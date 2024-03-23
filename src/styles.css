@@ -51,17 +51,29 @@ html, body {
 }
 .demo-drawer-header {
   box-sizing: border-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
+  align-items: center;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
   -webkit-justify-content: flex-end;
       -ms-flex-pack: end;
           justify-content: flex-end;
-  padding: 16px;
+  padding: 50px;
   height: 151px;
+  
+  .bug-icon {
+    font-size: 2.0rem; /* Adjust the size as needed */
+    margin-right: 10px; /* Add some spacing between the icon and the title */
+    vertical-align: middle;
+  }
+  
+  .drawer-title {
+    font-size: 1.8rem;
+    vertical-align: middle; 
+  }
+
+
 }
 .demo-avatar-dropdown {
   display: -webkit-flex;
@@ -97,7 +109,7 @@ html, body {
 }
 .demo-layout .demo-navigation .mdl-navigation__link:hover {
   background-color: #00BCD4;
-  color: #37474F;
+  color: #000000;
 }
 .demo-navigation .mdl-navigation__link .material-icons {
   font-size: 24px;
@@ -109,39 +121,8 @@ html, body {
   max-width: 1080px;
 }
 
-.demo-charts {
-  -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-.demo-chart:nth-child(1) {
-  color: #ACEC00;
-}
-.demo-chart:nth-child(2) {
-  color: #00BBD6;
-}
-.demo-chart:nth-child(3) {
-  color: #BA65C9;
-}
-.demo-chart:nth-child(4) {
-  color: #EF3C79;
-}
-.demo-graphs {
-  padding: 16px 32px;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-align-items: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
-}
-/* TODO: Find a proper solution to have the graphs
- * not float around outside their container in IE10/11.
- * Using a browserhacks.com solution for now.
- */
+
+
 _:-ms-input-placeholder, :root .demo-graphs {
   min-height: 664px;
 }
@@ -215,3 +196,53 @@ _:-ms-input-placeholder, :root .demo-graph {
       -ms-flex-align: center;
           align-items: center;
 }
+
+
+/************************* Login ************************/
+
+/* Body element */
+body {
+  background-color: #f0f5f9; /* Light blue background color */
+}
+
+
+/* Style the "Forgot Password?" link */
+.demo-card-square a {
+  color: black; /* Set the color to black */
+  text-decoration: none; /* Remove underline */
+}
+
+.demo-card-square a:hover {
+  text-decoration: underline; /* Add underline on hover if desired */
+}
+
+.demo-card-square.mdl-card {
+  width: 320px;
+  height: 330px;
+  border-radius: 8px; /* Adjust the border-radius as needed */
+  overflow: hidden; /* Ensure content doesn't overflow rounded corners */
+}
+.demo-card-square > .mdl-card__title {
+  color: #000000;
+  
+}
+
+
+
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+.demo-card-square .mdl-card__supporting-text {
+  margin-top: 20px; /* Adjust the title*/
+}
+
+.mdl-textfield {
+  margin-bottom: 20px; /* Adjust the bottom margin between input fields */
+}
+
+/************************* Login ************************/
