@@ -27,9 +27,7 @@ html, body {
 .demo-layout .mdl-layout__header .mdl-layout__drawer-button {
   color: rgba(0, 0, 0, 0.54);
 }
-.mdl-layout__drawer .avatar {
-  margin-bottom: 16px;
-}
+
 .demo-drawer {
   border: none;
 }
@@ -108,12 +106,12 @@ html, body {
   font-weight: 500;
 }
 .demo-layout .demo-navigation .mdl-navigation__link:hover {
-  background-color: #00BCD4;
+  background-color: #6e1e1e;
   color: #000000;
 }
 .demo-navigation .mdl-navigation__link .material-icons {
   font-size: 24px;
-  color: rgba(255, 255, 255, 0.56);
+  color: rgba(0, 0, 0, 0.56);
   margin-right: 32px;
 }
 
@@ -159,12 +157,7 @@ _:-ms-input-placeholder, :root .demo-graph {
 .demo-cards h3 {
   font-size: 1em;
 }
-.demo-updates .mdl-card__title {
-  min-height: 200px;
-  background-image: url('images/dog.png');
-  background-position: 90% 100%;
-  background-repeat: no-repeat;
-}
+
 .demo-cards .mdl-card__actions a {
   color: #00BCD4;
   text-decoration: none;
@@ -224,12 +217,11 @@ body {
 }
 .demo-card-square > .mdl-card__title {
   color: #000000;
+  background-color: #85d8cb;
   
 }
 
-
-
-.center-container {
+.center-container-login {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -245,4 +237,145 @@ body {
   margin-bottom: 20px; /* Adjust the bottom margin between input fields */
 }
 
-/************************* Login ************************/
+/* Center the button */
+.center-btn {
+  display: flex;
+  justify-content: center;
+}
+
+/* Additional styling for button */
+.demo-card-square .mdl-button-login {
+  border-radius: 24px; /* Adjust the border radius as needed */
+  color: #000000;
+  background-color: #9fe2d8;
+  width: 40%; 
+  height: 40px;
+}
+.mdl-button-login.mdl-js-ripple-effect .mdl-button__ripple-container {
+  border-radius: 24px;
+}
+
+
+/************************* Login ends ************************/
+
+
+/************************* Network ************************/
+
+
+.center-network-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.custom-width-network {
+  width: 80%; 
+}
+
+.mdl-button-network {
+  border-radius: 24px; /* Adjust the border radius as needed */
+  color: #000000;
+  background-color: #d4dbda;
+  width: 15%; 
+  height: 45px;
+  position: absolute;
+}
+.mdl-button-network i {
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+
+
+.mdl-button-network.mdl-js-ripple-effect .mdl-button__ripple-container {
+  border-radius: 24px;
+}
+
+.mdl-button-network.add-buoy {
+  top: 70px;
+  right: 20px;
+}
+
+.mdl-button-network.remove-buoy {
+  top: 70px;
+  left: 20px;
+  width: 16%; 
+}
+
+
+/************************* Network ends ************************/
+
+/************************* Account ************************/
+
+.custom-width-account {
+  width: 50%; 
+}
+
+.center-account-container {
+  display: flex;
+  flex-direction: column; /* Ensure elements are stacked vertically */
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+
+.table-container {
+  width: 100%; /* Ensure the table spans the full width */
+  margin-left: 90%;
+  margin-right: 0%;
+}
+.table-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Add spacing between title and table */
+  margin-left: 24%;
+}
+
+.mdl-button-account {
+  border-radius: 24px; /* Adjust the border radius as needed */
+  color: #000000;
+  background-color: #d4dbda;
+  width: 15%; 
+  height: 45px;
+  position: absolute;
+}
+.mdl-button-account i {
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+
+
+
+.mdl-button-account.mdl-js-ripple-effect .mdl-button__ripple-container {
+  border-radius: 24px;
+}
+
+
+.mdl-button-account.add-account {
+  top: 106px;
+  left: 835px;
+  right: 50px;
+  width: 16%; 
+}
+.mdl-button-account.remove-account {
+  top: 405px;
+  left: 835px;
+  right: 50px;
+  width: 16%; 
+}
+
+.mdl-button-account.change-password{
+  top: 405px;
+  left: 10px;
+  right: 50px;
+  width: 16%; 
+}
+.mdl-button-account.sign-out{
+  top: 405px;
+  left: 200px;
+  right: 50px;
+  width: 16%; 
+}
+
+/************************* Account ends ************************/

@@ -31,7 +31,7 @@ const Login = () => {
   };
 
   return (
-    <div className="center-container">
+    <div className="center-container-login">
       <div className="demo-card-square mdl-card mdl-shadow--2dp">
         <div className="mdl-card__title mdl-card--expand">
           <h2 className="mdl-card__title-text">Login</h2>
@@ -64,9 +64,11 @@ const Login = () => {
             <div style={{ marginBottom: '16px' }}> {/* Add margin-bottom style */}
               <a href="#" onClick={handleForgotPassword}>Forgot Password?</a>
             </div>
-            <button className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" type="submit">
-              Login
+            <div className="center-btn">
+            <button className="mdl-button-login mdl-button mdl-js-button mdl-js-ripple-effect" type="submit">
+            Login
             </button>
+            </div>
           </form>
         </div>
       </div>

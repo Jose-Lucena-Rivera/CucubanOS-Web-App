@@ -5,7 +5,7 @@ import Dashboard from './dashboard';
 import Network from './network';
 import Account from './account';
 import Login from './Login';
-import Layout from './Layout';
+
 
 const App = () => {
   return (
