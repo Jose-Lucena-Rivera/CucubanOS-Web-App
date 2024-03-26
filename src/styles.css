@@ -378,4 +378,30 @@ body {
   width: 16%; 
 }
 
+.custom-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.dialog-content {
+  margin-bottom: 150px;
+  width: 250px;
+}
+
+.dialog-actions {
+  text-align: right;
+}
+
+.dialog-actions button {
+  margin-left: 10px;
+}
+
+
 /************************* Account ends ************************/

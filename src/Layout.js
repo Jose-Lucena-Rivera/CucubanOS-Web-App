@@ -1,7 +1,7 @@
 import React from 'react';
 import 'material-design-lite/material'; 
 import 'material-design-lite/material.css';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './styles.css';
 
 const Header = () => {
@@ -19,6 +19,19 @@ const Header = () => {
       }
     };
   
+    const handleMenuItemClick = (menuItem) => {
+      switch (menuItem) {
+          case 'Account':
+              window.location.href = '/account'; // Redirect to the account page
+              break;
+          case 'Sign Out':
+              // Handle sign out logic
+              break;
+          default:
+              break;
+      }
+  };
+
     return (
       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
         <div className="mdl-layout__header-row">
@@ -32,8 +45,8 @@ const Header = () => {
             <i className="material-icons">more_vert</i>
           </button>
           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-            <li className="mdl-menu__item">Account</li>
-            <li className="mdl-menu__item">Sign Out</li>
+          <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Account')}>Account</li>
+            <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Sign Out')}>Sign Out</li>
           </ul>
         </div>
       </header>
