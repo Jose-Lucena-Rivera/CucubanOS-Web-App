@@ -301,7 +301,18 @@ body {
   left: 20px;
   width: 16%; 
 }
-
+.dialog-actions-submit-network {
+  position: absolute;
+  bottom: -220px;
+  right: 0px;
+ 
+}
+.center-container-add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
 /************************* Network ends ************************/
 
@@ -378,6 +389,16 @@ body {
   width: 16%; 
 }
 
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  z-index: 999; /* Ensure backdrop is below dialog */
+}
+
 .custom-dialog {
   position: fixed;
   top: 50%;
@@ -396,12 +417,54 @@ body {
 }
 
 .dialog-actions {
-  text-align: right;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+ 
 }
 
-.dialog-actions button {
-  margin-left: 10px;
+.dialog-actions-submit {
+  position: absolute;
+  bottom: -180px;
+  right: 0px;
+ 
 }
 
 
 /************************* Account ends ************************/
+
+
+/* Text fields with Floating Labels */
+
+.mdl-textfield {
+  margin-bottom: 20px;
+  position: relative; /* Ensure proper positioning of label */
+  width: 100%; /* Ensure the text field takes up full width */
+}
+
+.mdl-textfield__input {
+  border: none; /* Remove default border */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12); /* Add bottom border */
+  box-sizing: border-box; /* Ensure proper box-sizing */
+  font-size: 16px; /* Adjust font size as needed */
+  padding: 8px 0; /* Add padding to match floating label */
+  width: 100%; /* Ensure the input takes up full width */
+}
+
+.mdl-textfield__label {
+  color: rgba(0, 0, 0, 0.6); /* Set label color */
+  font-size: 16px; /* Set label font size */
+  left: 0; /* Position label at left by default */
+  pointer-events: none; /* Ensure label does not interfere with input */
+  position: absolute; /* Position label absolutely */
+  top: 14px; /* Adjust top position to vertically center */
+  transition: top 0.2s ease, font-size 0.2s ease; /* Add smooth transition */
+}
+
+.mdl-textfield__input:focus ~ .mdl-textfield__label,
+.mdl-textfield__input:valid ~ .mdl-textfield__label {
+  color: rgba(0, 0, 0, 0.87); /* Change label color on focus or when input has value */
+  font-size: 12px; /* Shrink font size when input has value */
+  top: -8px; /* Adjust top position when input has value */
+}
+/* Text fields with Floating Labels ends */
