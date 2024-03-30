@@ -258,6 +258,27 @@ body {
 
 /************************* Login ends ************************/
 
+/************************* Forgot Password ************************/
+
+.mdl-card__supporting-text{ /*Also changes login supporting text*/
+  margin-bottom: 10px; 
+}
+
+.forgotpassword-input-container {
+  bottom: -30px; /* Adjust the margin as needed */
+}
+
+.forgotpassword-button {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-top: 50px; /* Add some top margin for spacing */
+}
+
+
+/************************* Forgot Password ends ************************/
+
+
 
 /************************* Network ************************/
 
@@ -468,3 +489,63 @@ body {
   top: -8px; /* Adjust top position when input has value */
 }
 /* Text fields with Floating Labels ends */
+
+
+/************************* Dashboard ************************/
+
+.dashboard-content {
+  position: relative; /* Ensure positioning context for absolute positioning */
+}
+
+.deploy-button {
+  position: absolute;
+  top: 400px;
+  bottom: 10px; /* Adjust as needed */
+  right: 20px; /* Adjust as needed */
+}
+
+.stop-design{
+  position: absolute;
+  top: 400px;
+  bottom: 20px; /* Adjust as needed */
+  right: 200px; /* Adjust as needed */
+}
+
+.clear-all{
+  position: absolute;
+  top: 200px;
+  bottom: 40px; /* Adjust as needed */
+  right: 400px; /* Adjust as needed */
+}
+.select-all{
+  position: absolute;
+  top: 120px;
+  bottom: 20px; /* Adjust as needed */
+  right: 400px; /* Adjust as needed */
+}
+
+.slider-container {
+  /* Adjust positioning properties as needed */
+  position: absolute;
+  top: 330px; /* Move the slider to the center vertically */
+  left: 82%; /* Move the slider to the center horizontally */
+  transform: translate(-50%, -50%); /* Center the slider */
+}
+
+/* Styles for the Pattern menu button */
+#pattern-menu {
+  position: absolute; /* Position the button */
+  top: 265px; /* Adjust the top position */
+  left: 500px; /* Adjust the left position */
+}
+
+/* Styles for the Pattern menu options */
+.mdl-menu.mdl-menu--bottom-left {
+  position: absolute; /* Position the menu options */
+  top: -1px; /* Adjust the top position */
+  left: 5px; /* Adjust the left position */
+}
+
+
+
+/************************* Dashboard ends ************************/

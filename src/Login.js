@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // Import Link component
 import 'material-design-lite/material'; 
 import 'material-design-lite/material.css';
 import './styles.css';
@@ -23,11 +24,6 @@ const Login = () => {
     // Reset the form
     setEmail('');
     setPassword('');
-  };
-
-  const handleForgotPassword = () => {
-    // Add logic for handling forgot password functionality, such as showing a modal or navigating to a forgot password page
-    console.log('Forgot password clicked');
   };
 
   return (
@@ -62,12 +58,13 @@ const Login = () => {
               <label className="mdl-textfield__label" htmlFor="password">Password...</label>
             </div>
             <div style={{ marginBottom: '16px' }}> {/* Add margin-bottom style */}
-              <a href="#" onClick={handleForgotPassword}>Forgot Password?</a>
+              {/* Use Link component to navigate to Forgot Password page */}
+              <Link to="/forgot_password" className="forgot-password">Forgot Password?</Link>
             </div>
             <div className="center-btn">
-            <button className="mdl-button-login mdl-button mdl-js-button mdl-js-ripple-effect" type="submit">
-            Login
-            </button>
+              <button className="mdl-button-login mdl-button mdl-js-button mdl-js-ripple-effect" type="submit">
+                Login
+              </button>
             </div>
           </form>
         </div>

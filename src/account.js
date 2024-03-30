@@ -157,7 +157,7 @@ const Account = () => {
                       />
                       <label className="mdl-textfield__label" htmlFor="newUserEmail">Email...</label>
                     </div>
-                    <div className="center-btn">
+                    <div className="forgotpassword-button-container">
                       <button className="mdl-button-account mdl-button mdl-js-button mdl-js-ripple-effect" type="submit">
                         Submit
                       </button>

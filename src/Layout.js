@@ -1,7 +1,7 @@
 import React from 'react';
 import 'material-design-lite/material'; 
 import 'material-design-lite/material.css';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import './styles.css';
 
 const Header = () => {
@@ -67,7 +67,7 @@ const Drawer = () => {
         </div>
       </header>
       <nav className="demo-navigation mdl-navigation mdl-color--blue-grey-100">
-        <a className="mdl-navigation__link" href="/dashboard"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">dashboard</i>Dashboard</a>
+        <a className="mdl-navigation__link" href="/dashboard"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">format_color_fill</i>Dashboard</a>
         <a className="mdl-navigation__link" href="/network"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">wifi</i>Network</a>
         <a className="mdl-navigation__link" href="/account"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">person</i>Account</a>
       </nav>

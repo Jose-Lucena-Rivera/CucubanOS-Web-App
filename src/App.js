@@ -5,6 +5,7 @@ import Dashboard from './dashboard';
 import Network from './network';
 import Account from './account';
 import Login from './Login';
+import ForgotPassword from './forgotpassword';
 
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route exact path="/" element={<Login />} />
+        <Route excact path="forgot_password" element={<ForgotPassword/>}/>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/network" element={<Network />} />
         <Route path="/account" element={<Account />} />
