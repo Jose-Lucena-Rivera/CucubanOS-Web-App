@@ -547,5 +547,32 @@ body {
 }
 
 
+.color-picker-container {
+  position: fixed;
+  bottom: 150px;
+  right: 100px;
+}
+
+.color-squares {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 5px;
+}
+
+.color-square {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+
+.choose-color {
+  position: absolute;
+  top: 150px; /* Adjust top position as needed */
+  left: 750px; /* Adjust left position as needed */
+}
+
 
 /************************* Dashboard ends ************************/
