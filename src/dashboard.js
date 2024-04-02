@@ -2,52 +2,52 @@ import React, { useState, useEffect, useRef } from 'react';
 import Layout from './Layout';
 import './styles.css';
 
-const Dashboard = () => {
-  const [sliderValue, setSliderValue] = useState(0);
-  const [selectedColor, setSelectedColor] = useState('#FFFFFF');
-  const [displayColorPicker, setDisplayColorPicker] = useState(false);
-  const buttonRef = useRef(null);
-  const colorPickerRef = useRef(null);
+  const Dashboard = () => {
+    const [sliderValue, setSliderValue] = useState(0);
+    const [selectedColor, setSelectedColor] = useState('#FFFFFF');
+    const [displayColorPicker, setDisplayColorPicker] = useState(false);
+    const buttonRef = useRef(null);
+    const colorPickerRef = useRef(null);
 
-  const colors = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC100', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B'];
+    const colors = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC100', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B'];
 
-  useEffect(() => {
-    // Initialize MDL sliders
-    window.componentHandler.upgradeAllRegistered();
-    
-    // Event listener to update the displayed value of the slider
-    const slider = document.getElementById('s1');
-    slider.addEventListener('change', () => {
-      setSliderValue(slider.value);
-    });
+    useEffect(() => {
+      // Initialize MDL sliders
+      window.componentHandler.upgradeAllRegistered();
+      
+      // Event listener to update the displayed value of the slider
+      const slider = document.getElementById('s1');
+      slider.addEventListener('change', () => {
+        setSliderValue(slider.value);
+      });
 
-    // Event listener to close color picker when clicking outside of it
-    const handleClickOutside = (event) => {
-      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target) && buttonRef.current !== event.target) {
-        setDisplayColorPicker(false);
-      }
+      // Event listener to close color picker when clicking outside of it
+      const handleClickOutside = (event) => {
+        if (colorPickerRef.current && !colorPickerRef.current.contains(event.target) && buttonRef.current !== event.target) {
+          setDisplayColorPicker(false);
+        }
+      };
+
+      window.addEventListener('click', handleClickOutside);
+
+      return () => {
+        window.removeEventListener('click', handleClickOutside);
+      };
+    }, []);
+
+    const handleClick = (event) => {
+      event.stopPropagation(); // Prevent click event from propagating to window
+      setDisplayColorPicker(!displayColorPicker);
     };
 
-    window.addEventListener('click', handleClickOutside);
-
-    return () => {
-      window.removeEventListener('click', handleClickOutside);
+    const handleClose = () => {
+      setDisplayColorPicker(false);
     };
-  }, []);
 
-  const handleClick = (event) => {
-    event.stopPropagation(); // Prevent click event from propagating to window
-    setDisplayColorPicker(!displayColorPicker);
-  };
-
-  const handleClose = () => {
-    setDisplayColorPicker(false);
-  };
-
-  const handleColorClick = (color) => {
-    setSelectedColor(color);
-    setDisplayColorPicker(false);
-  };
+    const handleColorClick = (color) => {
+      setSelectedColor(color);
+      setDisplayColorPicker(false);
+    };
 
   return (
     <Layout>

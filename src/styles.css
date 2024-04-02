@@ -74,8 +74,7 @@ html, body {
 
 }
 .demo-avatar-dropdown {
-  display: -webkit-flex;
-  display: -ms-flexbox;
+ 
   display: flex;
   position: relative;
   -webkit-flex-direction: row;
@@ -85,6 +84,8 @@ html, body {
       -ms-flex-align: center;
           align-items: center;
   width: 100%;
+  top: 50%;
+  left: 25px;
 }
 
 .demo-navigation {
@@ -389,6 +390,7 @@ body {
   left: 835px;
   right: 50px;
   width: 16%; 
+  background-color: #37dae6;
 }
 .mdl-button-account.remove-account {
   top: 405px;
@@ -408,6 +410,7 @@ body {
   left: 200px;
   right: 50px;
   width: 16%; 
+  background-color: #ec9e9e;
 }
 
 .backdrop {
@@ -500,28 +503,28 @@ body {
 .deploy-button {
   position: absolute;
   top: 400px;
-  bottom: 10px; /* Adjust as needed */
-  right: 20px; /* Adjust as needed */
+  bottom: 10px; 
+  right: 20px; 
 }
 
 .stop-design{
   position: absolute;
   top: 400px;
-  bottom: 20px; /* Adjust as needed */
-  right: 200px; /* Adjust as needed */
+  bottom: 20px; 
+  right: 200px;
 }
 
 .clear-all{
   position: absolute;
   top: 200px;
-  bottom: 40px; /* Adjust as needed */
-  right: 400px; /* Adjust as needed */
+  bottom: 40px; 
+  right: 400px; 
 }
 .select-all{
   position: absolute;
   top: 120px;
-  bottom: 20px; /* Adjust as needed */
-  right: 400px; /* Adjust as needed */
+  bottom: 20px; 
+  right: 400px; 
 }
 
 .slider-container {
@@ -535,15 +538,15 @@ body {
 /* Styles for the Pattern menu button */
 #pattern-menu {
   position: absolute; /* Position the button */
-  top: 265px; /* Adjust the top position */
-  left: 500px; /* Adjust the left position */
+  top: 265px; 
+  left: 500px; 
 }
 
 /* Styles for the Pattern menu options */
 .mdl-menu.mdl-menu--bottom-left {
   position: absolute; /* Position the menu options */
-  top: -1px; /* Adjust the top position */
-  left: 5px; /* Adjust the left position */
+  top: -1px; 
+  left: 5px; 
 }
 
 

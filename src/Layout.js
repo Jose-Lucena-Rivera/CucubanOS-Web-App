@@ -57,9 +57,10 @@ const Drawer = () => {
   return (
     <div className="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
       <header className="demo-drawer-header">
-        <div className="drawer-header-content">
+      <div className="drawer-header-content" style={{ display: 'flex', alignItems: 'center' }}>
         <i className="material-icons bug-icon">bug_report</i>
-        <span className="drawer-title">CucubanOS</span>
+          <span className="drawer-title">CucubanOS</span>
+          
         </div>
         <div className="demo-avatar-dropdown">
           <span> Admin</span>
