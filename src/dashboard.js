@@ -75,8 +75,8 @@ import './styles.css';
           Pattern
         </button>
         <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="pattern-menu">
-          <li className="mdl-menu__item">Pattern 1</li>
-          <li className="mdl-menu__item">Pattern 2</li>
+          <li className="mdl-menu__item">Blink</li>
+          <li className="mdl-menu__item">Fade</li>
           <li className="mdl-menu__item">Pattern 3</li>
           <li className="mdl-menu__item">Pattern 4</li>
           <li className="mdl-menu__item">Pattern 5</li>

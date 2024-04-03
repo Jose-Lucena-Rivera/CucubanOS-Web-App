@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from './Layout';
-import 'material-design-lite/material'; 
+import 'material-design-lite/material';
 import 'material-design-lite/material.css';
 import './styles.css';
 
@@ -92,7 +92,9 @@ const Network = () => {
             <div className="backdrop" onClick={handleCloseRemoveDialog}></div>
             <div className="custom-dialog" style={{ width: '50%' }}>
               <div className="dialog-content">
-                <h4>Delete Buoy? </h4>
+                <h3>Delete Buoy? </h3>
+                <div className="mdl-card__supporting-text-account">
+                  You are about to delete a buoy from the network. This action cannot be undone.</div>
                 <ul>
                   {selectedBuoy && (
                     <li key={selectedBuoy.id}>
@@ -117,41 +119,44 @@ const Network = () => {
         {isAddCardOpen && (
           <div className="backdrop" onClick={handleCloseAddCard}>
             <div className="custom-dialog add-buoy-dialog" onClick={(e) => e.stopPropagation()}>
-              <button className="close-button" onClick={handleCloseAddCard}>
+              <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button-network" onClick={handleCloseAddCard}>
                 X
               </button>
               <div className="add-buoy-card">
-                <h2 className="add-buoy-card-title">Add a Buoy</h2>
+                <h3 className="dialog-content-network"> Add a Buoy</h3>
+                <div className="mdl-card__supporting-text-account">
+                  To add a buoy you must place the network id and a id for the buoy you are adding.</div>
                 <form onSubmit={handleSubmitAddCard}>
-                <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input
-                  className="mdl-textfield__input"
-                  type="text"
-                  id="networkId"
-                  value={networkId}
-                  onChange={handleNetworkIdChange}
-                  required
-                />
-                <label className="mdl-textfield__label" htmlFor="networkId">Network ID...</label>
-              </div>
-              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input
-                  className="mdl-textfield__input"
-                  type="text"
-                  id="buoyId"
-                  value={buoyId}
-                  onChange={handleBuoyIdChange}
-                  required
-                />
-                <label className="mdl-textfield__label" htmlFor="buoyId">Buoy ID...</label>
-              </div>
-
-                  <div className="center-btn">
-                    <button className="mdl-button-login mdl-button mdl-js-button mdl-js-ripple-effect" type="submit">
-                      Submit
-                    </button>
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input
+                      className="mdl-textfield__input"
+                      type="text"
+                      id="networkId"
+                      value={networkId}
+                      onChange={handleNetworkIdChange}
+                      required
+                    />
+                    <label className="mdl-textfield__label" htmlFor="networkId">Network ID...</label>
+                  </div>
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input
+                      className="mdl-textfield__input"
+                      type="text"
+                      id="buoyId"
+                      value={buoyId}
+                      onChange={handleBuoyIdChange}
+                      required
+                    />
+                    <label className="mdl-textfield__label" htmlFor="buoyId">Buoy ID...</label>
                   </div>
                 </form>
+              </div>
+              <div className="dialog-actions">
+                <div className="dialog-actions-submit-network-add">
+                  <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" onClick={handleSubmitAddCard}>
+                    Submit
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -325,15 +325,39 @@ body {
 }
 .dialog-actions-submit-network {
   position: absolute;
-  bottom: -220px;
+  bottom: -310px;
   right: 0px;
  
 }
-.center-container-add {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+
+.dialog-close-button-network{
+  position: absolute;
+  bottom: 10px;
+  left: 550px;
+}
+
+.dialog-content-network{
+  margin-bottom: 60px;
+  padding: 20px;
+  margin-top: 5px;
+}
+
+.add-buoy-dialog{
+
+  width: 600px;
+  height:370px;
+  
+}
+.dialog-actions-submit-network-add {
+  position: absolute;
+  bottom: -390px;
+  right: 0px;
+  margin: 0px;
+ 
+}
+
+.mdl-card__supporting-text-network{ 
+  margin-bottom: 60px; 
 }
 
 /************************* Network ends ************************/
@@ -436,8 +460,8 @@ body {
 }
 
 .dialog-content {
-  margin-bottom: 150px;
-  width: 250px;
+  margin-bottom: 130px;
+  
 }
 
 .dialog-actions {
@@ -453,6 +477,78 @@ body {
   right: 0px;
  
 }
+.dialog-close-button {
+  position: absolute;
+  top: 30;
+  right: 0;
+  margin: 12px;
+}
+
+.mdl-card__supporting-text-account{ 
+  margin-bottom: 60px; 
+}
+
+.add-account-dialog{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 600px;
+  
+}
+
+.mdl-card__supporting-text-account-remove{ 
+  margin-top: 5px; 
+}
+.dialog-actions-submit-add {
+  position: absolute;
+  bottom: -300px;
+  right: 0px;
+ 
+}
+/* Change Password Card */
+.change-password-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  width: 400px;
+}
+
+.dialog-content-change {
+  margin-top: 10;
+}
+
+.mdl-textfield--floating-label {
+  width: 100%;
+}
+
+/* Close button */
+.dialog-close-button-change {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin-left: 10px;
+}
+
+/* Submit button */
+.dialog-actions-submit-change {
+ position: absolute;
+ top: 220px;
+ right: 0px;
+}
+
+
+
 
 
 /************************* Account ends ************************/
@@ -576,6 +672,9 @@ body {
   top: 150px; /* Adjust top position as needed */
   left: 750px; /* Adjust left position as needed */
 }
+
+
+
 
 
 /************************* Dashboard ends ************************/

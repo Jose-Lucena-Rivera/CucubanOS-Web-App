@@ -10,6 +10,8 @@ const Account = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false); 
+  const [currentPassword, setCurrentPassword] = useState(''); 
 
   const handleRemoveAccountClick = () => {
     const selectedAccountData = []; // Replace with logic to get selected user(s) information
@@ -43,6 +45,18 @@ const Account = () => {
     console.log('New User Email:', newUserEmail);
     handleCloseAddCard();
   };
+
+  const handleCloseChangePassword = () => {
+    setIsChangePasswordOpen(false);
+  };
+
+  const handleSubmitChangePassword = (event) => {
+    event.preventDefault();
+    // Add logic to handle password change
+    console.log('Current Password:', currentPassword);
+    handleCloseChangePassword();
+  };
+  
 
   return (
     <Layout>
@@ -92,7 +106,7 @@ const Account = () => {
             <span>Sign Out</span>
           </button>
           {/* Change password button */}
-          <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect change-password" type="submit">
+          <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect change-password" type="submit" onClick={() => setIsChangePasswordOpen(true)}>
             <span>Change Password</span>
           </button>
           {/* Dialog and backdrop */}
@@ -102,6 +116,8 @@ const Account = () => {
               <div className="custom-dialog" style={{ width: '50%' }}>
                 <div className="dialog-content">
                   <h4>Delete User? </h4>
+                  <div className="mdl-card__supporting-text-account-remove">
+                  You are about to remove the following accounts, this action cannot be undone. </div>
                   <ul>
                     {selectedUsers.map(account => (
                       <li key={account.id}>
@@ -129,11 +145,10 @@ const Account = () => {
           {isAddCardOpen && (
             <div className="backdrop" onClick={handleCloseAddCard}>
               <div className="custom-dialog add-account-dialog" onClick={(e) => e.stopPropagation()}>
-                <button className="close-button" onClick={handleCloseAddCard}>
-                  X
-                </button>
                 <div className="add-account-card">
-                  <h2 className="add-account-card-title">Add an Account</h2>
+                  <h3 className="dialog-content-add">Add an Account</h3>
+                  <div className="mdl-card__supporting-text-account">
+                  To add an account please place a Name and Email that will be associated with the account. A one time use password will be generated for the user, they will be prompted to change once they login.</div>
                   <form onSubmit={handleSubmitAddCard}>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <input
@@ -157,10 +172,54 @@ const Account = () => {
                       />
                       <label className="mdl-textfield__label" htmlFor="newUserEmail">Email...</label>
                     </div>
-                    <div className="forgotpassword-button-container">
-                      <button className="mdl-button-account mdl-button mdl-js-button mdl-js-ripple-effect" type="submit">
+                    <div className="dialog-actions">
+                      <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button" onClick={handleCloseAddCard}>
+                        X
+                      </button>
+                      <div className="dialog-actions-submit-add">
+                      <button className= "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" type="submit">
                         Submit
                       </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
+           {/* Change Password Card */}
+          {isChangePasswordOpen && (
+            <div className="backdrop" onClick={handleCloseChangePassword}>
+              <div className="custom-dialog change-password-dialog" onClick={(e) => e.stopPropagation()}>
+                <div className="change-password-card">
+                  <h3 className="dialog-content-change">Change Password</h3>
+                  <div className="mdl-card__supporting-text-account">
+                    {/* Supporting text */}
+                    Enter your current password.
+                  </div>
+                  <form onSubmit={handleSubmitChangePassword}>
+                    <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                      <input
+                        className="mdl-textfield__input"
+                        type="password"
+                        id="currentPassword"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        required
+                      />
+                      <label className="mdl-textfield__label" htmlFor="currentPassword">Current Password</label>
+                    </div>
+                    {/* Add inputs for new password and confirmation if needed */}
+                    {/* Close and submit buttons */}
+                    <div className="dialog-actions">
+                      <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button-change" onClick={handleCloseChangePassword}>
+                        X
+                      </button>
+                      <div className="dialog-actions-submit-change">
+                        <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" type="submit">
+                          Submit
+                        </button>
+                      </div>
                     </div>
                   </form>
                 </div>
