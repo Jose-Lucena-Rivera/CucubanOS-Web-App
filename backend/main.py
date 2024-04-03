@@ -32,10 +32,40 @@ def subscribe():
     # Display confirmation or handle errors
     return jsonify({"message": message},200)
 
-@app.route("/users", methods=["GET"])
-def test():
+@app.route("/add-user", methods=["GET"])
+def add_user():
     pass
 
+@app.route("/remove-user/<string:username>", methods=["DELETE"])
+def remove_user(username):
+    pass
+
+@app.route("/update-user/<string:username>", methods=["POST"])
+def update_user(username):
+    pass
+
+
+@app.route("/forgot-password/<string:username>", methods=["POST"])
+def forgot_password(username):
+    pass
+
+
+@app.route("/add-buoy", methods=["POST"])
+def add_buoy():
+    pass
+
+
+@app.route("/get-buoys", methods=["GET"])
+def get_buoys():
+    pass
+
+@app.route("/update-buoy", methods=["POST"])
+def update_buoy():
+    pass
+
+@app.route("/delete-buoy/<int:buoyID>", methods=["DELETE"])
+def delete_buoy(buoyID):
+    pass
 
 if __name__ == '__main__':
     connect_mqtt()
