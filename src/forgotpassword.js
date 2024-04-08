@@ -20,7 +20,7 @@ const ForgotPassword = () => {
 
   return (
     <div className="center-container-login">
-      <div className="demo-card-square mdl-card mdl-shadow--2dp">
+      <div className="demo-card-square mdl-card-forgot mdl-shadow--3dp">
         <div className="mdl-card__title mdl-card--expand">
           <h2 className="mdl-card__title-text">Forgot Password?</h2>
         </div>

@@ -212,9 +212,10 @@ body {
 
 .demo-card-square.mdl-card {
   width: 320px;
-  height: 330px;
+  height: 340px;
   border-radius: 8px; /* Adjust the border-radius as needed */
   overflow: hidden; /* Ensure content doesn't overflow rounded corners */
+  
 }
 .demo-card-square > .mdl-card__title {
   color: #000000;
@@ -227,11 +228,13 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  
 }
 
 
 .demo-card-square .mdl-card__supporting-text {
   margin-top: 20px; /* Adjust the title*/
+  
 }
 
 .mdl-textfield {
@@ -275,11 +278,38 @@ body {
   align-items: flex-end;
   margin-top: 50px; /* Add some top margin for spacing */
 }
+.demo-card-square.mdl-card-forgot {
+  width: 320px;
+  height: 320px;
+  border-radius: 8px; /* Adjust the border-radius as needed */
+  overflow: hidden; /* Ensure content doesn't overflow rounded corners */
+  background-color: #ffffff;
+  
+}
+
 
 
 /************************* Forgot Password ends ************************/
 
+/************************* Change Password  ************************/
 
+.demo-card-square.mdl-card-change {
+  width: 350px;
+  height: 400px;
+  border-radius: 8px; /* Adjust the border-radius as needed */
+  overflow: hidden; /* Ensure content doesn't overflow rounded corners */
+  background-color: #ffffff;
+}
+
+.changepassword-button {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-top: 0px; /* Add some top margin for spacing */
+}
+
+
+/************************* Chanage Password ends ************************/
 
 /************************* Network ************************/
 
