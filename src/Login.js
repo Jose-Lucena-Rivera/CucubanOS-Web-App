@@ -30,14 +30,14 @@ const Login = () => {
     const emailRegex = /\S+@\S+\.\S+/;
     if (!email || !emailRegex.test(email)) {
       setEmailError(true);
-      setEmailErrorMessage("The email address must end with '.com'");
+      setEmailErrorMessage("The email address must have a '.'");
       return;
     }
 
     // Additional validation for email domain
-    if (!email.endsWith('.com')) {
+    if (!email.endsWith('.com') ) {
       setEmailError(true);
-      setEmailErrorMessage("The email address must end with '.com'");
+      setEmailErrorMessage("The email address must end with '.com' or '.edu");  
       return;
     }
 

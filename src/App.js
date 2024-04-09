@@ -13,8 +13,8 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route exact path="/" element={<Login />} />
-        <Route exact path="forgot_password" element={<ForgotPassword/>}/>
+        <Route path="/" element={<Login />} />
+        <Route path="forgot_password" element={<ForgotPassword/>}/>
         <Route path="change_password" element={<ChangePassword/>}/>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/network" element={<Network />} />

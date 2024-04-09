@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Layout from './Layout';
-import 'material-design-lite/material'; 
+import 'material-design-lite/material';
 import 'material-design-lite/material.css';
 import './styles.css';
+
 
 const Account = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -10,8 +11,14 @@ const Account = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false); 
-  const [currentPassword, setCurrentPassword] = useState(''); 
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [isConfirmPasswordOpen, setIsConfirmPasswordOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordsMatch, setPasswordsMatch] = useState(true); // Flag to track if passwords match
+  const [emailError, setEmailError] = useState(''); // Error message for invalid email
+  
 
   const handleRemoveAccountClick = () => {
     const selectedAccountData = []; // Replace with logic to get selected user(s) information
@@ -40,6 +47,12 @@ const Account = () => {
 
   const handleSubmitAddCard = (event) => {
     event.preventDefault();
+    // Check if the email ends with ".com"
+    if (!newUserEmail.toLowerCase().endsWith('.com')) {
+      setEmailError('Email must end with ".com"');
+      return;
+    }
+    setEmailError('');
     // Add logic to submit new account
     console.log('New User Name:', newUserName);
     console.log('New User Email:', newUserEmail);
@@ -54,9 +67,45 @@ const Account = () => {
     event.preventDefault();
     // Add logic to handle password change
     console.log('Current Password:', currentPassword);
+    // Close the Change Password dialog
     handleCloseChangePassword();
+    // Open the Confirm Password dialog
+    setIsConfirmPasswordOpen(true);
+    // Reset passwordsMatch flag
+    setPasswordsMatch(true);
   };
-  
+
+  const handleSubmitConfirmPassword = (event) => {
+    event.preventDefault();
+    if (newPassword === confirmPassword) {
+      // Passwords match, proceed with password change
+      console.log('Password changed successfully.');
+      handleCloseConfirmPassword(); // Close the Confirm Password dialog
+    } else {
+      // Passwords do not match, display error message
+      setPasswordsMatch(false);
+    }
+  };
+
+  const handleCloseConfirmPassword = () => {
+    setIsConfirmPasswordOpen(false);
+    // Reset passwordsMatch flag when Confirm Password dialog is closed
+    setPasswordsMatch(true);
+  };
+
+  const handleEmailChange = (event) => {
+    const { value } = event.target;
+    // Check if the email ends with ".com"
+    setNewUserEmail(value);
+  };
+
+  const handleSignOut = () => {
+    // Redirect to the login page ("/")
+    window.location.href = '/'; 
+  };
+
+ 
+
 
   return (
     <Layout>
@@ -102,7 +151,7 @@ const Account = () => {
             <span>Remove an account</span>
           </button>
           {/* Sign out button */}
-          <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect sign-out" type="submit">
+          <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect sign-out" type="submit" onClick={handleSignOut}>
             <span>Sign Out</span>
           </button>
           {/* Change password button */}
@@ -152,7 +201,7 @@ const Account = () => {
                   <form onSubmit={handleSubmitAddCard}>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <input
-                        className="mdl-textfield__input"
+                        className={`mdl-textfield__input ${emailError ? 'invalid' : ''}`}
                         type="text"
                         id="newUserName"
                         value={newUserName}
@@ -163,14 +212,16 @@ const Account = () => {
                     </div>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <input
-                        className="mdl-textfield__input"
+                        className={`mdl-textfield__input ${emailError ? 'invalid' : ''}`}
                         type="email"
                         id="newUserEmail"
                         value={newUserEmail}
-                        onChange={(e) => setNewUserEmail(e.target.value)}
+                        onChange={handleEmailChange}
                         required
                       />
                       <label className="mdl-textfield__label" htmlFor="newUserEmail">Email...</label>
+                      {/* Error message if email is invalid */}
+                      {emailError && <div className="error-message">{emailError}</div>}
                     </div>
                     <div className="dialog-actions">
                       <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button" onClick={handleCloseAddCard}>
@@ -226,7 +277,53 @@ const Account = () => {
               </div>
             </div>
           )}
-        </div>
+            {/* Confirm Password Card */}
+        {isConfirmPasswordOpen && (
+          <div className="backdrop" onClick={handleCloseConfirmPassword}>
+            <div className="custom-dialog confirm-password-dialog" onClick={(e) => e.stopPropagation()}>
+              <div className="confirm-password-card">
+                <h3 className="dialog-content-confirm">Confirm Password</h3>
+                <form onSubmit={handleSubmitConfirmPassword}>
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input
+                      className="mdl-textfield__input"
+                      type="password"
+                      id="newPassword"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
+                    <label className="mdl-textfield__label" htmlFor="newPassword">New Password</label>
+                  </div>
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input
+                      className="mdl-textfield__input"
+                      type="password"
+                      id="confirmPassword"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                    <label className="mdl-textfield__label" htmlFor="confirmPassword">Confirm Password</label>
+                  </div>
+                  {/* Error message if passwords do not match */}
+                  {!passwordsMatch && <div className="error-message">Passwords do not match.</div>}
+                  <div className="dialog-actions">
+                    <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button-confirm" onClick={handleCloseConfirmPassword}>
+                      X
+                    </button>
+                    <div className="dialog-actions-submit-confirm">
+                      <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" type="submit">
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       </div>
     </Layout>
   );
