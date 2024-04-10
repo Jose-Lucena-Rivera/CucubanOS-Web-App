@@ -2,18 +2,23 @@ from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS, cross_origin
 import os
 from mqtt import *
+from dotenv import load_dotenv
+from handler.users import *
 
 
 # Create the application instance
 app = Flask(__name__)
 CORS(app)
 
+load_dotenv()
+debugging = os.getenv("DEBUGGING")
+
 port = int(os.environ.get("PORT", 5000))
 
 # Create a URL route in our application for "/"
 @app.route('/')
 def index():
-    return render_template("index".html)
+    return jsonify({"message": "Hello, Personas!"})
 
 
 @app.route("/publish", methods=["POST"])
@@ -32,12 +37,17 @@ def subscribe():
     # Display confirmation or handle errors
     return jsonify({"message": message},200)
 
-@app.route("/add-user", methods=["GET"])
+@app.route("/add-user", methods=["POST"])
+@app.route("/add-user/", methods=["POST"])
 def add_user():
-    pass
+    user = UserHandler()
+    return user.create_user()
+    # return create_user()
 
-@app.route("/remove-user/<string:username>", methods=["DELETE"])
-def remove_user(username):
+@app.route("/remove-user/<string:email>", methods=["DELETE"])
+@app.route("/remove-user/<string:email>", methods=["DELETE"])
+def remove_user(email):
+
     pass
 
 @app.route("/update-user/<string:username>", methods=["POST"])
@@ -52,6 +62,7 @@ def forgot_password(username):
 
 @app.route("/add-buoy", methods=["POST"])
 def add_buoy():
+    return jsonify({"message": "Buoy added"}, 200)
     pass
 
 
@@ -67,9 +78,10 @@ def update_buoy():
 def delete_buoy(buoyID):
     pass
 
-if __name__ == '__main__':
-    connect_mqtt()
-    app.run(debug=True)
 
-# if __name__ == '__main__':
-#     app.run(host='', port = port)
+if __name__ == '__main__':
+    if debugging:
+        #connect_mqtt()
+        app.run(debug=True)
+    else:
+        app.run(host='', port = port)
