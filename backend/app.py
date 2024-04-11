@@ -44,15 +44,17 @@ def add_user():
     return user.create_user()
     # return create_user()
 
-@app.route("/remove-user/<string:email>", methods=["DELETE"])
-@app.route("/remove-user/<string:email>", methods=["DELETE"])
-def remove_user(email):
+@app.route("/remove-user/", methods=["DELETE"])
+@app.route("/remove-user", methods=["DELETE"])
+def remove_user():
+    user = UserHandler()
+    return user.delete_user()
 
-    pass
-
-@app.route("/update-user/<string:username>", methods=["POST"])
-def update_user(username):
-    pass
+@app.route("/update-user", methods=["PUT"])
+@app.route("/update-user/", methods=["PUT"])
+def update_user():
+    user = UserHandler()
+    return user.update_user()
 
 
 @app.route("/forgot-password/<string:username>", methods=["POST"])

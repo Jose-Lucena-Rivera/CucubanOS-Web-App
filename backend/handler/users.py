@@ -3,8 +3,11 @@ from dao.users import UsersDAO
 from config.APIs import *
 import re
 from random import randint
-# from app import DEBUGGING
-DEBUGGING = True
+from dotenv import load_dotenv
+
+load_dotenv()
+
+debugging = os.getenv('DEBUGGING')
 
 class UserHandler():
     
@@ -37,11 +40,12 @@ class UserHandler():
         usr=UsersDAO()
 
 
-        if usr.get_user_by_email(email):
+        if usr.get_user_by_email(email) is not None:
+            usr.close_connection()
             return jsonify({"error": "User with this email already exists."}), 400
         
         # Generate password with the password generator API
-        if (DEBUGGING):
+        if (debugging):
             password = 'Abc87.1.'
         else:
             password = generate_password(8)
@@ -52,18 +56,17 @@ class UserHandler():
 
 
         # obtained from what the azure api call returns in the json (azure nos da el uid)
-        if (DEBUGGING): ##########  Debugging offline. Luego, cuando se conecte lo del api de azure se puede dejar lo de debugging y que retorne el user id real
+        if (debugging): ##########  Debugging offline. Luego, cuando se conecte lo del api de azure se puede dejar lo de debugging y que retorne el user id real
             userid = data.get('uid')
         else:
             userid = ''
 
         ########################################################################################################
 
-        # return jsonify({"message": "all good hasta aqui x2"}), 200
         #check aqui. ya no me importa el user id solo quiero saber un bool pa si se creo ()
         # usr = UsersDAO()
         created=usr.create_user(userid, email, uName, isAdmin)
-        print("Created afuera: ", created)
+        
 
         # send email with password
         if created is not None:
@@ -78,3 +81,84 @@ class UserHandler():
             
         else:
             return jsonify({"error": "user was not created. An error was encountered during with the db (Change comment, i need wifi first)"}), 400
+        
+
+    def delete_user(self):
+
+        ## Check JWT here to ensure only admin can delete users
+
+
+
+        data = request.get_json()
+        email = data.get('email')
+
+        usr = UsersDAO()
+        uid = usr.get_user_by_email(email)
+
+        if uid is None:
+            usr.close_connection()
+            return jsonify({"error": "User not found"}), 404
+        
+
+        ##########################################Call to azure api to delete user and pass uid or what it needs########
+
+        
+
+
+
+        ####################################################################################################################
+
+        # delete from local db
+
+        deleted=usr.delete_user(email)
+        if deleted is None:
+            return jsonify({"error": "User was not deleted. An error was encountered with the db"}), 400
+        else:
+            return jsonify({"message": f"User deleted: {deleted}"}), 200
+        
+        
+    def update_user(self):
+
+        ## Check JWT here to ensure only admin (or any logged in user??) can update users
+        ## a logged in user may only update their own info, not others
+
+        ##Get email from JWT
+        email = None
+
+        data = request.get_json()
+
+        if debugging:
+            email = data.get('email')
+
+        updated_email = data.get('updated_email')
+        updated_name = data.get('updated_name')
+
+        usr = UsersDAO()
+        uid = usr.get_user_by_email(email)
+        
+        if uid is None:
+            usr.close_connection()
+            return jsonify({"error": "User not found"}), 404
+            
+            
+        if (updated_email is not None) and (len(updated_email)>0):
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", updated_email):
+                return jsonify({"error": "Invalid updated email format. Must follow the format user@example.com"}), 400
+        elif (updated_name is not None) and (len(updated_name)>0):
+            if len(updated_name) > 20:
+                return jsonify({"error": "Name is too long. Must be 20 characters or less."}), 400
+            
+
+        ########################################### call to azure api to update user and pass uid or what it needs
+
+
+
+
+        ####################################################################################################################
+
+        # update local db
+        updated_user = usr.update_user(email, updated_email, updated_name)
+        if updated_user is None:
+            return jsonify({"error": "User was not updated."}), 400
+        else:
+            return jsonify({"message": f"User updated: {updated_user}"}), 200
