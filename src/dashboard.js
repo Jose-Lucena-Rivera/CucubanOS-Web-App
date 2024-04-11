@@ -54,10 +54,9 @@ const Dashboard = () => {
       <div className="dashboard-content">
          {/* Google Maps iframe */}
          <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30311.50147273055!2d-66.67002733048908!3d18.258678053451753!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c02d8243b2daccb%3A0xe74abb725347f602!2sLago%20Caonillas!5e0!3m2!1sen!2spr!4v1712679652261!5m2!1sen!2spr"
-          width="400"
+          src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d21432.895380016187!2d-66.66869482751298!3d18.263319124176782!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c02d8243b2daccb%3A0xe74abb725347f602!2sLago%20Caonillas!5e0!3m2!1sen!2spr!4v1712768782094!5m2!1sen!2spr"
           height="450"
-          frameBorder="0"
+          width="300"
           style={{ border: 0, float: 'left', marginRight: '20px' }}
           allowFullScreen
           loading="lazy"
@@ -81,10 +80,10 @@ const Dashboard = () => {
         <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="pattern-menu">
           <li className="mdl-menu__item">Blink</li>
           <li className="mdl-menu__item">Fade</li>
-          <li className="mdl-menu__item">Pattern 3</li>
-          <li className="mdl-menu__item">Pattern 4</li>
-          <li className="mdl-menu__item">Pattern 5</li>
-          <li className="mdl-menu__item">Pattern 6</li>
+          <li className="mdl-menu__item">Strobe</li>
+          <li className="mdl-menu__item">Pulse</li>
+          <li className="mdl-menu__item">Wave</li>
+          <li className="mdl-menu__item">Random</li>
         </ul>
         <button ref={buttonRef} onClick={handleClick} className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect choose-color" style={{ backgroundColor: selectedColor }}>
           <span>Choose Color</span>

@@ -53,6 +53,7 @@ const Network = () => {
   return (
     <Layout>
       <div className="dashboard-content center-network-container">
+      <h3 className="table-title-network">Buoy Information</h3>
         <button className="mdl-button-network mdl-button--colored mdl-js-button mdl-js-ripple-effect add-buoy" onClick={handleAddBuoyClick} type="submit">
           <i className="material-icons">add</i>
           <span>Add a Buoy</span>
@@ -69,17 +70,17 @@ const Network = () => {
             <tr>
               <td className="mdl-data-table__cell--non-numeric">1</td>
               <td>80%</td>
-              <td>100L-300LA</td>
+              <td>18.273986, -66.651742</td>
             </tr>
             <tr>
-              <td className="mdl-data-table__cell--non-numeric"># </td>
-              <td>%</td>
-              <td>#</td>
+              <td className="mdl-data-table__cell--non-numeric">2 </td>
+              <td>85%</td>
+              <td>18.267751, -66.656763</td>
             </tr>
             <tr>
-              <td className="mdl-data-table__cell--non-numeric"># </td>
-              <td>%</td>
-              <td>#</td>
+              <td className="mdl-data-table__cell--non-numeric">3 </td>
+              <td>73%</td>
+              <td>18.264861, -66.656703</td>
             </tr>
           </tbody>
         </table>

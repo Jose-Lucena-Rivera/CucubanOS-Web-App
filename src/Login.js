@@ -35,9 +35,11 @@ const Login = () => {
     }
 
     // Additional validation for email domain
-    if (!email.endsWith('.com') ) {
+    const allowedDomains = ['.com', '.edu', '.org', '.net'];
+    const isValidDomain = allowedDomains.some(domain => email.endsWith(domain));
+    if (!isValidDomain) {
       setEmailError(true);
-      setEmailErrorMessage("The email address must end with '.com' or '.edu");  
+      setEmailErrorMessage("The email must end with a valid domain");  
       return;
     }
 
