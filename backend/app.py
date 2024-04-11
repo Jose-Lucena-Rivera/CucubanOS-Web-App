@@ -4,7 +4,7 @@ import os
 from mqtt import *
 from dotenv import load_dotenv
 from handler.users import *
-
+from handler.buoys import *
 
 # Create the application instance
 app = Flask(__name__)
@@ -57,27 +57,45 @@ def update_user():
     return user.update_user()
 
 
-@app.route("/forgot-password/<string:username>", methods=["POST"])
+@app.route("/forgot-password/", methods=["POST"])
 def forgot_password(username):
+    
     pass
 
+@app.route("/reset-password", methods=["POST"])
+@app.route("/reset-password/", methods=["POST"])
+def reset_password():
+    pass
 
 @app.route("/add-buoy", methods=["POST"])
+@app.route("/add-buoy/", methods=["POST"])
 def add_buoy():
-    return jsonify({"message": "Buoy added"}, 200)
+    buoy = BuoyHandler()
+    return buoy.create_buoy()
     pass
 
 
+@app.route("/get-buoys/", methods=["GET"])
 @app.route("/get-buoys", methods=["GET"])
 def get_buoys():
-    pass
+    buoy = BuoyHandler()
+    return buoy.get_buoys()
 
 @app.route("/update-buoy", methods=["POST"])
 def update_buoy():
     pass
 
-@app.route("/delete-buoy/<int:buoyID>", methods=["DELETE"])
-def delete_buoy(buoyID):
+@app.route("/delete-buoy", methods=["DELETE"])
+@app.route("/delete-buoy/", methods=["DELETE"])
+def delete_buoy():
+    buoy = BuoyHandler()
+    return buoy.delete_buoy()
+
+
+@app.route("/send-buoy-data/", methods=["POST"])
+@app.route("/send-buoy-data", methods=["POST"])
+def send_buoy_data():
+    # https://loraserver.tetaneutral.net/api#!/DeviceQueueService/Enqueue
     pass
 
 

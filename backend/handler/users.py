@@ -53,7 +53,7 @@ class UserHandler():
         ###################################    Call al API de AZURE AD B2C #####################################
         
         #recuerda decirle al api que la proxima vez que haga login lo lleve a cambiar su password
-
+        # https://learn.microsoft.com/en-us/graph/api/user-post-users?view=graph-rest-1.0&tabs=python
 
         # obtained from what the azure api call returns in the json (azure nos da el uid)
         if (debugging): ##########  Debugging offline. Luego, cuando se conecte lo del api de azure se puede dejar lo de debugging y que retorne el user id real
