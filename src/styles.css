@@ -345,12 +345,12 @@ body {
 
 .mdl-button-network.add-buoy {
   top: 70px;
-  right: 20px;
+  left: 20px;
 }
 
 .mdl-button-network.remove-buoy {
   top: 70px;
-  left: 20px;
+  right: 20px;
   width: 16%; 
 }
 .dialog-actions-submit-network {
@@ -442,15 +442,15 @@ body {
   vertical-align: middle;
 }
 
-.mdl-data-table-name{
- margin-left: 1000px;
-}
-.mdl-data-table-email{
-  width: 1000px;
+.mdl-data-table__cell--non-numeric label {
+  margin-right: -35px; /* Adjust margin as needed */
+  display: inline-block;
+  vertical-align: middle;
 }
 
-.mdl-button-account.mdl-js-ripple-effect .mdl-button__ripple-container {
-  border-radius: 24px;
+.mdl-data-table__cell--non-numeric .mdl-checkbox__input {
+  margin-right: 5px; /* Adjust margin as needed */
+  vertical-align: middle;
 }
 
 

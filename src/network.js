@@ -7,13 +7,14 @@ import './styles.css';
 const Network = () => {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [isAddCardOpen, setIsAddCardOpen] = useState(false);
-  const [selectedBuoy, setSelectedBuoy] = useState(null); // Track selected buoy
+  const [selectedBuoys, setSelectedBuoys] = useState([]); // Track selected buoys as an array
   const [networkId, setNetworkId] = useState('');
   const [buoyId, setBuoyId] = useState('');
 
   const handleRemoveBuoyClick = () => {
-    const selectedBuoyData = []; // Replace with logic to get selected buoy(s) information
-    setSelectedBuoy(selectedBuoyData); // Set selected buoy data
+    // Filter out the selected buoys from the selectedBuoys array
+    const selectedBuoyData = selectedBuoys.filter(buoy => selectedBuoys.includes(buoy));
+    setSelectedBuoys(selectedBuoyData); // Update selectedBuoys state
     setIsRemoveDialogOpen(true); // Open the remove dialog
   };
 
@@ -22,18 +23,20 @@ const Network = () => {
   };
 
   const handleCloseRemoveDialog = () => {
-    setIsRemoveDialogOpen(false);
-  };
+  setIsRemoveDialogOpen(false);
+  setSelectedBuoys([]); // Clear the selected buoys array when the dialog is closed
+};
 
   const handleCloseAddCard = () => {
     setIsAddCardOpen(false);
   };
 
   const handleSubmitRemoveDialog = () => {
-    console.log('Remove Buoy button clicked');
-    handleCloseRemoveDialog();
+    // Filter out the selected buoys from the selectedBuoys array
+    const updatedSelectedBuoys = selectedBuoys.filter(buoy => !selectedBuoys.includes(buoy));
+    setSelectedBuoys(updatedSelectedBuoys); // Update selectedBuoys state
+    handleCloseRemoveDialog(); // Close the dialog
   };
-
   const handleSubmitAddCard = (event) => {
     event.preventDefault();
     console.log('Add Buoy button clicked');
@@ -50,10 +53,20 @@ const Network = () => {
     setBuoyId(event.target.value);
   };
 
+  const handleRowClick = (buoy) => {
+    // Check if the selected buoy already exists in the array
+    const isAlreadySelected = selectedBuoys.some(selectedBuoy => selectedBuoy.id === buoy.id);
+    
+    // If the buoy is not already selected, add it to the array
+    if (!isAlreadySelected) {
+      setSelectedBuoys([...selectedBuoys, buoy]);
+    }
+  };
+
   return (
     <Layout>
       <div className="dashboard-content center-network-container">
-      <h3 className="table-title-network">Buoy Information</h3>
+        <h3 className="table-title-network">Buoy Information</h3>
         <button className="mdl-button-network mdl-button--colored mdl-js-button mdl-js-ripple-effect add-buoy" onClick={handleAddBuoyClick} type="submit">
           <i className="material-icons">add</i>
           <span>Add a Buoy</span>
@@ -67,18 +80,18 @@ const Network = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr onClick={() => handleRowClick({ id: 1, battery: '80%', coordinates: '18.273986, -66.651742' })}>
               <td className="mdl-data-table__cell--non-numeric">1</td>
               <td>80%</td>
               <td>18.273986, -66.651742</td>
             </tr>
-            <tr>
-              <td className="mdl-data-table__cell--non-numeric">2 </td>
+            <tr onClick={() => handleRowClick({ id: 2, battery: '85%', coordinates: '18.267751, -66.656763' })}>
+              <td className="mdl-data-table__cell--non-numeric">2</td>
               <td>85%</td>
               <td>18.267751, -66.656763</td>
             </tr>
-            <tr>
-              <td className="mdl-data-table__cell--non-numeric">3 </td>
+            <tr onClick={() => handleRowClick({ id: 3, battery: '73%', coordinates: '18.264861, -66.656703' })}>
+              <td className="mdl-data-table__cell--non-numeric">3</td>
               <td>73%</td>
               <td>18.264861, -66.656703</td>
             </tr>
@@ -93,14 +106,19 @@ const Network = () => {
             <div className="backdrop" onClick={handleCloseRemoveDialog}></div>
             <div className="custom-dialog" style={{ width: '50%' }}>
               <div className="dialog-content">
-                <h3>Delete Buoy? </h3>
+                <h3>Delete Buoy(s)?</h3>
                 <div className="mdl-card__supporting-text-account">
-                  You are about to delete a buoy from the network. This action cannot be undone.</div>
+                  You are about to delete buoy(s) from the network. This action cannot be undone.
+                </div>
                 <ul>
-                  {selectedBuoy && (
-                    <li key={selectedBuoy.id}>
-                      ID: {selectedBuoy.id}, Battery %: {selectedBuoy.battery}, Coordinates: {selectedBuoy.coordinates}
-                    </li>
+                  {selectedBuoys.length > 0 ? (
+                    selectedBuoys.map(buoy => (
+                      <li key={buoy.id}>
+                        ID: {buoy.id}, Battery %: {buoy.battery}, Coordinates: {buoy.coordinates}
+                      </li>
+                    ))
+                  ) : (
+                    <li>No buoys selected</li>
                   )}
                 </ul>
               </div>
@@ -126,7 +144,8 @@ const Network = () => {
               <div className="add-buoy-card">
                 <h3 className="dialog-content-network"> Add a Buoy</h3>
                 <div className="mdl-card__supporting-text-account">
-                  To add a buoy you must place the network id and a id for the buoy you are adding.</div>
+                  To add a buoy you must place the network id and a id for the buoy you are adding.
+                </div>
                 <form onSubmit={handleSubmitAddCard}>
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input

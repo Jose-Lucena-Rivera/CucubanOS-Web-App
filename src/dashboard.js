@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import Layout from './Layout';
 import './styles.css';
 
-
 const Dashboard = () => {
   const [sliderValue, setSliderValue] = useState(0);
   const [selectedColor, setSelectedColor] = useState('#FFFFFF');
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
+  const [selectedPattern, setSelectedPattern] = useState('Pattern'); // State to hold selected pattern
   const buttonRef = useRef(null);
   const colorPickerRef = useRef(null);
 
@@ -42,11 +42,13 @@ const Dashboard = () => {
     setDisplayColorPicker(!displayColorPicker);
   };
 
-  
-
   const handleColorClick = (color) => {
     setSelectedColor(color);
     setDisplayColorPicker(false);
+  };
+
+  const handlePatternSelect = (pattern) => { // Function to handle pattern selection
+    setSelectedPattern(pattern);
   };
 
   return (
@@ -75,15 +77,15 @@ const Dashboard = () => {
           <span>Clear All</span>
         </button>
         <button id="pattern-menu" className="mdl-button mdl-js-button mdl-button--raised" style={{ marginLeft: '10px' }}>
-          Pattern
+          {selectedPattern} {/* Display selected pattern */}
         </button>
         <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="pattern-menu">
-          <li className="mdl-menu__item">Blink</li>
-          <li className="mdl-menu__item">Fade</li>
-          <li className="mdl-menu__item">Strobe</li>
-          <li className="mdl-menu__item">Pulse</li>
-          <li className="mdl-menu__item">Wave</li>
-          <li className="mdl-menu__item">Random</li>
+          <li className="mdl-menu__item" onClick={() => handlePatternSelect('Blink')}>Blink</li>
+          <li className="mdl-menu__item" onClick={() => handlePatternSelect('Fade')}>Fade</li>
+          <li className="mdl-menu__item" onClick={() => handlePatternSelect('Strobe')}>Strobe</li>
+          <li className="mdl-menu__item" onClick={() => handlePatternSelect('Pulse')}>Pulse</li>
+          <li className="mdl-menu__item" onClick={() => handlePatternSelect('Wave')}>Wave</li>
+          <li className="mdl-menu__item" onClick={() => handlePatternSelect('Random')}>Random</li>
         </ul>
         <button ref={buttonRef} onClick={handleClick} className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect choose-color" style={{ backgroundColor: selectedColor }}>
           <span>Choose Color</span>
