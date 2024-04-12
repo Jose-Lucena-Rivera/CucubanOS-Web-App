@@ -56,6 +56,17 @@ def update_user():
     user = UserHandler()
     return user.update_user()
 
+@app.route("/get-user", methods=["GET"])
+@app.route("/get-user/", methods=["GET"])
+def get_user():
+    user = UserHandler()
+    return user.get_user()
+
+@app.route("/get-all-users", methods=["GET"])
+@app.route("/get-all-users/", methods=["GET"])
+def get_all_users():
+    user = UserHandler()
+    return user.get_all_users()
 
 @app.route("/forgot-password/", methods=["POST"])
 def forgot_password(username):
@@ -66,14 +77,19 @@ def forgot_password(username):
 @app.route("/reset-password/", methods=["POST"])
 def reset_password():
     pass
+    
 
 @app.route("/add-buoy", methods=["POST"])
 @app.route("/add-buoy/", methods=["POST"])
 def add_buoy():
     buoy = BuoyHandler()
     return buoy.create_buoy()
-    pass
-
+    
+@app.route("/get-one-buoy", methods=["GET"])
+@app.route("/get-one-buoy/", methods=["GET"])
+def get_one_buoy():
+    buoy = BuoyHandler()
+    return buoy.get_buoy()
 
 @app.route("/get-buoys/", methods=["GET"])
 @app.route("/get-buoys", methods=["GET"])
@@ -81,9 +97,10 @@ def get_buoys():
     buoy = BuoyHandler()
     return buoy.get_buoys()
 
-@app.route("/update-buoy", methods=["POST"])
+@app.route("/update-buoy", methods=["PUT"])
 def update_buoy():
-    pass
+    buoy = BuoyHandler()
+    return buoy.update_buoy()
 
 @app.route("/delete-buoy", methods=["DELETE"])
 @app.route("/delete-buoy/", methods=["DELETE"])

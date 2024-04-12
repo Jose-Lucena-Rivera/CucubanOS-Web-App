@@ -75,7 +75,7 @@ class UserHandler():
             # el mensaje va a decir que se creo una cuenta a su para ellos en la catalana pr. Se le va a enviar el email que se loggeo y el password randomly generado
             # tambien se le va a decir lo que podra hacer
 
-            return jsonify({"message": f"Exitooooo. For debugging purposes we are returning the user id and name: {created}" }), 201
+            return jsonify({"message": f"Success. User with id and name: {created} was created." }), 201
 
             ######################################
             
@@ -162,3 +162,34 @@ class UserHandler():
             return jsonify({"error": "User was not updated."}), 400
         else:
             return jsonify({"message": f"User updated: {updated_user}"}), 200
+        
+
+    def get_user(self):
+
+        ## Check token to ensure user is logged in and can view their own info
+
+        ##########################################
+
+        data = request.get_json()
+        email = data.get('email')
+        usr = UsersDAO()
+        user = usr.get_user(email)
+        
+        if user is None:
+            return jsonify({"error": "User not found"}), 404
+        else:
+            return jsonify({"message": f"User found: {user}"}), 200
+        
+
+    def get_all_users(self):
+        
+        ## Check token to ensure user is logged in and can view all users or
+
+        ##########################################
+
+        usr = UsersDAO()
+        users = usr.get_all_users()
+        if users is None:
+            return jsonify({"error": "No users found"}), 404
+        else:
+            return jsonify({"message": f"Users found: "}, users), 200

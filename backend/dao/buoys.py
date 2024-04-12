@@ -33,6 +33,15 @@ class BuoyDAO():
         # self.conn.close()
         return bEUI
     
+    def get_all_from_buoy(self, eui):
+        cursor = self.conn.cursor()
+        query = "SELECT * FROM buoy WHERE bEUI = %s;"
+        cursor.execute(query, (eui,))
+        result = cursor.fetchall()
+        cursor.close()
+        self.conn.close()
+        return result
+    
     def create_buoy(self, name, eui):
         cursor = self.conn.cursor()
         created = None
@@ -71,3 +80,19 @@ class BuoyDAO():
             cursor.close()
             self.conn.close()
         return deleted
+    
+    def update_buoy(self, updates, params):
+        cursor = self.conn.cursor()
+        updated = None
+        try:
+            query = "UPDATE buoy SET " + ", ".join(updates) + " WHERE bEUI = %s RETURNING *;"
+            print(query,params)
+            cursor.execute(query, params)
+            updated = cursor.fetchone()
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+        finally:
+            cursor.close()
+            self.conn.close()
+        return updated

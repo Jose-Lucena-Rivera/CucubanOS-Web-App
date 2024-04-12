@@ -14,12 +14,10 @@ class BuoyHandler():
 
     def generate_random_eui(self):
         """Generates a random EUI string (replace with specific EUI format if needed)"""
-        # Define valid characters for EUI (modify based on your specific EUI format)
-        valid_chars = string.ascii_uppercase + string.digits
-        # Generate random characters
-        random_string = ''.join(random.choice(valid_chars) for _ in range(16))
-        # Prepend leading zeros (adjust for desired EUI length)
-        return f"00{random_string}"
+        """Generates a random 16-character hex string"""
+        hex_digits = string.hexdigits
+        random_string = ''.join(random.choice(hex_digits) for _ in range(16))
+        return random_string
 
 
     def create_buoy(self):
@@ -83,7 +81,35 @@ class BuoyHandler():
         
         # buoys.get_all_buoys(sort_by)
         buoys = buoy.get_all_buoys()
-        return jsonify({"message":"Las boyas no estan \"sorted by\" nada porque no he hablado con jose sobre eso xdd"},buoys),200
+        return jsonify({"message":"Buoys in local database"},buoys),200
+    
+    def get_buoy(self):
+        ########################### Check if user is logged in with valid token
+
+
+        #######################################################################
+
+        data = request.get_json()
+        eui = data.get('eui')
+        name = data.get('name')
+        if (not eui) and (not name):
+            return jsonify({"error": "EUI or buoy name is required to get buoy."}), 400
+
+        buoy = BuoyDAO()
+
+        if not eui:
+            eui = buoy.get_buoy_by_name(name)
+            if not eui:
+                buoy.close_connection()
+                return jsonify({"error": "Buoy with this name does not exist."}), 400
+        else:
+            name = buoy.get_buoy_by_eui(eui)
+            if not name:
+                buoy.close_connection()
+                return jsonify({"error": "Buoy with this EUI does not exist."}), 400
+
+        buoy_info=buoy.get_all_from_buoy(eui)
+        return jsonify(buoy_info), 200
     
     def delete_buoy(self):
         ########################### Check if user is logged in with valid token
@@ -122,3 +148,78 @@ class BuoyHandler():
             return jsonify({"message": f"Buoy {name} with EUI {eui} has been deleted."}), 200
         else:
             return jsonify({"error": "Buoy was not deleted."}), 400
+        
+
+
+    def update_buoy(self):
+        ########################### Check if user is logged in with valid token
+
+
+        #######################################################################
+        data = request.get_json()
+        eui = data.get('eui')
+        name = data.get('name')
+
+        print(data)
+
+        updated_name = data.get('updated_name')
+        updated_location = data.get('updated_location')
+        updated_bcolor = data.get('updated_bcolor')
+        updated_battery = data.get('updated_battery')
+        updated_frequency = data.get('updated_frequency')
+        updated_description = data.get('updated_description')
+
+        if (not eui) and (not name):
+            return jsonify({"error": "EUI or buoy name is required to update buoy."}), 400
+
+        buoy = BuoyDAO()
+
+        if not eui:
+            eui = buoy.get_buoy_by_name(name)
+            if not eui:
+                buoy.close_connection()
+                return jsonify({"error": "Buoy with this name does not exist."}), 400
+        else:
+            name = buoy.get_buoy_by_eui(eui)
+            if not name:
+                buoy.close_connection()
+                return jsonify({"error": "Buoy with this EUI does not exist."}), 400
+
+        updates = []
+        params = []
+        if updated_name:
+            updates.append("bName = %s")
+            params.append(updated_name)
+        if updated_location:
+            updates.append("bLocation = %s")
+            params.append(updated_location)
+        if updated_bcolor:
+            updates.append("bColor = %s")
+            params.append(updated_bcolor)
+        if updated_battery:
+            updates.append("bBattery = %s")
+            params.append(updated_battery)
+        if updated_frequency:
+            updates.append("bFrequency = %s")
+            params.append(updated_frequency)
+        
+        
+        if not updates and not updated_description:
+            buoy.close_connection()
+            return jsonify({"error": "No updates provided."}), 400
+        
+
+        #################################### UPDATE IN CHIRPSTACK API ########################################
+
+
+        ####################################################################################################
+
+
+        
+        params.append(eui)
+
+        updated = buoy.update_buoy(updates, params)
+        if updated:
+            return jsonify({"message": f"Buoy {name} with EUI {eui} has been updated."}, updated), 200
+        else:
+            return jsonify({"error": "Buoy was not updated."}), 400

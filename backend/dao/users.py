@@ -41,6 +41,25 @@ class UsersDAO():
         # self.conn.close()
         return uid
     
+    def get_user(self, email):
+        cursor = self.conn.cursor()
+        query = "SELECT * FROM users WHERE email = %s;"
+        cursor.execute(query, (email,))
+        result = cursor.fetchone() if cursor.rowcount > 0 else None
+        cursor.close()
+        self.conn.close()
+        return result
+    
+
+    def get_all_users(self):
+        cursor = self.conn.cursor()
+        query = "SELECT * FROM users;"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        self.conn.close()
+        return result
+
     def delete_user(self, email):
         cursor = self.conn.cursor()
         deleted = None
