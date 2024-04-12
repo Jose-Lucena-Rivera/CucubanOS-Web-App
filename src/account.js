@@ -5,7 +5,7 @@ import 'material-design-lite/material.css';
 import './styles.css';
 
 const Account = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const [isAddCardOpen, setIsAddCardOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [newUserName, setNewUserName] = useState('');
@@ -23,21 +23,24 @@ const Account = () => {
 
 
 
+
   const handleRemoveAccountClick = () => {
-    const selectedAccountData = []; // Replace with logic to get selected user(s) information
-    setSelectedUsers(selectedAccountData);
-    setIsDialogOpen(true);
+    // Filter out the selected accounts from the accounts array
+    const selectedAccountData = accounts.filter(account => selectedUsers.includes(account));
+    setSelectedUsers(selectedAccountData); // Update selectedUsers state
+    setIsRemoveOpen(true); // Open the remove dialog
   };
 
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
+  const handleCloseRemoveDialog = () => {
+    setIsRemoveOpen(false); // Close the remove dialog
   };
 
-  const handleSubmit = () => {
-    // Add logic to initiate the process to remove the account
-    console.log('Submit button clicked');
-    // Close the dialog after submission
-    handleCloseDialog();
+    const handleSubmitRemove = () => {
+    // Logic to remove the selected account(s) from the table
+    const updatedAccounts = accounts.filter(account => !selectedUsers.includes(account));
+    setAccounts(updatedAccounts);
+    setSelectedUsers([]); // Clear selected users
+    handleCloseRemoveDialog(); // Close the dialog
   };
 
   const handleAddAccountClick = () => {
@@ -81,34 +84,32 @@ const Account = () => {
     setIsChangePasswordOpen(false);
   };
 
-  // Function to handle submission of change password dialog
-const handleSubmitChangePassword = (event) => {
-  event.preventDefault();
+  const handleSubmitChangePassword = (event) => {
+    event.preventDefault();
   // Add logic to handle password change
   console.log('Current Password:', currentPassword);
-  // Close the Change Password dialog
-  handleCloseChangePassword();
-  // Open the Confirm Password dialog
-  setIsConfirmPasswordOpen(true);
-  // Reset passwordsMatch flag
-  setPasswordsMatch(true);
-  // Reset password fields
-  resetPasswordFields();
-};
-
-    // Function to handle submission of confirm password dialog
-  const handleSubmitConfirmPassword = (event) => {
-    event.preventDefault();
-    if (newPassword === confirmPassword) {
-      // Passwords match, proceed with password change
-      console.log('Password changed successfully.');
-      handleCloseConfirmPassword(); // Close the Confirm Password dialog
-      resetPasswordFields(); // Reset password fields
-    } else {
-      // Passwords do not match, display error message
-      setPasswordsMatch(false);
-    }
+    // Close the Change Password dialog
+    handleCloseChangePassword();
+    // Open the Confirm Password dialog
+    setIsConfirmPasswordOpen(true);
+    // Reset passwordsMatch flag
+    setPasswordsMatch(true);
+    // Reset password fields
+    resetPasswordFields();
   };
+
+const handleSubmitConfirmPassword = (event) => {
+  event.preventDefault();
+  if (newPassword === confirmPassword) {
+    // Passwords match, proceed with password change
+    console.log('Password changed successfully.');
+    handleCloseConfirmPassword(); // Close the Confirm Password dialog
+    resetPasswordFields(); // Reset password fields
+  } else {
+    // Passwords do not match, display error message
+    setPasswordsMatch(false);
+  }
+};
 
   const handleCloseConfirmPassword = () => {
     setIsConfirmPasswordOpen(false);
@@ -144,6 +145,20 @@ const toggleConfirmPasswordVisibility = () => {
   setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
 };
 
+// Function to handle checkbox click and update selectedUsers state
+const handleCheckboxChange = (account) => {
+  const isSelected = selectedUsers.some(selectedAccount => selectedAccount === account);
+  if (isSelected) {
+    // If account is already selected, remove it
+    setSelectedUsers(prevSelectedUsers => prevSelectedUsers.filter(selectedAccount => selectedAccount !== account));
+  } else {
+    // If account is not selected, add it
+    setSelectedUsers(prevSelectedUsers => [...prevSelectedUsers, account]);
+  }
+};
+
+
+
   return (
     <Layout>
       <div className="user-info">
@@ -169,23 +184,23 @@ const toggleConfirmPasswordVisibility = () => {
             </tr>
           </thead>
           <tbody>
-            {accounts.map((account, index) => (
-              <tr key={index}>
-                {newAccounts.includes(account) ? (
-                  <td className="mdl-data-table__cell--non-numeric">
-                    <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-                      <input type="checkbox" className="mdl-checkbox__input" />
-                    </label>
-                    {account.name}
-                  </td>
-                ) : (
-                  <td className="mdl-data-table__cell--non-numeric">{account.name}</td>
-                )}
-                <td>{account.email}</td>
-                <td>{account.password}</td>
-              </tr>
-            ))}
-          </tbody>
+          {accounts.map((account, index) => (
+            <tr key={index}>
+              <td className="mdl-data-table__cell--non-numeric account-name">
+                <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                  <input
+                    type="checkbox"
+                    className="mdl-checkbox__input"
+                    onChange={() => handleCheckboxChange(account)}
+                  />
+                </label>
+                {account.name}
+              </td>
+              <td className="email-cell">{account.email}</td>
+              <td className="password-cell">{account.password}</td>
+            </tr>
+          ))}
+        </tbody>
         </table>
           {/* Add an account button */}
           <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect add-account" onClick={handleAddAccountClick} type="submit">
@@ -207,13 +222,13 @@ const toggleConfirmPasswordVisibility = () => {
           </button>
         </div>
       </div>
-      {/* Dialog and backdrop */}
-      {isDialogOpen && (
+        {/* Remove Account Dialog */}
+      {isRemoveOpen && (
         <>
-          <div className="backdrop" onClick={handleCloseDialog}></div>
+          <div className="backdrop" onClick={handleCloseRemoveDialog}></div>
           <div className="custom-dialog" style={{ width: '50%' }}>
             <div className="dialog-content">
-              <h4>Delete User? </h4>
+              <h4>Delete User?</h4>
               <div className="mdl-card__supporting-text-account-remove">
                 You are about to remove the following accounts, this action cannot be undone.
               </div>
@@ -226,13 +241,13 @@ const toggleConfirmPasswordVisibility = () => {
               </ul>
             </div>
             <div className="dialog-actions">
-              {/* X button */}
-              <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button" onClick={handleCloseDialog}>
+              {/* Close button */}
+              <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button" onClick={handleCloseRemoveDialog}>
                 X
               </button>
               {/* Submit button */}
               <div className="dialog-actions-submit">
-                <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" onClick={handleSubmit}>
+                <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" onClick={handleSubmitRemove}>
                   Submit
                 </button>
               </div>
@@ -336,33 +351,33 @@ const toggleConfirmPasswordVisibility = () => {
           <h3 className="dialog-content-confirm">Confirm Password</h3>
           <form onSubmit={handleSubmitConfirmPassword}>
           <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label password-input">
-  <input
-    className="mdl-textfield__input"
-    type={isNewPasswordVisible ? "text" : "password"}
-    id="newPassword"
-    value={newPassword}
-    onChange={(e) => setNewPassword(e.target.value)}
-    required
-  />
-  <label className="mdl-textfield__label" htmlFor="newPassword">New Password</label>
-  <button type="button" className="mdl-button mdl-js-button mdl-button--icon password-visibility-button" onClick={toggleNewPasswordVisibility}>
-    <i className="material-icons">{isNewPasswordVisible ? "visibility_off" : "visibility"}</i>
-  </button>
-</div>
-<div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label password-input">
-  <input
-    className="mdl-textfield__input"
-    type={isConfirmPasswordVisible ? "text" : "password"}
-    id="confirmPassword"
-    value={confirmPassword}
-    onChange={(e) => setConfirmPassword(e.target.value)}
-    required
-  />
-  <label className="mdl-textfield__label" htmlFor="confirmPassword">Confirm Password</label>
-  <button type="button" className="mdl-button mdl-js-button mdl-button--icon password-visibility-button" onClick={toggleConfirmPasswordVisibility}>
-    <i className="material-icons">{isConfirmPasswordVisible ? "visibility_off" : "visibility"}</i>
-  </button>
-</div>
+          <input
+            className="mdl-textfield__input"
+            type={isNewPasswordVisible ? "text" : "password"}
+            id="newPassword"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
+          <label className="mdl-textfield__label" htmlFor="newPassword">New Password</label>
+          <button type="button" className="mdl-button mdl-js-button mdl-button--icon password-visibility-button" onClick={toggleNewPasswordVisibility}>
+            <i className="material-icons">{isNewPasswordVisible ? "visibility_off" : "visibility"}</i>
+          </button>
+        </div>
+        <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label password-input">
+          <input
+            className="mdl-textfield__input"
+            type={isConfirmPasswordVisible ? "text" : "password"}
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <label className="mdl-textfield__label" htmlFor="confirmPassword">Confirm Password</label>
+          <button type="button" className="mdl-button mdl-js-button mdl-button--icon password-visibility-button" onClick={toggleConfirmPasswordVisibility}>
+            <i className="material-icons">{isConfirmPasswordVisible ? "visibility_off" : "visibility"}</i>
+          </button>
+        </div>
             {/* Add error message if passwords do not match */}
             {!passwordsMatch && <div className="error-message">Passwords do not match.</div>}
             <div className="dialog-actions">
