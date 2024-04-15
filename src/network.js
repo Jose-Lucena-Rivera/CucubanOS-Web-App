@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 import 'material-design-lite/material';
 import 'material-design-lite/material.css';
@@ -7,44 +7,57 @@ import './styles.css';
 const Network = () => {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [isAddCardOpen, setIsAddCardOpen] = useState(false);
-  const [selectedBuoys, setSelectedBuoys] = useState([]); // Track selected buoys as an array
+  const [selectedBuoys, setSelectedBuoys] = useState(JSON.parse(localStorage.getItem('selectedBuoys')) || []); 
   const [networkId, setNetworkId] = useState('');
   const [buoyId, setBuoyId] = useState('');
+  const [coordinates, setCoordinates] = useState('');
+  const [newBuoyCoordinates, setNewBuoyCoordinates] = useState(null);
+
+
+  useEffect(() => {
+    localStorage.setItem('selectedBuoys', JSON.stringify(selectedBuoys));
+  }, [selectedBuoys]);
 
   const handleRemoveBuoyClick = () => {
-    // Filter out the selected buoys from the selectedBuoys array
-    const selectedBuoyData = selectedBuoys.filter(buoy => selectedBuoys.includes(buoy));
-    setSelectedBuoys(selectedBuoyData); // Update selectedBuoys state
-    setIsRemoveDialogOpen(true); // Open the remove dialog
-  };
-
-  const handleAddBuoyClick = () => {
-    setIsAddCardOpen(true); // Open the add card
+    setIsRemoveDialogOpen(true);
   };
 
   const handleCloseRemoveDialog = () => {
-  setIsRemoveDialogOpen(false);
-  setSelectedBuoys([]); // Clear the selected buoys array when the dialog is closed
-};
+    setIsRemoveDialogOpen(false);
+  };
+
+  const handleSubmitRemoveDialog = () => {
+    const selectedBuoysToDelete = selectedBuoys.filter(buoy => buoy.isSelected);
+    setSelectedBuoys(selectedBuoys.filter(buoy => !buoy.isSelected)); // Keep only unselected buoys
+    handleCloseRemoveDialog();
+  };
+
+  const handleAddBuoyClick = () => {
+    setIsAddCardOpen(true);
+  };
 
   const handleCloseAddCard = () => {
     setIsAddCardOpen(false);
   };
 
-  const handleSubmitRemoveDialog = () => {
-    // Filter out the selected buoys from the selectedBuoys array
-    const updatedSelectedBuoys = selectedBuoys.filter(buoy => !selectedBuoys.includes(buoy));
-    setSelectedBuoys(updatedSelectedBuoys); // Update selectedBuoys state
-    handleCloseRemoveDialog(); // Close the dialog
-  };
   const handleSubmitAddCard = (event) => {
-    event.preventDefault();
-    console.log('Add Buoy button clicked');
-    console.log('Network ID:', networkId);
-    console.log('Buoy ID:', buoyId);
-    handleCloseAddCard();
-  };
+  event.preventDefault();
+  console.log('Submitting form...');
+  
+  const lat = parseFloat(coordinates.split(',')[0].trim());
+  const lng = parseFloat(coordinates.split(',')[1].trim());
 
+  console.log('Parsed Lat:', lat);
+  console.log('Parsed Lng:', lng);
+  const batteryPercentage = `${Math.floor(Math.random() * 100)}%`;
+  
+  setSelectedBuoys([...selectedBuoys, { id: buoyId, battery: batteryPercentage, coordinates, isSelected: false }]);
+  setNewBuoyCoordinates({ lat, lng });
+  
+  console.log('New Buoy Coordinates:', newBuoyCoordinates);
+
+  handleCloseAddCard();
+};
   const handleNetworkIdChange = (event) => {
     setNetworkId(event.target.value);
   };
@@ -53,13 +66,20 @@ const Network = () => {
     setBuoyId(event.target.value);
   };
 
+  const handleCoordinatesChange = (event) => {
+    setCoordinates(event.target.value);
+  };
+
   const handleRowClick = (buoy) => {
-    // Check if the selected buoy already exists in the array
     const isAlreadySelected = selectedBuoys.some(selectedBuoy => selectedBuoy.id === buoy.id);
-    
-    // If the buoy is not already selected, add it to the array
-    if (!isAlreadySelected) {
-      setSelectedBuoys([...selectedBuoys, buoy]);
+  
+    if (isAlreadySelected) {
+      const updatedBuoys = selectedBuoys.map(selectedBuoy =>
+        selectedBuoy.id === buoy.id ? { ...selectedBuoy, isSelected: !selectedBuoy.isSelected } : selectedBuoy
+      );
+      setSelectedBuoys(updatedBuoys);
+    } else {
+      setSelectedBuoys([...selectedBuoys, { ...buoy, isSelected: true }]);
     }
   };
 
@@ -71,30 +91,26 @@ const Network = () => {
           <i className="material-icons">add</i>
           <span>Add a Buoy</span>
         </button>
-        <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp custom-width-network">
+        <table className="mdl-data-table mdl-js-data-table mdl-shadow--2dp custom-width-network">
           <thead>
             <tr>
+              <th></th>
               <th className="mdl-data-table__cell--non-numeric">ID</th>
               <th>Battery %</th>
               <th>Coordinates</th>
             </tr>
           </thead>
           <tbody>
-            <tr onClick={() => handleRowClick({ id: 1, battery: '80%', coordinates: '18.273986, -66.651742' })}>
-              <td className="mdl-data-table__cell--non-numeric">1</td>
-              <td>80%</td>
-              <td>18.273986, -66.651742</td>
-            </tr>
-            <tr onClick={() => handleRowClick({ id: 2, battery: '85%', coordinates: '18.267751, -66.656763' })}>
-              <td className="mdl-data-table__cell--non-numeric">2</td>
-              <td>85%</td>
-              <td>18.267751, -66.656763</td>
-            </tr>
-            <tr onClick={() => handleRowClick({ id: 3, battery: '73%', coordinates: '18.264861, -66.656703' })}>
-              <td className="mdl-data-table__cell--non-numeric">3</td>
-              <td>73%</td>
-              <td>18.264861, -66.656703</td>
-            </tr>
+            {selectedBuoys.map(buoy => (
+              <tr key={buoy.id}>
+                <td>
+                  <input type="checkbox" onChange={() => handleRowClick(buoy)} />
+                </td>
+                <td className="mdl-data-table__cell--non-numeric">{buoy.id}</td>
+                <td>{buoy.battery}</td>
+                <td>{buoy.coordinates}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
         <button className="mdl-button-network mdl-button--colored mdl-js-button mdl-js-ripple-effect remove-buoy" onClick={handleRemoveBuoyClick} type="submit">
@@ -111,13 +127,12 @@ const Network = () => {
                   You are about to delete buoy(s) from the network. This action cannot be undone.
                 </div>
                 <ul>
-                  {selectedBuoys.length > 0 ? (
-                    selectedBuoys.map(buoy => (
-                      <li key={buoy.id}>
-                        ID: {buoy.id}, Battery %: {buoy.battery}, Coordinates: {buoy.coordinates}
-                      </li>
-                    ))
-                  ) : (
+                  {selectedBuoys.map(buoy => buoy.isSelected && (
+                    <li key={buoy.id}>
+                      ID: {buoy.id}, Battery %: {buoy.battery}, Coordinates: {buoy.coordinates}
+                    </li>
+                  ))}
+                  {selectedBuoys.every(buoy => !buoy.isSelected) && (
                     <li>No buoys selected</li>
                   )}
                 </ul>
@@ -144,7 +159,7 @@ const Network = () => {
               <div className="add-buoy-card">
                 <h3 className="dialog-content-network"> Add a Buoy</h3>
                 <div className="mdl-card__supporting-text-account">
-                  To add a buoy you must place the network id and a id for the buoy you are adding.
+                  To add a buoy you must place the network id, an id for the buoy, and its coordinates.
                 </div>
                 <form onSubmit={handleSubmitAddCard}>
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -156,7 +171,7 @@ const Network = () => {
                       onChange={handleNetworkIdChange}
                       required
                     />
-                    <label className="mdl-textfield__label" htmlFor="networkId">Network ID...</label>
+                    <label className="mdl-textfield__label" htmlFor="networkId">Network ID:</label>
                   </div>
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input
@@ -167,16 +182,23 @@ const Network = () => {
                       onChange={handleBuoyIdChange}
                       required
                     />
-                    <label className="mdl-textfield__label" htmlFor="buoyId">Buoy ID...</label>
+                    <label className="mdl-textfield__label" htmlFor="buoyId">Buoy ID:</label>
                   </div>
-                </form>
-              </div>
-              <div className="dialog-actions">
-                <div className="dialog-actions-submit-network-add">
-                  <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" onClick={handleSubmitAddCard}>
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input
+                      className="mdl-textfield__input"
+                      type="text"
+                      id="coordinates"
+                      value={coordinates}
+                      onChange={handleCoordinatesChange}
+                      required
+                    />
+                    <label className="mdl-textfield__label" htmlFor="coordinates">Coordinates:</label>
+                  </div>
+                  <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" type="submit">
                     Submit
                   </button>
-                </div>
+                </form>
               </div>
             </div>
           </div>

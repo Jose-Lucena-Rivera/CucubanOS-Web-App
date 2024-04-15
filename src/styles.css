@@ -191,6 +191,13 @@ _:-ms-input-placeholder, :root .demo-graph {
           align-items: center;
 }
 
+.mdl-textfield__input {
+  text-indent: 10px; /* Move the text 5px away from the left edge */
+  
+}
+
+
+
 
 /************************* Login ************************/
 
@@ -705,13 +712,13 @@ body {
 
 .clear-all{
   position: absolute;
-  top: 200px;
+  top: 150px;
   bottom: 40px; 
   right: 400px; 
 }
 .select-all{
   position: absolute;
-  top: 120px;
+  top: 80px;
   bottom: 20px; 
   right: 400px; 
 }
@@ -727,8 +734,14 @@ body {
 /* Styles for the Pattern menu button */
 #pattern-menu {
   position: absolute; /* Position the button */
-  top: 265px; 
+  top: 225px; 
   left: 500px; 
+}
+
+#frequency-menu {
+  position: absolute; /* Position the button */
+  top: 295px; 
+  left: 495px; 
 }
 
 /* Styles for the Pattern menu options */
@@ -766,6 +779,16 @@ body {
   left: 750px; /* Adjust left position as needed */
 }
 
+
+:root {
+  --brightness: 100%; /* Default brightness */
+  --selected-color: #FFFFFF; /* Default selected color */
+}
+
+.color-picker-container .color-square {
+  /* Adjust brightness */
+  filter: brightness(var(--brightness));
+}
 
 
 

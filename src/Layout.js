@@ -38,10 +38,6 @@ const Header = () => {
         <div className="mdl-layout__header-row">
           <span className="mdl-layout-title">{getPageTitle()}</span>
           <div className="mdl-layout-spacer"></div>
-          <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-            <div className="mdl-textfield__expandable-holder">
-            </div>
-          </div>
           <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
             <i className="material-icons">more_vert</i>
           </button>
