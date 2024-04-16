@@ -171,7 +171,7 @@ const Network = () => {
                       onChange={handleNetworkIdChange}
                       required
                     />
-                    <label className="mdl-textfield__label" htmlFor="networkId">Network ID:</label>
+                    <label className="mdl-textfield__label" htmlFor="networkId">Dev ID:</label>
                   </div>
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input
@@ -182,7 +182,7 @@ const Network = () => {
                       onChange={handleBuoyIdChange}
                       required
                     />
-                    <label className="mdl-textfield__label" htmlFor="buoyId">Buoy ID:</label>
+                    <label className="mdl-textfield__label" htmlFor="buoyId">Buoy Name:</label>
                   </div>
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input
