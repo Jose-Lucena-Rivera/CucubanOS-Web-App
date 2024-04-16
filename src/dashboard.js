@@ -104,7 +104,10 @@ useEffect(() => {
       };
       document.head.appendChild(script);
     } else {
-      loadMap();
+      // Wait for the Google Maps API to load
+      existingScript.addEventListener('load', () => {
+        loadMap();
+      });
     }
   } else {
     loadMap();
@@ -114,7 +117,6 @@ useEffect(() => {
     window.removeEventListener('click', handleClickOutside);
   };
 }, [selectedColor, displayColorPicker, clickedMarkerColor]);
-
 const clearMarker = () => {
   const marker = markerRef.current;
   if (marker) {
