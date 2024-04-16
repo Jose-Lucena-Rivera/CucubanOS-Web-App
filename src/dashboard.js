@@ -26,40 +26,44 @@ const Dashboard = () => {
       return;
     }
   
-    const position = { lat: 18.262550, lng: -66.656294 };
-    const mapOptions = {
-      zoom: 14,
-      center: position,
-    };
+    try {
+      const position = { lat: 18.262550, lng: -66.656294 };
+      const mapOptions = {
+        zoom: 14,
+        center: position,
+      };
   
-    const newMap = new window.google.maps.Map(mapRef.current, {
-      ...mapOptions,
-      key: GOOGLE_MAPS_API_KEY,
-    });
+      const newMap = new window.google.maps.Map(mapRef.current, {
+        ...mapOptions,
+        key: GOOGLE_MAPS_API_KEY,
+      });
   
-    const marker = new window.google.maps.Marker({
-      position: position,
-      map: newMap,
-      icon: {
-        path: window.google.maps.SymbolPath.CIRCLE,
-        fillColor: localStorage.getItem('clickedMarkerColor') || '#FFFFFF',
-        fillOpacity: 1,
-        strokeWeight: 0,
-        scale: 10,
-      }
-    });
+      const marker = new window.google.maps.Marker({
+        position: position,
+        map: newMap,
+        icon: {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          fillColor: localStorage.getItem('clickedMarkerColor') || '#FFFFFF',
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scale: 10,
+        }
+      });
   
-    marker.addListener('click', () => {
-      if (clickedMarkerColor === selectedColor) {
-        clearMarker();
-      } else {
-        setClickedMarkerColor(selectedColor);
-        updateMarkerIcon(marker, selectedColor);
-      }
-    });
+      marker.addListener('click', () => {
+        if (clickedMarkerColor === selectedColor) {
+          clearMarker();
+        } else {
+          setClickedMarkerColor(selectedColor);
+          updateMarkerIcon(marker, selectedColor);
+        }
+      });
   
-    markerRef.current = marker;
-    setMap(newMap);
+      markerRef.current = marker;
+      setMap(newMap);
+    } catch (error) {
+      console.error('Error loading map:', error);
+    }
   };
   
   window.initMap = () => {
@@ -86,14 +90,24 @@ useEffect(() => {
 
   window.addEventListener('click', handleClickOutside);
 
-  if (window.google && window.google.maps) {
-    loadMap();
+  // Check if Google Maps API script is already loaded
+  if (!window.google || !window.google.maps) {
+    const existingScript = document.querySelector('script[src^="https://maps.googleapis.com/maps/api/js"]');
+    
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      script.onerror = () => {
+        console.error('Error loading Google Maps API.');
+      };
+      document.head.appendChild(script);
+    } else {
+      loadMap();
+    }
   } else {
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
+    loadMap();
   }
 
   return () => {
@@ -117,14 +131,16 @@ const clearMarker = () => {
 };
 
 const updateMarkerIcon = (marker, color) => {
-  marker.setIcon({
-    path: window.google.maps.SymbolPath.CIRCLE,
-    fillColor: color,
-    fillOpacity: 1,
-    strokeWeight: 0,
-    scale: 10,
-  });
-  localStorage.setItem('clickedMarkerColor', color);
+  if (marker && window.google && window.google.maps) { // Check if marker and google maps are loaded
+    marker.setIcon({
+      path: window.google.maps.SymbolPath.CIRCLE,
+      fillColor: color,
+      fillOpacity: 1,
+      strokeWeight: 0,
+      scale: 10,
+    });
+    localStorage.setItem('clickedMarkerColor', color);
+  }
 };
 
   const handleClick = (event) => {
