@@ -5,7 +5,7 @@ import './styles.css';
 const Dashboard = () => {
   const [sliderValue, setSliderValue] = useState(100);
   const [selectedColor, setSelectedColor] = useState('#FFFFFF');
-  const [selectedColorNum, setSelectedColorNum] = useState(0); // Add new state for color number
+  const [selectedColorNum, setSelectedColorNum] = useState(0);
   const [selectedPattern, setSelectedPattern] = useState('Pattern');
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const mapRef = useRef(null);
@@ -15,33 +15,28 @@ const Dashboard = () => {
   const [clickedMarkerColor, setClickedMarkerColor] = useState(null);
   const markerRef = useRef(null);
   const [selectedFrequency, setSelectedFrequency] = useState('Frequency');
-  const [selectedPatternNum, setSelectedPatternNum] = useState(0); // Add state for pattern number
-  const [selectedFrequencyNum, setSelectedFrequencyNum] = useState(0); // Add state for frequency number
-  const [brightnessLevel, setBrightnessLevel] = useState(0); // Add state for brightness level
+  const [selectedPatternNum, setSelectedPatternNum] = useState(0);
+  const [selectedFrequencyNum, setSelectedFrequencyNum] = useState(0);
+  const [brightnessLevel, setBrightnessLevel] = useState(0);
+  const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
-  useEffect(() => {
-    document.documentElement.style.setProperty('--selected-color', selectedColor);
-  }, [selectedColor]);
-
-  useEffect(() => {
-    window.componentHandler.upgradeAllRegistered();
-
-    const handleClickOutside = (event) => {
-      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target) && displayColorPicker) {
-        setDisplayColorPicker(false);
-      }
-    };
-
-    window.addEventListener('click', handleClickOutside);
-
+  const loadMap = () => {
+    if (!window.google || !window.google.maps) {
+      console.error('Google Maps API is not loaded.');
+      return;
+    }
+  
     const position = { lat: 18.262550, lng: -66.656294 };
     const mapOptions = {
       zoom: 14,
       center: position,
-      mapId: 'DEMO_MAP_ID'
     };
-    const newMap = new window.google.maps.Map(mapRef.current, mapOptions);
-
+  
+    const newMap = new window.google.maps.Map(mapRef.current, {
+      ...mapOptions,
+      key: GOOGLE_MAPS_API_KEY,
+    });
+  
     const marker = new window.google.maps.Marker({
       position: position,
       map: newMap,
@@ -53,7 +48,7 @@ const Dashboard = () => {
         scale: 10,
       }
     });
-
+  
     marker.addListener('click', () => {
       if (clickedMarkerColor === selectedColor) {
         clearMarker();
@@ -62,41 +57,75 @@ const Dashboard = () => {
         updateMarkerIcon(marker, selectedColor);
       }
     });
-    
-
+  
     markerRef.current = marker;
     setMap(newMap);
+  };
+  
+  window.initMap = () => {
+    loadMap();
+  };
 
-    return () => {
-      window.removeEventListener('click', handleClickOutside);
-    };
-  }, [selectedColor, displayColorPicker, clickedMarkerColor]);
+useEffect(() => {
+  document.documentElement.style.setProperty('--selected-color', selectedColor);
+}, [selectedColor]);
 
-  const clearMarker = () => {
-    const marker = markerRef.current;
-    if (marker) {
-      setClickedMarkerColor(null);
-      marker.setIcon({
-        path: window.google.maps.SymbolPath.CIRCLE,
-        fillColor: '#FFFFFF',
-        fillOpacity: 1,
-        strokeWeight: 0,
-        scale: 10,
-      });
-      localStorage.removeItem('clickedMarkerColor');
+useEffect(() => {
+  window.componentHandler.upgradeAllRegistered();
+
+  const handleClickOutside = (event) => {
+    if (colorPickerRef.current && !colorPickerRef.current.contains(event.target) && displayColorPicker) {
+      setDisplayColorPicker(false);
     }
   };
 
-  const updateMarkerIcon = (marker, color) => {
+  if (!GOOGLE_MAPS_API_KEY) {
+    console.error("Google Maps API key is not provided.");
+    return;
+  }
+
+  window.addEventListener('click', handleClickOutside);
+
+  if (window.google && window.google.maps) {
+    loadMap();
+  } else {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
+  return () => {
+    window.removeEventListener('click', handleClickOutside);
+  };
+}, [selectedColor, displayColorPicker, clickedMarkerColor]);
+
+const clearMarker = () => {
+  const marker = markerRef.current;
+  if (marker) {
+    setClickedMarkerColor(null);
     marker.setIcon({
       path: window.google.maps.SymbolPath.CIRCLE,
-      fillColor: color,
+      fillColor: '#FFFFFF',
       fillOpacity: 1,
       strokeWeight: 0,
       scale: 10,
     });
-    localStorage.setItem('clickedMarkerColor', color);
-  };
+    localStorage.removeItem('clickedMarkerColor');
+  }
+};
+
+const updateMarkerIcon = (marker, color) => {
+  marker.setIcon({
+    path: window.google.maps.SymbolPath.CIRCLE,
+    fillColor: color,
+    fillOpacity: 1,
+    strokeWeight: 0,
+    scale: 10,
+  });
+  localStorage.setItem('clickedMarkerColor', color);
+};
 
   const handleClick = (event) => {
     event.stopPropagation();
