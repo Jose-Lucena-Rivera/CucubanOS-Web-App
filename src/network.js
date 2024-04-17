@@ -83,6 +83,8 @@ const Network = () => {
     }
   };
 
+  
+
   return (
     <Layout>
       <div className="dashboard-content center-network-container">
@@ -120,7 +122,7 @@ const Network = () => {
         {isRemoveDialogOpen && (
           <>
             <div className="backdrop" onClick={handleCloseRemoveDialog}></div>
-            <div className="custom-dialog" style={{ width: '50%' }}>
+            <div className="custom-dialog remove-buoy-dialog" style={{ width: '50%' }}>
               <div className="dialog-content">
                 <h3>Delete Buoy(s)?</h3>
                 <div className="mdl-card__supporting-text-account">
@@ -195,7 +197,7 @@ const Network = () => {
                     />
                     <label className="mdl-textfield__label" htmlFor="coordinates">Coordinates:</label>
                   </div>
-                  <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" type="submit">
+                  <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300 add-submit" type="submit">
                     Submit
                   </button>
                 </form>

@@ -28,6 +28,10 @@ html, body {
   color: rgba(0, 0, 0, 0.54);
 }
 
+.mdl-layout__drawer .avatar {
+  margin-bottom: 16px;
+}
+
 .demo-drawer {
   border: none;
 }
@@ -74,7 +78,8 @@ html, body {
 
 }
 .demo-avatar-dropdown {
- 
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
   position: relative;
   -webkit-flex-direction: row;
@@ -84,8 +89,6 @@ html, body {
       -ms-flex-align: center;
           align-items: center;
   width: 100%;
-  top: 50%;
-  left: 25px;
 }
 
 .demo-navigation {
@@ -196,6 +199,11 @@ _:-ms-input-placeholder, :root .demo-graph {
   
 }
 
+@media screen and (max-width: 1024px) {
+  .mdl-layout--fixed-drawer > .mdl-layout__content {
+    margin-left: 340px; /* Adjust this value as needed */
+  }
+}
 
 
 
@@ -402,6 +410,88 @@ body {
  top: 150px;
  left: 10%;
 
+}
+/* Make tbody scrollable */
+.custom-width-network tbody {
+  display: block;
+  height: 150px; /* Set the height you want */
+  overflow-y: auto;
+}
+.custom-width-network thead,
+.custom-width-network tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+.custom-width-network tbody tr {
+  cursor: pointer;
+}
+/* Ensure the table keeps its width */
+.custom-width-network thead {
+  width: calc(100% - 17px); /* Adjusted for scrollbar width */
+}
+
+.custom-width-network tbody {
+  display: block;
+  overflow-y: auto;
+  width: 100%;
+}
+.custom-width-network tbody::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-width-network tbody::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .custom-width-network {
+    width: 95%; /* Adjust as needed for mobile */
+  }
+
+  .mdl-button-network {
+    width: 120px; /* Adjust width for mobile */
+    height: 35px; /* Adjust height for mobile */
+  }
+
+  .mdl-button-network i {
+    font-size: 1em; /* Adjust font size for mobile */
+  }
+
+  .mdl-button-network.add-buoy,
+  .mdl-button-network.remove-buoy {
+    top: 40px; /* Adjust top position for mobile */
+    width: 120px;
+  }
+
+  .dialog-actions-submit-network{
+    bottom: -320px;
+
+  }
+  
+  
+  .add-buoy-dialog {
+    width: 70%; /* Adjust width for mobile */
+    height: auto; /* Adjust height for mobile */
+  }
+
+ .add-submit{
+  left: 200px;
+ }
+
+  .remove-buoy-dialog{
+    width: 75% !important;
+  }
+  
+  .mdl-card__supporting-text-network {
+    margin-bottom: 40px; /* Adjust margin for mobile */
+  }
+}
+.dialog-close-button-network {
+  position: absolute;
+  bottom: 10px;
+  left: 230px; /* Adjust left position */
+  z-index: 1000; /* Ensure it's above other elements */
 }
 
 /************************* Network ends ************************/
@@ -651,6 +741,57 @@ body {
   transform: translateY(-50%);
 }
 
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+
+  .mdl-button-account.change-password{
+    width: 120px; /* Adjust width for mobile */
+    height: 35px; /* Adjust height for mobile */
+    top: 120px;
+  }
+  .mdl-button-account.sign-out {
+    width: 120px; /* Adjust width for mobile */
+    height: 35px; /* Adjust height for mobile */
+    top: 200px;
+  }
+
+  /* Change Password Dialog */
+  .change-password-dialog {
+    width: 70%; /* Adjust width for mobile */
+    padding: 35px; /* Adjust padding for mobile */
+  }
+
+  .dialog-close-button-change {
+    top: 5px; /* Adjust top position for mobile */
+    right: -5px; /* Adjust right position for mobile */
+  }
+
+  .dialog-actions-submit-change {
+    top: 290px; /* Adjust top position for mobile */
+  }
+  
+  .dialog-actions-submit-confirm {
+    top: 200px; /* Adjust top position for mobile */
+  }
+   /* Confirm Password Dialog */
+   .confirm-password-dialog {
+    width: 80%; /* Adjust width for mobile */
+    padding: 35px; /* Adjust padding for mobile */
+  }
+
+  .dialog-close-button-confirm {
+    top: 5px; /* Adjust top position for mobile */
+    right: -5px; /* Adjust right position for mobile */
+  }
+
+  .dialog-actions-submit-confirm {
+    top: 240px; /* Adjust top position for mobile */
+  }
+}
+
+
+
+
 /************************* Account ends ************************/
 
 
@@ -724,7 +865,7 @@ body {
 .slider-container {
   position: absolute;
   top: 330px;
-  left: 82%;
+  left: 85%;
   transform: translate(-50%, -50%);
 }
 
@@ -800,29 +941,38 @@ body {
   }
 
   .deploy-button {
-    bottom: -500px;
+    bottom: -600px;
     right: -120px;
   }
 
   .stop-design {
-    bottom: -500px;
+    bottom: -600px;
     right: -30px;
   }
 
   .clear-all {
-    bottom: -195px;
+    bottom: -3px;
     right: -230px;
   }
 
   .select-all {
-    bottom: -175px;
-    right: 10px;
+    bottom: -45px;
+    right: 200px;
   }
 
   .slider-container {
-    top: -60px;
-    left: 120px;
+    top: 150px;
+    left: 285px;
     transform: translate(-50%, -50%);
+  }
+
+  .slider-container > div {
+    width: 150px !important; /* Override inline width for mobile */
+    margin: 20px auto;
+  }
+
+  .mdl-slider {
+    width: 100%; /* Ensure slider takes full width of its container */
   }
 
   #pattern-menu {
@@ -832,8 +982,8 @@ body {
   }
   #frequency-menu {
     position: relative;
-    top: 290px;
-    left: 215px;
+    top: 340px;
+    left: -30px;
   }
 
   .color-picker-container {
@@ -843,7 +993,7 @@ body {
   }
 
   .choose-color {
-    top: 110px;
+    top: 150px;
     left: 240px;
     width: 100px;
   }
