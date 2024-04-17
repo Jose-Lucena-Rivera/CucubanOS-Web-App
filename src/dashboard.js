@@ -29,7 +29,7 @@ const Dashboard = () => {
     try {
       const position = { lat: 18.262550, lng: -66.656294 };
       const mapOptions = {
-        zoom: 14,
+        zoom: 13.5,
         center: position,
       };
   
@@ -46,7 +46,7 @@ const Dashboard = () => {
           fillColor: localStorage.getItem('clickedMarkerColor') || '#FFFFFF',
           fillOpacity: 1,
           strokeWeight: 0,
-          scale: 10,
+          scale: 8,
         }
       });
   
@@ -394,7 +394,7 @@ const updateMarkerIcon = (marker, color) => {
             </div>
           )}
         </div>
-        <div ref={mapRef} className="map-container" style={{ top: '20px',left: '40px', height: '530px', width: '400px' }}></div>
+        <div ref={mapRef} className="map-container" style={{ top: '120px', left: '40px', height: '50vh', width: '40vw' }}></div>
       </div>
     </Layout>
   );

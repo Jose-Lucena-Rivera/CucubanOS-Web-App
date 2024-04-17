@@ -696,61 +696,55 @@ body {
   position: relative; /* Ensure positioning context for absolute positioning */
 }
 
+/* Default positions for desktop */
 .deploy-button {
   position: absolute;
   top: 400px;
-  bottom: 10px; 
-  right: 20px; 
+  right: 20px;
 }
 
-.stop-design{
+.stop-design {
   position: absolute;
   top: 400px;
-  bottom: 20px; 
   right: 200px;
 }
 
-.clear-all{
+.clear-all {
   position: absolute;
   top: 150px;
-  bottom: 40px; 
-  right: 400px; 
+  right: 300px;
 }
-.select-all{
+
+.select-all {
   position: absolute;
   top: 80px;
-  bottom: 20px; 
-  right: 400px; 
+  right: 300px;
 }
 
 .slider-container {
-  /* Adjust positioning properties as needed */
   position: absolute;
-  top: 330px; /* Move the slider to the center vertically */
-  left: 82%; /* Move the slider to the center horizontally */
-  transform: translate(-50%, -50%); /* Center the slider */
+  top: 330px;
+  left: 82%;
+  transform: translate(-50%, -50%);
 }
 
-/* Styles for the Pattern menu button */
 #pattern-menu {
-  position: absolute; /* Position the button */
-  top: 225px; 
-  left: 500px; 
+  position: absolute;
+  top: 225px;
+  left: 580px;
 }
 
 #frequency-menu {
-  position: absolute; /* Position the button */
-  top: 295px; 
-  left: 495px; 
+  position: absolute;
+  top: 295px;
+  left: 575px;
 }
 
-/* Styles for the Pattern menu options */
 .mdl-menu.mdl-menu--bottom-left {
-  position: absolute; /* Position the menu options */
-  top: -1px; 
-  left: 5px; 
+  position: absolute;
+  top: -1px;
+  left: 5px;
 }
-
 
 .color-picker-container {
   position: fixed;
@@ -771,26 +765,88 @@ body {
   cursor: pointer;
 }
 
-
-
 .choose-color {
   position: absolute;
-  top: 150px; /* Adjust top position as needed */
-  left: 750px; /* Adjust left position as needed */
+  top: 150px;
+  left: 790px;
 }
 
-
 :root {
-  --brightness: 100%; /* Default brightness */
-  --selected-color: #FFFFFF; /* Default selected color */
+  --brightness: 100%;
+  --selected-color: #FFFFFF;
 }
 
 .color-picker-container .color-square {
-  /* Adjust brightness */
   filter: brightness(var(--brightness));
 }
 
+.map-container {
+  position: absolute;
+  top: 20px;
+  left: 80px;
+  height: 60%;
+  width: 40%;
+}
 
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .deploy-button, .stop-design, .clear-all, .select-all, .slider-container, #pattern-menu, #frequency-menu {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: 120px;
+    font-size: 14px;
+  }
 
+  .deploy-button {
+    bottom: -500px;
+    right: -120px;
+  }
+
+  .stop-design {
+    bottom: -500px;
+    right: -30px;
+  }
+
+  .clear-all {
+    bottom: -195px;
+    right: -230px;
+  }
+
+  .select-all {
+    bottom: -175px;
+    right: 10px;
+  }
+
+  .slider-container {
+    top: -60px;
+    left: 120px;
+    transform: translate(-50%, -50%);
+  }
+
+  #pattern-menu {
+    position: relative;
+    top: 270px;
+    left: 100px;
+  }
+  #frequency-menu {
+    position: relative;
+    top: 290px;
+    left: 215px;
+  }
+
+  .color-picker-container {
+    position: fixed;
+    bottom: 220px;
+    right: 220px;
+  }
+
+  .choose-color {
+    top: 110px;
+    left: 240px;
+    width: 100px;
+  }
+}
 
 /************************* Dashboard ends ************************/
