@@ -111,8 +111,8 @@ const Dashboard = () => {
       }
     };
 
-    console.log('API Key:', process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
-    if (!process.env.REACT_APP_GOOGLE_MAPS_API_KEY) {
+    console.log('API Key:', GOOGLE_MAPS_API_KEY);
+    if (!GOOGLE_MAPS_API_KEY) {
       console.error("Google Maps API key is not provided.");
       return;
     }
