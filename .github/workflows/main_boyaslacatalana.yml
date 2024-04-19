@@ -24,6 +24,10 @@ jobs:
       - name: Clear npm cache
         run: npm cache clean --force
 
+      - name: Set up environment variables
+        run: echo "REACT_APP_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}" >> .env.production
+
+
 
       - name: npm install, build, and test
         run: |
