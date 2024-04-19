@@ -18,7 +18,7 @@ const Dashboard = () => {
   const [selectedPatternNum, setSelectedPatternNum] = useState(0);
   const [selectedFrequencyNum, setSelectedFrequencyNum] = useState(0);
   const [brightnessLevel, setBrightnessLevel] = useState(0);
-  const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+  const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
 
   const loadMap = () => {
     if (!window.google || !window.google.maps) {
@@ -112,6 +112,7 @@ const Dashboard = () => {
     };
 
     console.log(process.env);
+    console.log('API Key:', process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
     console.log('API Key:', GOOGLE_MAPS_API_KEY);
     if (!GOOGLE_MAPS_API_KEY) {
       console.error("Google Maps API key is not provided.");
