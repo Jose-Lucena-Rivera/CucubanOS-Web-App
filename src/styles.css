@@ -767,7 +767,7 @@ body {
   }
 
   .dialog-actions-submit-change {
-    top: 290px; /* Adjust top position for mobile */
+    top: 250px; /* Adjust top position for mobile */
   }
   
   .dialog-actions-submit-confirm {
