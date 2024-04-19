@@ -872,13 +872,13 @@ body {
 #pattern-menu {
   position: absolute;
   top: 225px;
-  left: 650px;
+  left: 610px;
 }
 
 #frequency-menu {
   position: absolute;
   top: 295px;
-  left: 645px;
+  left: 595px;
 }
 
 .mdl-menu.mdl-menu--bottom-left {
