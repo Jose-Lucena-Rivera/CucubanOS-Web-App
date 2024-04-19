@@ -872,13 +872,13 @@ body {
 #pattern-menu {
   position: absolute;
   top: 225px;
-  left: 580px;
+  left: 650px;
 }
 
 #frequency-menu {
   position: absolute;
   top: 295px;
-  left: 575px;
+  left: 645px;
 }
 
 .mdl-menu.mdl-menu--bottom-left {
@@ -909,7 +909,7 @@ body {
 .choose-color {
   position: absolute;
   top: 150px;
-  left: 790px;
+  left: 850px;
 }
 
 :root {
@@ -938,6 +938,7 @@ body {
     left: auto;
     width: 120px;
     font-size: 14px;
+    margin-bottom: 10px;
   }
 
   .deploy-button {
@@ -964,6 +965,7 @@ body {
     top: 150px;
     left: 285px;
     transform: translate(-50%, -50%);
+    margin-top: 20px;
   }
 
   .slider-container > div {

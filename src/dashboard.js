@@ -70,54 +70,84 @@ const Dashboard = () => {
     loadMap();
   };
 
-useEffect(() => {
-  document.documentElement.style.setProperty('--selected-color', selectedColor);
-}, [selectedColor]);
+  useEffect(() => {
+    const handleTouchStart = (event) => {
+      event.target.classList.add('touched'); // Add a class to indicate touch
+    };
 
-useEffect(() => {
-  window.componentHandler.upgradeAllRegistered();
+    const handleTouchEnd = (event) => {
+      event.target.classList.remove('touched'); // Remove the touch class
+      event.target.click(); // Trigger the button click
+    };
 
-  const handleClickOutside = (event) => {
-    if (colorPickerRef.current && !colorPickerRef.current.contains(event.target) && displayColorPicker) {
-      setDisplayColorPicker(false);
-    }
-  };
+    // Add touch event listeners to all buttons
+    document.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('touchstart', handleTouchStart);
+      button.addEventListener('touchend', handleTouchEnd);
+    });
 
-  if (!GOOGLE_MAPS_API_KEY) {
-    console.error("Google Maps API key is not provided.");
-    return;
-  }
-
-  window.addEventListener('click', handleClickOutside);
-
-  // Check if Google Maps API script is already loaded
-  if (!window.google || !window.google.maps) {
-    const existingScript = document.querySelector('script[src^="https://maps.googleapis.com/maps/api/js"]');
-    
-    if (!existingScript) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-      script.onerror = () => {
-        console.error('Error loading Google Maps API.');
-      };
-      document.head.appendChild(script);
-    } else {
-      // Wait for the Google Maps API to load
-      existingScript.addEventListener('load', () => {
-        loadMap();
+    // Cleanup: Remove event listeners when the component unmounts
+    return () => {
+      document.querySelectorAll('button').forEach((button) => {
+        button.removeEventListener('touchstart', handleTouchStart);
+        button.removeEventListener('touchend', handleTouchEnd);
       });
-    }
-  } else {
-    loadMap();
-  }
+    };
+  }, []); // Empty dependency array means this useEffect runs once when the component mounts
 
-  return () => {
-    window.removeEventListener('click', handleClickOutside);
-  };
-}, [selectedColor, displayColorPicker, clickedMarkerColor]);
-const clearMarker = () => {
+
+
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--selected-color', selectedColor);
+  }, [selectedColor]);
+
+  useEffect(() => {
+    window.componentHandler.upgradeAllRegistered();
+
+    const handleClickOutside = (event) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target) && displayColorPicker) {
+        setDisplayColorPicker(false);
+      }
+    };
+
+    console.log('API Key:', process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
+    if (!process.env.REACT_APP_GOOGLE_MAPS_API_KEY) {
+      console.error("Google Maps API key is not provided.");
+      return;
+    }
+
+    window.addEventListener('click', handleClickOutside);
+
+    // Check if Google Maps API script is already loaded
+    if (!window.google || !window.google.maps) {
+      const existingScript = document.querySelector('script[src^="https://maps.googleapis.com/maps/api/js"]');
+      
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        script.onerror = () => {
+          console.error('Error loading Google Maps API.');
+        };
+        document.head.appendChild(script);
+      } else {
+        // Wait for the Google Maps API to load
+        existingScript.addEventListener('load', () => {
+          loadMap();
+        });
+      }
+    } else {
+      loadMap();
+    }
+
+    return () => {
+      window.removeEventListener('click', handleClickOutside);
+    };
+  }, [selectedColor, displayColorPicker, clickedMarkerColor]);
+
+  const clearMarker = () => {
   const marker = markerRef.current;
   if (marker) {
     setClickedMarkerColor(null);
