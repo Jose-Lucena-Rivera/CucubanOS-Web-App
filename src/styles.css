@@ -958,13 +958,13 @@ body {
   }
 
   .select-all {
-    bottom: -45px;
+    bottom: -58px;
     right: 200px;
   }
 
   .slider-container {
     top: 150px;
-    left: 285px;
+    left: 300px;
     transform: translate(-50%, -50%);
     margin-top: 20px;
   }
@@ -981,23 +981,24 @@ body {
   #pattern-menu {
     position: relative;
     top: 270px;
-    left: 100px;
+    left: 130px;
   }
   #frequency-menu {
     position: relative;
     top: 340px;
-    left: -30px;
+    left: -2px;
   }
 
   .color-picker-container {
     position: fixed;
     bottom: 220px;
-    right: 220px;
+    right: 205px;
+    z-index: 9999;
   }
 
   .choose-color {
     top: 150px;
-    left: 240px;
+    left: 265px;
     width: 100px;
   }
 }

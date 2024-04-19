@@ -111,9 +111,7 @@ const Dashboard = () => {
       }
     };
 
-    console.log(process.env);
-    console.log('API Key:', process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
-    console.log('API Key:', GOOGLE_MAPS_API_KEY);
+    
     if (!GOOGLE_MAPS_API_KEY) {
       console.error("Google Maps API key is not provided.");
       return;
@@ -426,7 +424,7 @@ const updateMarkerIcon = (marker, color) => {
             </div>
           )}
         </div>
-        <div ref={mapRef} className="map-container" style={{ top: '120px', left: '40px', height: '50vh', width: '40vw' }}></div>
+        <div ref={mapRef} className="map-container" style={{ top: '130px', left: '40px', height: '50vh', width: '40vw' }}></div>
       </div>
     </Layout>
   );
