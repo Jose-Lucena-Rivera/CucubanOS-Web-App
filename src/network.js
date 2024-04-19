@@ -15,6 +15,34 @@ const Network = () => {
 
 
   useEffect(() => {
+    const handleTouchStart = (event) => {
+      event.target.classList.add('touched'); // Add a class to indicate touch
+    };
+
+    const handleTouchEnd = (event) => {
+      event.target.classList.remove('touched'); // Remove the touch class
+      event.target.click(); // Trigger the button click
+    };
+
+    // Add touch event listeners to all buttons
+    document.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('touchstart', handleTouchStart);
+      button.addEventListener('touchend', handleTouchEnd);
+    });
+
+    // Cleanup: Remove event listeners when the component unmounts
+    return () => {
+      document.querySelectorAll('button').forEach((button) => {
+        button.removeEventListener('touchstart', handleTouchStart);
+        button.removeEventListener('touchend', handleTouchEnd);
+      });
+    };
+  }, []); // Empty dependency array means this useEffect runs once when the component mounts
+
+
+
+
+  useEffect(() => {
     localStorage.setItem('selectedBuoys', JSON.stringify(selectedBuoys));
   }, [selectedBuoys]);
 
