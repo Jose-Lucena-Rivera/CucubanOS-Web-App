@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { v4 as uuidv4} from 'uuid';
+import { Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import 'material-design-lite/material'; 
+import 'material-design-lite/material.css';
+import './styles.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -9,7 +12,6 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [redirectToDashboard, setRedirectToDashboard] = useState(false); // State to control redirection
-  const AAD_B2C_CLIENT_ID = '3a70932b-93dd-4960-9188-3a2e3a15c9f1';
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -19,15 +21,6 @@ const Login = () => {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
     setPasswordError(false); // Reset password error state when the user starts typing again
-  };
-
-  const handleAzureLogin = async () => {
-    const nonce = uuidv4();
-    const redirectUri = encodeURIComponent(window.location.origin + '/dashboard');
-    const azureLoginUrl = `https://CucubanosAuth.b2clogin.com/CucubanosAuth.onmicrosoft.com/B2C_1_login/oauth2/v2.0/authorize?client_id=${AAD_B2C_CLIENT_ID}&response_type=id_token&redirect_uri=${redirectUri}&response_mode=form_post&scope=openid&nonce=${nonce}&p=B2C_1_login`;
-    window.location.href = azureLoginUrl;
-
-    
   };
 
   const handleSubmit = (event) => {
@@ -56,42 +49,18 @@ const Login = () => {
       return;
     }
 
-    // Redirect to Azure AD B2C login
-    handleAzureLogin();
-  };
-  
-  // Function to send the id_token to the backend
-  const sendTokenToBackend = async (idToken) => {
-    const response = await fetch('/dashboard', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id_token: idToken }),
-    });
+    // Assuming login is successful, set state to redirect to Dashboard
+    setRedirectToDashboard(true);
 
-    const data = await response.json();
-  
-    if (data.success) {
-      // Navigate to the dashboard or set session or do other things as needed
-      window.location.href = '/dashboard';
-    } else {
-      // Handle the error
-      console.error('Authentication failed:', data.message);
-    }
+    // Reset the form
+    setEmail('');
+    setPassword('');
   };
 
-  // Check if there's an id_token in the URL (after redirection from Azure AD B2C)
-  const urlParams = new URLSearchParams(window.location.search);
-  const idToken = urlParams.get('id_token');
-
-  if (idToken) {
-    // If id_token is present, send it to the backend for validation
-    sendTokenToBackend(idToken);
+  // Redirect to Dashboard if redirectToDashboard state is true
+  if (redirectToDashboard) {
+    return <Navigate to="/dashboard" />;
   }
-
-
-
 
   return (
     <div className="center-container-login">
