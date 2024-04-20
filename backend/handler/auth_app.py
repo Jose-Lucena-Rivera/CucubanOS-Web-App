@@ -25,7 +25,7 @@ def login():
     else:
         return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
-@app.route('/dashboard', methods=['GET'])
+@app.route('/dashboard', methods=['POST'])
 def protected_dashboard():
     if session.get('authenticated'):
         return "Welcome to the Dashboard!"

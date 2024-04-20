@@ -59,6 +59,39 @@ const Login = () => {
     // Redirect to Azure AD B2C login
     handleAzureLogin();
   };
+  
+  // Function to send the id_token to the backend
+  const sendTokenToBackend = async (idToken) => {
+    const response = await fetch('/dashboard', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id_token: idToken }),
+    });
+
+    const data = await response.json();
+  
+    if (data.success) {
+      // Navigate to the dashboard or set session or do other things as needed
+      window.location.href = '/dashboard';
+    } else {
+      // Handle the error
+      console.error('Authentication failed:', data.message);
+    }
+  };
+
+  // Check if there's an id_token in the URL (after redirection from Azure AD B2C)
+  const urlParams = new URLSearchParams(window.location.search);
+  const idToken = urlParams.get('id_token');
+
+  if (idToken) {
+    // If id_token is present, send it to the backend for validation
+    sendTokenToBackend(idToken);
+  }
+
+
+
 
   return (
     <div className="center-container-login">
