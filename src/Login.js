@@ -43,24 +43,39 @@ const Login = () => {
       return;
     }
 
-    // Validation for password
     if (!password) {
       setPasswordError(true);
       return;
     }
 
-    // Assuming login is successful, set state to redirect to Dashboard
-    setRedirectToDashboard(true);
+      fetch('/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Login failed');
+        }
+      })
+      .then(data => {
+        localStorage.setItem('token', data.token);
+        setRedirectToDashboard(true);
+      })
+      .catch(error => {
+        console.error('Login error:', error);
+      });
+    };
+    if (redirectToDashboard) {
+      return <Navigate to="/dashboard" />;
+    }
 
-    // Reset the form
-    setEmail('');
-    setPassword('');
-  };
 
-  // Redirect to Dashboard if redirectToDashboard state is true
-  if (redirectToDashboard) {
-    return <Navigate to="/dashboard" />;
-  }
+
 
   return (
     <div className="center-container-login">
