@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 #local http://127.0.0.1:5000
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.net/", "methods": ["GET", "POST"]}})
+
 
 
 load_dotenv()
