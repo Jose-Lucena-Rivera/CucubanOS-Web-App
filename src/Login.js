@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
-import 'material-design-lite/material'; 
-import 'material-design-lite/material.css';
-import './styles.css';
+import { Link, Navigate } from 'react-router-dom';
+import { v4 as uuidv4} from 'uuid';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -21,6 +18,15 @@ const Login = () => {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
     setPasswordError(false); // Reset password error state when the user starts typing again
+  };
+
+  const handleAzureLogin = async () => {
+    const nonce = uuidv4();
+    const redirectUri = encodeURIComponent(window.location.origin + '/dashboard');
+    const azureLoginUrl = `https://CucubanosAuth.b2clogin.com/CucubanosAuth.onmicrosoft.com/B2C_1_login/oauth2/v2.0/authorize?client_id=${AAD_B2C_CLIENT_ID}&response_type=id_token&redirect_uri=${redirectUri}&response_mode=form_post&scope=openid&nonce=${nonce}&p=B2C_1_login`;
+    window.location.href = azureLoginUrl;
+
+    
   };
 
   const handleSubmit = (event) => {
@@ -49,18 +55,9 @@ const Login = () => {
       return;
     }
 
-    // Assuming login is successful, set state to redirect to Dashboard
-    setRedirectToDashboard(true);
-
-    // Reset the form
-    setEmail('');
-    setPassword('');
+    // Redirect to Azure AD B2C login
+    handleAzureLogin();
   };
-
-  // Redirect to Dashboard if redirectToDashboard state is true
-  if (redirectToDashboard) {
-    return <Navigate to="/dashboard" />;
-  }
 
   return (
     <div className="center-container-login">
