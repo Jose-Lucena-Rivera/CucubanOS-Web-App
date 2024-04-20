@@ -48,7 +48,7 @@ const Login = () => {
       setPasswordError(true);
       return;
     }
-
+      //local 'http://127.0.0.1:5000'
     fetch('https://boyaslacatalana.azurewebsites.net', {
       method: 'POST',
       headers: {
