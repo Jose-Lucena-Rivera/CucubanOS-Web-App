@@ -12,6 +12,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [redirectToDashboard, setRedirectToDashboard] = useState(false); // State to control redirection
+  const [loginError, setLoginError] = useState(null);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -48,32 +49,33 @@ const Login = () => {
       return;
     }
 
-      fetch('/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Login failed');
-        }
-      })
-      .then(data => {
-        localStorage.setItem('token', data.token);
-        setRedirectToDashboard(true);
-      })
-      .catch(error => {
-        console.error('Login error:', error);
-      });
-    };
-    if (redirectToDashboard) {
-      return <Navigate to="/dashboard" />;
-    }
+    fetch('https://boyaslacatalana.azurewebsites.net/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Login failed');
+      }
+    })
+    .then(data => {
+      localStorage.setItem('token', data.token);
+      setRedirectToDashboard(true);
+    })
+    .catch(error => {
+      console.error('Login error:', error);
+      setLoginError('Login failed. Please check your credentials and try again.');
+    });
+  };
 
+  if (redirectToDashboard) {
+    return <Navigate to="/dashboard" />;
+  }
 
 
 

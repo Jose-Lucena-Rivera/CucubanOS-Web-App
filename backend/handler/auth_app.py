@@ -1,26 +1,22 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify
 import jwt
 import datetime
 import os
 import logging
-
-
+from flask_cors import CORS
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY')  # Retrieve secret key from environment variables
+CORS(app)
+app.secret_key = os.environ.get('SECRET_KEY')
 
-
-
-# Users dictionary for email and password authentication
 USERS = {
     'jose.lucena2@upr.edu': 'password123'
 }
 
-# Generate JWT token
 def generate_token(email):
     payload = {
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=30),  # Token expiration time
-        'iat': datetime.datetime.utcnow(),  # Token issued at
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=30),
+        'iat': datetime.datetime.utcnow(),
         'sub': email
     }
     token = jwt.encode(payload, app.secret_key, algorithm='HS256')
@@ -51,8 +47,10 @@ def protected_dashboard():
         return jsonify({"success": False, "message": "Token has expired"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"success": False, "message": "Invalid token"}), 401
+    except Exception as e:
+        app.logger.error(f"Error decoding token: {e}")
+        return jsonify({"success": False, "message": "An error occurred"}), 500
 
-    # If token is valid, return the protected resource
     return "Welcome to the Dashboard!"
 
 if __name__ == '__main__':
