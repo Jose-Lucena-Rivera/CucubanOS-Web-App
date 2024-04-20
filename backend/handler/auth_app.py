@@ -4,9 +4,13 @@ import datetime
 import os
 import logging
 from flask_cors import CORS
+from dotenv import load_dotenv
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.net"}})
+
+load_dotenv()
+
 app.secret_key = os.environ.get('SECRET_KEY')
 
 USERS = {
@@ -15,12 +19,12 @@ USERS = {
 
 def generate_token(email):
     payload = {
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=30),
-        'iat': datetime.datetime.utcnow(),
+        'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=0, minutes=30),
+        'iat': datetime.datetime.now(datetime.timezone.utc),
         'sub': email
     }
     token = jwt.encode(payload, app.secret_key, algorithm='HS256')
-    return token.decode('utf-8')
+    return token
 
 @app.route('/', methods=['POST'])
 def login():

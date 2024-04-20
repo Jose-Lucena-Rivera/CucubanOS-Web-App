@@ -49,7 +49,7 @@ const Login = () => {
       return;
     }
 
-    fetch('https://boyaslacatalana.azurewebsites.net/', {
+    fetch('https://boyaslacatalana.azurewebsites.net', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
