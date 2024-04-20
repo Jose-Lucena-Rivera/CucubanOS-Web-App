@@ -9,6 +9,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [redirectToDashboard, setRedirectToDashboard] = useState(false); // State to control redirection
+  const AAD_B2C_CLIENT_ID = '3a70932b-93dd-4960-9188-3a2e3a15c9f1';
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
