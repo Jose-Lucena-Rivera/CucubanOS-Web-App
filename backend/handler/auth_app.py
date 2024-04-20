@@ -1,5 +1,4 @@
-from flask import Flask, request, session, jsonify
-import jwt
+from flask import Flask, request, session, jsonify, redirect
 
 app = Flask(__name__)
 app.secret_key = 'e83570372eba5162777bd4ff59b8720f4149af1f7937b12e'
@@ -31,7 +30,7 @@ def protected_dashboard():
     if session.get('authenticated'):
         return "Welcome to the Dashboard!"
     else:
-        return "Access Denied", 403
+        return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True)
