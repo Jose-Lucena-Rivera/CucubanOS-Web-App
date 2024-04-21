@@ -17,7 +17,6 @@ class BuoyDAO():
         query = "select bName from buoy where bEUI = %s;"
         cursor.execute(query, (eui,))
         bName = cursor.fetchone()[0] if cursor.rowcount > 0 else None
-        print ("buoy name: ",bName)
         cursor.close()
         # self.conn.close()
         return bName
@@ -28,7 +27,6 @@ class BuoyDAO():
         query = "select bEUI from buoy where bName = %s;"
         cursor.execute(query, (name,))
         bEUI = cursor.fetchone()[0] if cursor.rowcount > 0 else None
-        print ("buoy eui: ",bEUI)
         cursor.close()
         # self.conn.close()
         return bEUI
@@ -37,7 +35,7 @@ class BuoyDAO():
         cursor = self.conn.cursor()
         query = "SELECT * FROM buoy WHERE bEUI = %s;"
         cursor.execute(query, (eui,))
-        result = cursor.fetchall()
+        result = cursor.fetchall() if cursor.rowcount > 0 else None
         cursor.close()
         self.conn.close()
         return result
@@ -86,7 +84,6 @@ class BuoyDAO():
         updated = None
         try:
             query = "UPDATE buoy SET " + ", ".join(updates) + " WHERE bEUI = %s RETURNING *;"
-            print(query,params)
             cursor.execute(query, params)
             updated = cursor.fetchone()
             self.conn.commit()

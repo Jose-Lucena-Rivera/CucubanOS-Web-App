@@ -21,10 +21,6 @@ class UserHandler():
         email = data.get('email')
         uName = data.get('name')
 
-        if data.get('isAdmin'):
-            isAdmin = data.get('isAdmin')
-        else:
-            isAdmin = False
         
         # return jsonify({"message": "all good hasta aqui"}), 200
 
@@ -59,13 +55,13 @@ class UserHandler():
         if (debugging): ##########  Debugging offline. Luego, cuando se conecte lo del api de azure se puede dejar lo de debugging y que retorne el user id real
             userid = data.get('uid')
         else:
-            userid = ''
+            userid = '' #Get from what the azure api call returns in the json
 
         ########################################################################################################
 
         #check aqui. ya no me importa el user id solo quiero saber un bool pa si se creo ()
         # usr = UsersDAO()
-        created=usr.create_user(userid, email, uName, isAdmin)
+        created=usr.create_user(userid, email, uName)
         
 
         # send email with password
@@ -85,8 +81,10 @@ class UserHandler():
 
     def delete_user(self):
 
-        ## Check JWT here to ensure only admin can delete users
+        ############# Check JWT here to ensure only admin can delete users
+        #### Check identity of the user (with the token??)
 
+        ############ Check if email is valid (como en create user)
 
 
         data = request.get_json()

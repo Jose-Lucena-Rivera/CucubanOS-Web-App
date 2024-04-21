@@ -14,12 +14,12 @@ class UsersDAO():
         self.conn.close()
 
 
-    def create_user(self, userid, email, uName, isAdmin = False):
+    def create_user(self, userid, email, uName):
         cursor = self.conn.cursor()
         created = None
         try:
-            query = "INSERT INTO users (id, email, uname, isadmin) VALUES (%s, %s, %s, %s) RETURNING id, uname;"
-            cursor.execute(query, (userid, email, uName, isAdmin))
+            query = "INSERT INTO users (id, email, uname) VALUES (%s, %s, %s) RETURNING id, uname;"
+            cursor.execute(query, (userid, email, uName))
             created = cursor.fetchone()
             self.conn.commit()
             

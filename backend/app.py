@@ -5,6 +5,7 @@ from mqtt import *
 from dotenv import load_dotenv
 from handler.users import *
 from handler.buoys import *
+from handler.messages import *
 
 # Create the application instance
 app = Flask(__name__)
@@ -16,9 +17,9 @@ debugging = os.getenv("DEBUGGING")
 port = int(os.environ.get("PORT", 5000))
 
 # Create a URL route in our application for "/"
-@app.route('/')
-def index():
-    return jsonify({"message": "Hello, Personas!"})
+# @app.route('/')
+# def index():
+#     return jsonify({"message": "Hello, Personas!"})
 
 
 @app.route("/publish", methods=["POST"])
@@ -97,10 +98,6 @@ def get_buoys():
     buoy = BuoyHandler()
     return buoy.get_buoys()
 
-@app.route("/update-buoy", methods=["PUT"])
-def update_buoy():
-    buoy = BuoyHandler()
-    return buoy.update_buoy()
 
 @app.route("/delete-buoy", methods=["DELETE"])
 @app.route("/delete-buoy/", methods=["DELETE"])
@@ -109,16 +106,43 @@ def delete_buoy():
     return buoy.delete_buoy()
 
 
-@app.route("/send-buoy-data/", methods=["POST"])
-@app.route("/send-buoy-data", methods=["POST"])
+@app.route("/update-buoy/", methods=["PUT"])
+@app.route("/update-buoy", methods=["PUT"])
+def update_buoy():
+    buoy = BuoyHandler()
+    return buoy.update_buoy()
+
+
+@app.route("/chirpstack-updates", methods=["POST"])
+@app.route("/chirpstack-updates/", methods=["POST"])
+def chirpstack_updates():
+    update = MessageHandler()
+    return update.chirpstack_updates()
+
+
+@app.route("/send-all-buoys-data/", methods=["POST"])
+@app.route("/send-all-buoys-data", methods=["POST"])
 def send_buoy_data():
     # https://loraserver.tetaneutral.net/api#!/DeviceQueueService/Enqueue
-    pass
+    message = MessageHandler()
+    return message.multicast()
+    
+@app.route("/send-one-buoy-data/", methods=["POST"])
+@app.route("/send-one-buoy-data", methods=["POST"])
+def send_one_buoy_data():
+    message = MessageHandler()
+    return message.send_one_buoy_data()
 
+@app.route("/see-multimessage", methods=["GET"])
+def see_multimessage():
+    message = MessageHandler()
+    return message.see_multimessage()
 
 if __name__ == '__main__':
     if debugging:
         #connect_mqtt()
         app.run(debug=True)
     else:
-        app.run(host='', port = port)
+        ap.run(host='', port = port)
+        # app.run(host='https://boyaslacatalana.azurewebsites.net/chirpstack-updates', port = 80)
+    # app.run(host='https://boyaslacatalana.azurewebsites.net/chirpstack-updates')
