@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import 'material-design-lite/material'; 
 import 'material-design-lite/material.css';
 import { useLocation } from 'react-router-dom';
@@ -32,27 +32,38 @@ const Header = () => {
               break;
       }
   };
+  useEffect(() => {
+    // Initialize MDL components
+    window.componentHandler.upgradeAllRegistered();
+}, []);
 
-    return (
-      <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__header-row">
-          <span className="mdl-layout-title">{getPageTitle()}</span>
-          <div className="mdl-layout-spacer"></div>
-          <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-            <div className="mdl-textfield__expandable-holder">
-            </div>
-          </div>
-          <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
-            <i className="material-icons">more_vert</i>
-          </button>
-          <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-          <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Account')}>Account</li>
-            <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Sign Out')}>Sign Out</li>
-          </ul>
-        </div>
-      </header>
+  let drawerButton = null;
+
+  if (location.pathname !== '/') {
+    drawerButton = (
+      <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-layout__drawer-button">
+        <i className="material-icons"></i>
+      </button>
     );
-  };
+  }
+
+  return (
+    <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+      <div className="mdl-layout__header-row">
+        {drawerButton}
+        <span className="mdl-layout-title">{getPageTitle()}</span>
+        <div className="mdl-layout-spacer"></div>
+        <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+          <i className="material-icons">more_vert</i>
+        </button>
+        <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
+          <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Account')}>Account</li>
+          <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Sign Out')}>Sign Out</li>
+        </ul>
+      </div>
+    </header>
+  );
+};
 
 const Drawer = () => {
   return (

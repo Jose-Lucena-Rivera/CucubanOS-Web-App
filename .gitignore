@@ -28,3 +28,4 @@ sendgrid.env
 # *.pyc
 *pycache*
 .env
+.env.production

@@ -12,6 +12,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [redirectToDashboard, setRedirectToDashboard] = useState(false); // State to control redirection
+  const [loginError, setLoginError] = useState(null);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -43,24 +44,40 @@ const Login = () => {
       return;
     }
 
-    // Validation for password
     if (!password) {
       setPasswordError(true);
       return;
     }
-
-    // Assuming login is successful, set state to redirect to Dashboard
-    setRedirectToDashboard(true);
-
-    // Reset the form
-    setEmail('');
-    setPassword('');
+      //local 'http://127.0.0.1:5000'
+    fetch('https://boyaslacatalana.azurewebsites.net/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Login failed');
+      }
+    })
+    .then(data => {
+      localStorage.setItem('token', data.token);
+      setRedirectToDashboard(true);
+    })
+    .catch(error => {
+      console.error('Login error:', error);
+      setLoginError('Login failed. Please check your credentials and try again.');
+    });
   };
 
-  // Redirect to Dashboard if redirectToDashboard state is true
   if (redirectToDashboard) {
     return <Navigate to="/dashboard" />;
   }
+
+
 
   return (
     <div className="center-container-login">

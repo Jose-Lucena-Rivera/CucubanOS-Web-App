@@ -28,6 +28,10 @@ html, body {
   color: rgba(0, 0, 0, 0.54);
 }
 
+.mdl-layout__drawer .avatar {
+  margin-bottom: 16px;
+}
+
 .demo-drawer {
   border: none;
 }
@@ -74,7 +78,8 @@ html, body {
 
 }
 .demo-avatar-dropdown {
- 
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
   position: relative;
   -webkit-flex-direction: row;
@@ -84,8 +89,6 @@ html, body {
       -ms-flex-align: center;
           align-items: center;
   width: 100%;
-  top: 50%;
-  left: 25px;
 }
 
 .demo-navigation {
@@ -190,6 +193,18 @@ _:-ms-input-placeholder, :root .demo-graph {
       -ms-flex-align: center;
           align-items: center;
 }
+
+.mdl-textfield__input {
+  text-indent: 10px; /* Move the text 5px away from the left edge */
+  
+}
+
+@media screen and (max-width: 1024px) {
+  .mdl-layout--fixed-drawer > .mdl-layout__content {
+    margin-left: 340px; /* Adjust this value as needed */
+  }
+}
+
 
 
 /************************* Login ************************/
@@ -345,12 +360,12 @@ body {
 
 .mdl-button-network.add-buoy {
   top: 70px;
-  right: 20px;
+  left: 20px;
 }
 
 .mdl-button-network.remove-buoy {
   top: 70px;
-  left: 20px;
+  right: 20px;
   width: 16%; 
 }
 .dialog-actions-submit-network {
@@ -395,6 +410,88 @@ body {
  top: 150px;
  left: 10%;
 
+}
+/* Make tbody scrollable */
+.custom-width-network tbody {
+  display: block;
+  height: 150px; /* Set the height you want */
+  overflow-y: auto;
+}
+.custom-width-network thead,
+.custom-width-network tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+.custom-width-network tbody tr {
+  cursor: pointer;
+}
+/* Ensure the table keeps its width */
+.custom-width-network thead {
+  width: calc(100% - 17px); /* Adjusted for scrollbar width */
+}
+
+.custom-width-network tbody {
+  display: block;
+  overflow-y: auto;
+  width: 100%;
+}
+.custom-width-network tbody::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-width-network tbody::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .custom-width-network {
+    width: 95%; /* Adjust as needed for mobile */
+  }
+
+  .mdl-button-network {
+    width: 120px; /* Adjust width for mobile */
+    height: 35px; /* Adjust height for mobile */
+  }
+
+  .mdl-button-network i {
+    font-size: 1em; /* Adjust font size for mobile */
+  }
+
+  .mdl-button-network.add-buoy,
+  .mdl-button-network.remove-buoy {
+    top: 40px; /* Adjust top position for mobile */
+    width: 120px;
+  }
+
+  .dialog-actions-submit-network{
+    bottom: -320px;
+
+  }
+  
+  
+  .add-buoy-dialog {
+    width: 70%; /* Adjust width for mobile */
+    height: auto; /* Adjust height for mobile */
+  }
+
+ .add-submit{
+  left: 200px;
+ }
+
+  .remove-buoy-dialog{
+    width: 75% !important;
+  }
+  
+  .mdl-card__supporting-text-network {
+    margin-bottom: 40px; /* Adjust margin for mobile */
+  }
+}
+.dialog-close-button-network {
+  position: absolute;
+  bottom: 10px;
+  left: 230px; /* Adjust left position */
+  z-index: 1000; /* Ensure it's above other elements */
 }
 
 /************************* Network ends ************************/
@@ -442,15 +539,15 @@ body {
   vertical-align: middle;
 }
 
-.mdl-data-table-name{
- margin-left: 1000px;
-}
-.mdl-data-table-email{
-  width: 1000px;
+.mdl-data-table__cell--non-numeric label {
+  margin-right: -35px; /* Adjust margin as needed */
+  display: inline-block;
+  vertical-align: middle;
 }
 
-.mdl-button-account.mdl-js-ripple-effect .mdl-button__ripple-container {
-  border-radius: 24px;
+.mdl-data-table__cell--non-numeric .mdl-checkbox__input {
+  margin-right: 5px; /* Adjust margin as needed */
+  vertical-align: middle;
 }
 
 
@@ -644,6 +741,57 @@ body {
   transform: translateY(-50%);
 }
 
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+
+  .mdl-button-account.change-password{
+    width: 120px; /* Adjust width for mobile */
+    height: 35px; /* Adjust height for mobile */
+    top: 120px;
+  }
+  .mdl-button-account.sign-out {
+    width: 120px; /* Adjust width for mobile */
+    height: 35px; /* Adjust height for mobile */
+    top: 200px;
+  }
+
+  /* Change Password Dialog */
+  .change-password-dialog {
+    width: 70%; /* Adjust width for mobile */
+    padding: 35px; /* Adjust padding for mobile */
+  }
+
+  .dialog-close-button-change {
+    top: 5px; /* Adjust top position for mobile */
+    right: -5px; /* Adjust right position for mobile */
+  }
+
+  .dialog-actions-submit-change {
+    top: 250px; /* Adjust top position for mobile */
+  }
+  
+  .dialog-actions-submit-confirm {
+    top: 200px; /* Adjust top position for mobile */
+  }
+   /* Confirm Password Dialog */
+   .confirm-password-dialog {
+    width: 80%; /* Adjust width for mobile */
+    padding: 35px; /* Adjust padding for mobile */
+  }
+
+  .dialog-close-button-confirm {
+    top: 5px; /* Adjust top position for mobile */
+    right: -5px; /* Adjust right position for mobile */
+  }
+
+  .dialog-actions-submit-confirm {
+    top: 240px; /* Adjust top position for mobile */
+  }
+}
+
+
+
+
 /************************* Account ends ************************/
 
 
@@ -689,60 +837,61 @@ body {
   position: relative; /* Ensure positioning context for absolute positioning */
 }
 
+/* Default positions for desktop */
 .deploy-button {
   position: absolute;
   top: 400px;
-  bottom: 10px; 
-  right: 20px; 
+  right: 20px;
 }
 
-.stop-design{
+.stop-design {
   position: absolute;
   top: 400px;
-  bottom: 20px; 
   right: 200px;
 }
 
-.clear-all{
+.clear-all {
   position: absolute;
-  top: 200px;
-  bottom: 40px; 
-  right: 400px; 
+  top: 150px;
+  right: 300px;
 }
-.select-all{
+
+.select-all {
   position: absolute;
-  top: 120px;
-  bottom: 20px; 
-  right: 400px; 
+  top: 80px;
+  right: 300px;
 }
 
 .slider-container {
-  /* Adjust positioning properties as needed */
   position: absolute;
-  top: 330px; /* Move the slider to the center vertically */
-  left: 82%; /* Move the slider to the center horizontally */
-  transform: translate(-50%, -50%); /* Center the slider */
+  top: 330px;
+  left: 85%;
+  transform: translate(-50%, -50%);
 }
 
-/* Styles for the Pattern menu button */
+
 #pattern-menu {
-  position: absolute; /* Position the button */
-  top: 265px; 
-  left: 500px; 
+  position: absolute;
+  top: 225px;
+  left: 610px;
 }
 
-/* Styles for the Pattern menu options */
+#frequency-menu {
+  position: absolute;
+  top: 295px;
+  left: 595px;
+}
+
 .mdl-menu.mdl-menu--bottom-left {
-  position: absolute; /* Position the menu options */
-  top: -1px; 
-  left: 5px; 
+  position: absolute;
+  top: -1px;
+  left: 5px;
 }
-
 
 .color-picker-container {
   position: fixed;
   bottom: 150px;
-  right: 100px;
+  right: 170px;
 }
 
 .color-squares {
@@ -758,16 +907,100 @@ body {
   cursor: pointer;
 }
 
-
-
 .choose-color {
   position: absolute;
-  top: 150px; /* Adjust top position as needed */
-  left: 750px; /* Adjust left position as needed */
+  top: 150px;
+  left: 850px;
 }
 
+:root {
+  --brightness: 100%;
+  --selected-color: #FFFFFF;
+}
 
+.color-picker-container .color-square {
+  filter: brightness(var(--brightness));
+}
 
+.map-container {
+  position: absolute;
+  top: 20px;
+  left: 80px;
+  height: 60%;
+  width: 40%;
+}
 
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .deploy-button, .stop-design, .clear-all, .select-all, .slider-container, #pattern-menu, #frequency-menu {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: 120px;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .deploy-button {
+    bottom: -600px;
+    right: -120px;
+  }
+
+  .stop-design {
+    bottom: -600px;
+    right: -30px;
+  }
+
+  .clear-all {
+    bottom: -3px;
+    right: -230px;
+  }
+
+  .select-all {
+    bottom: -58px;
+    right: 200px;
+  }
+
+  .slider-container {
+    top: 150px;
+    left: 300px;
+    transform: translate(-50%, -50%);
+    margin-top: 20px;
+  }
+
+  .slider-container > div {
+    width: 150px !important; /* Override inline width for mobile */
+    margin: 20px auto;
+  }
+
+  .mdl-slider {
+    width: 100%; /* Ensure slider takes full width of its container */
+  }
+
+  #pattern-menu {
+    position: relative;
+    top: 270px;
+    left: 130px;
+  }
+  #frequency-menu {
+    position: relative;
+    top: 340px;
+    left: -2px;
+  }
+
+  .color-picker-container {
+    position: fixed;
+    bottom: 220px;
+    right: 205px;
+    z-index: 9999;
+  }
+
+  .choose-color {
+    top: 150px;
+    left: 265px;
+    width: 100px;
+  }
+}
 
 /************************* Dashboard ends ************************/
