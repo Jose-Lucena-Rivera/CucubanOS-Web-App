@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-debugging = os.getenv('DEBUGGING')
+debugging = os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
 
 class UserHandler():
     

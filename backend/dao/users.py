@@ -4,11 +4,13 @@ from flask import current_app
 import os
 from dotenv import load_dotenv
 
+
+database_url = os.getenv('DATABASE_URL') if not None else os.environ.get('DATABASE_URL')
 class UsersDAO():
     def __init__(self):
        
         load_dotenv()
-        self.conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+        self.conn = psycopg2.connect(database_url)
 
     def close_connection(self):
         self.conn.close()

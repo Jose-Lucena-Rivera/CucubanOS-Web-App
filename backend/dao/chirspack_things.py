@@ -12,18 +12,18 @@ from chirpstack_api import api
 
 load_dotenv()
 
-debugging = os.getenv('DEBUGGING')
+debugging = os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
 # server = os.getenv('TEST_CHIRPSTACK_URL')
 # application_id = os.getenv('TEST_CHIRPSTACK_APP_ID')
 # api_token = os.getenv('TEST_CHIRPSTACK_API_KEY')
 # device_profile_id = os.getenv('TEST_DEVICE_PROFILE_ID')
 # multicast_group_id = os.getenv('TEST_MULTICAST_GROUP_ID')
 
-server = os.getenv('CHIRPSTACK_URL')
-application_id = os.getenv('CHIRPSTACK_APP_ID')
-api_token = os.getenv('CHIRPSTACK_API_KEY')
-device_profile_id = os.getenv('CHIRPSTACK_DEVICE_PROFILE_ID')
-multicast_group_id = os.getenv('CHIRPSTACK_MULTICAST_GROUP_ID')
+server = os.getenv('CHIRPSTACK_URL') if not None else os.environ.get('CHIRPSTACK_URL')
+application_id = os.getenv('CHIRPSTACK_APP_ID') if not None else os.environ.get('CHIRPSTACK_APP_ID')
+api_token = os.getenv('CHIRPSTACK_API_KEY') if not None else os.environ.get('CHIRPSTACK_API_KEY')
+device_profile_id = os.getenv('CHIRPSTACK_DEVICE_PROFILE_ID') if not None else os.environ.get('CHIRPSTACK_DEVICE_PROFILE_ID')
+multicast_group_id = os.getenv('CHIRPSTACK_MULTICAST_GROUP_ID') if not None else os.environ.get('CHIRPSTACK_MULTICAST_GROUP_ID')
 
 class ChirpstackThing():
    

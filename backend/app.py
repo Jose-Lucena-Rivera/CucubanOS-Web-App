@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 load_dotenv()
-debugging = os.getenv("DEBUGGING")
+debugging = os.getenv("DEBUGGING") if not None else os.environ.get("DEBUGGING")
 
 port = int(os.environ.get("PORT", 5000))
 
@@ -143,6 +143,6 @@ if __name__ == '__main__':
         #connect_mqtt()
         app.run(debug=True)
     else:
-        app.run(host='', port = port)
+        app.run(host='0.0.0.0', port = port)
         # app.run(host='https://boyaslacatalana.azurewebsites.net/chirpstack-updates', port = 80)
     # app.run(host='https://boyaslacatalana.azurewebsites.net/chirpstack-updates')
