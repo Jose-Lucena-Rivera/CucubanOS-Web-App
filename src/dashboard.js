@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from './Layout';
 import './styles.css';
-import axios from 'axios';
+
 
 
 
@@ -26,23 +26,6 @@ const Dashboard = ({coordinates}) => {
 
   
 
-  useEffect(() => {
-    const fetchCoordinates = async () => {
-      try {
-        if (!coordinates || !coordinates.lat || !coordinates.lng) {
-          console.error('Coordinates are not provided.');
-          return;
-        }
-  
-        const response = await axios.get('http://localhost:5000/deploy', { params: { lat: coordinates.lat, lng: coordinates.lng } });
-        console.log('Received coordinates:', response.data);
-      } catch (error) {
-        console.error('Error fetching coordinates:', error);
-      }
-    };
-  
-    fetchCoordinates();
-  }, [coordinates]);
   
 
     const loadMap = () => {
