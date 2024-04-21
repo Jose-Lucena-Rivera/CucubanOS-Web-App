@@ -143,6 +143,6 @@ if __name__ == '__main__':
         #connect_mqtt()
         app.run(debug=True)
     else:
-        ap.run(host='', port = port)
+        app.run(host='', port = port)
         # app.run(host='https://boyaslacatalana.azurewebsites.net/chirpstack-updates', port = 80)
     # app.run(host='https://boyaslacatalana.azurewebsites.net/chirpstack-updates')
