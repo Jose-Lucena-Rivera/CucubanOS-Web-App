@@ -12,21 +12,18 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [redirectToDashboard, setRedirectToDashboard] = useState(false); // State to control redirection
-  const [loginError, setLoginError] = useState(null);
-
+ 
+ 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
     setEmailError(false); // Reset email error state when the user starts typing again
   };
-
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
     setPasswordError(false); // Reset password error state when the user starts typing again
   };
-
   const handleSubmit = (event) => {
     event.preventDefault();
-
     // Validation for email format
     const emailRegex = /\S+@\S+\.\S+/;
     if (!email || !emailRegex.test(email)) {
@@ -34,49 +31,35 @@ const Login = () => {
       setEmailErrorMessage("The email address must have a '.'");
       return;
     }
-
+  
     // Additional validation for email domain
-    const allowedDomains = ['.com', '.edu', '.org', '.net'];
-    const isValidDomain = allowedDomains.some(domain => email.endsWith(domain));
-    if (!isValidDomain) {
-      setEmailError(true);
-      setEmailErrorMessage("The email must end with a valid domain");  
-      return;
+    if (!email.endsWith('.com')) {
+      const allowedDomains = ['.com', '.edu', '.org', '.net'];
+      const isValidDomain = allowedDomains.some(domain => email.endsWith(domain));
+      if (!isValidDomain) {
+        setEmailError(true);
+        setEmailErrorMessage("The email address must end with '.com', '.edu', '.org', or '.net'"); // Fixed typo here
+        return;
+      }
     }
-
+  
+    // Validation for password
     if (!password) {
       setPasswordError(true);
       return;
     }
-      //local 'http://127.0.0.1:5000'
-    fetch('https://boyaslacatalana.azurewebsites.net/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error('Login failed');
-      }
-    })
-    .then(data => {
-      localStorage.setItem('token', data.token);
-      setRedirectToDashboard(true);
-    })
-    .catch(error => {
-      console.error('Login error:', error);
-      setLoginError('Login failed. Please check your credentials and try again.');
-    });
+  
+    // Assuming login is successful, set state to redirect to Dashboard
+    setRedirectToDashboard(true);
+    // Reset the form
+    setEmail('');
+    setPassword('');
   };
-
+  
+  // Redirect to Dashboard if redirectToDashboard state is true
   if (redirectToDashboard) {
     return <Navigate to="/dashboard" />;
   }
-
 
 
   return (
@@ -127,5 +110,4 @@ const Login = () => {
     </div>
   );
 };
-
 export default Login;

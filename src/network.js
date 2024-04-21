@@ -40,7 +40,7 @@ const Network = () => {
   }, []); // Empty dependency array means this useEffect runs once when the component mounts
 
 
-
+  
 
   useEffect(() => {
     localStorage.setItem('selectedBuoys', JSON.stringify(selectedBuoys));
@@ -69,23 +69,23 @@ const Network = () => {
   };
 
   const handleSubmitAddCard = (event) => {
-  event.preventDefault();
+    event.preventDefault();
   console.log('Submitting form...');
   
-  const lat = parseFloat(coordinates.split(',')[0].trim());
-  const lng = parseFloat(coordinates.split(',')[1].trim());
+    const lat = parseFloat(coordinates.split(',')[0].trim());
+    const lng = parseFloat(coordinates.split(',')[1].trim());
 
   console.log('Parsed Lat:', lat);
   console.log('Parsed Lng:', lng);
-  const batteryPercentage = `${Math.floor(Math.random() * 100)}%`;
+    const batteryPercentage = `${Math.floor(Math.random() * 100)}%`;
   
-  setSelectedBuoys([...selectedBuoys, { id: buoyId, battery: batteryPercentage, coordinates, isSelected: false }]);
-  setNewBuoyCoordinates({ lat, lng });
+    setSelectedBuoys([...selectedBuoys, { id: buoyId, battery: batteryPercentage, coordinates, isSelected: false }]);
+    setNewBuoyCoordinates({ lat, lng });
   
-  console.log('New Buoy Coordinates:', newBuoyCoordinates);
-
-  handleCloseAddCard();
-};
+    console.log('New Buoy Coordinates:', newBuoyCoordinates);
+  
+    handleCloseAddCard();
+  };
   const handleNetworkIdChange = (event) => {
     setNetworkId(event.target.value);
   };
@@ -234,6 +234,7 @@ const Network = () => {
           </div>
         )}
       </div>
+      
     </Layout>
   );
 };

@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from './Layout';
 import './styles.css';
+import axios from 'axios';
 
-const Dashboard = () => {
+
+
+const Dashboard = ({coordinates}) => {
   const [sliderValue, setSliderValue] = useState(100);
   const [selectedColor, setSelectedColor] = useState('#FFFFFF');
   const [selectedColorNum, setSelectedColorNum] = useState(0);
@@ -19,56 +22,122 @@ const Dashboard = () => {
   const [selectedFrequencyNum, setSelectedFrequencyNum] = useState(0);
   const [brightnessLevel, setBrightnessLevel] = useState(0);
   const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
+  const [markers, setMarkers] = useState([]); // State to store all markers
 
-  const loadMap = () => {
-    if (!window.google || !window.google.maps) {
-      console.error('Google Maps API is not loaded.');
-      return;
-    }
   
-    try {
-      const position = { lat: 18.262550, lng: -66.656294 };
-      const mapOptions = {
-        zoom: 13.5,
-        center: position,
-      };
+
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      try {
+        if (!coordinates || !coordinates.lat || !coordinates.lng) {
+          console.error('Coordinates are not provided.');
+          return;
+        }
   
-      const newMap = new window.google.maps.Map(mapRef.current, {
-        ...mapOptions,
-        key: GOOGLE_MAPS_API_KEY,
-      });
+        const response = await axios.get('http://localhost:5000/deploy', { params: { lat: coordinates.lat, lng: coordinates.lng } });
+        console.log('Received coordinates:', response.data);
+      } catch (error) {
+        console.error('Error fetching coordinates:', error);
+      }
+    };
   
-      const marker = new window.google.maps.Marker({
-        position: position,
-        map: newMap,
-        icon: {
+    fetchCoordinates();
+  }, [coordinates]);
+  
+
+    const loadMap = () => {
+      if (!window.google || !window.google.maps) {
+        console.error('Google Maps API is not loaded.');
+        return;
+      }
+
+      try {
+        const position = { lat: 18.262550, lng: -66.656294 };
+        const mapOptions = {
+          zoom: 13.5,
+          center: position,
+        };
+    
+        const newMap = new window.google.maps.Map(mapRef.current, {
+          ...mapOptions,
+          key: GOOGLE_MAPS_API_KEY,
+        });
+    
+        const marker = new window.google.maps.Marker({
+          position: position,
+          map: newMap,
+          icon: {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            fillColor: localStorage.getItem('clickedMarkerColor') || '#FFFFFF',
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scale: 8,
+          }
+        });
+    
+        marker.addListener('click', () => {
+          if (clickedMarkerColor === selectedColor) {
+            clearMarker();
+          } else {
+            setClickedMarkerColor(selectedColor);
+            updateMarkerIcon(marker, selectedColor);
+          }
+        });
+    
+        markerRef.current = marker;
+        setMap(newMap);
+        setMarkers(prevMarkers => [...prevMarkers, marker]); // Store the new marker in the markers state
+      } catch (error) {
+        console.error('Error loading map:', error);
+      }
+
+      
+
+
+    };
+
+    
+
+    const updateMarkerIcon = (marker, color) => {
+      if (marker && window.google && window.google.maps) {
+        marker.setIcon({
           path: window.google.maps.SymbolPath.CIRCLE,
-          fillColor: localStorage.getItem('clickedMarkerColor') || '#FFFFFF',
+          fillColor: color,
           fillOpacity: 1,
           strokeWeight: 0,
           scale: 8,
-        }
+        });
+        localStorage.setItem('clickedMarkerColor', color);
+      }
+    };
+
+    const clearMarker = () => {
+      const marker = markerRef.current;
+      if (marker) {
+        setClickedMarkerColor(null);
+        marker.setIcon({
+          path: window.google.maps.SymbolPath.CIRCLE,
+          fillColor: '#FFFFFF',
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scale: 8,
+        });
+        localStorage.removeItem('clickedMarkerColor');
+      }
+    };
+
+    const updateAllMarkersColor = (color) => {
+      markers.forEach((marker) => {
+        updateMarkerIcon(marker, color);
       });
-  
-      marker.addListener('click', () => {
-        if (clickedMarkerColor === selectedColor) {
-          clearMarker();
-        } else {
-          setClickedMarkerColor(selectedColor);
-          updateMarkerIcon(marker, selectedColor);
-        }
-      });
-  
-      markerRef.current = marker;
-      setMap(newMap);
-    } catch (error) {
-      console.error('Error loading map:', error);
-    }
-  };
-  
-  window.initMap = () => {
-    loadMap();
-  };
+    };
+
+    const handleSelectAll = () => {
+      updateAllMarkersColor(selectedColor);
+    };
+
+
+    
 
   useEffect(() => {
     const handleTouchStart = (event) => {
@@ -147,34 +216,7 @@ const Dashboard = () => {
     };
   }, [selectedColor, displayColorPicker, clickedMarkerColor]);
 
-  const clearMarker = () => {
-  const marker = markerRef.current;
-  if (marker) {
-    setClickedMarkerColor(null);
-    marker.setIcon({
-      path: window.google.maps.SymbolPath.CIRCLE,
-      fillColor: '#FFFFFF',
-      fillOpacity: 1,
-      strokeWeight: 0,
-      scale: 10,
-    });
-    localStorage.removeItem('clickedMarkerColor');
-  }
-};
-
-const updateMarkerIcon = (marker, color) => {
-  if (marker && window.google && window.google.maps) { // Check if marker and google maps are loaded
-    marker.setIcon({
-      path: window.google.maps.SymbolPath.CIRCLE,
-      fillColor: color,
-      fillOpacity: 1,
-      strokeWeight: 0,
-      scale: 10,
-    });
-    localStorage.setItem('clickedMarkerColor', color);
-  }
-};
-
+  
   const handleClick = (event) => {
     event.stopPropagation();
     setDisplayColorPicker(!displayColorPicker);
@@ -284,7 +326,7 @@ const updateMarkerIcon = (marker, color) => {
       'Pulse': 4,
       'Strobe': 5,
       'Random': 6,
-      'No Pattern': 7,
+      'No Pattern': 0,
     };
 
     return patternMap[pattern] || 0; // Return pattern number or 0 if pattern not found
@@ -309,10 +351,13 @@ const updateMarkerIcon = (marker, color) => {
   };
 
   const handleDeploy = async () => {
+
+    const brightnessLevelToSend = sliderValue === 100 ? 5 : brightnessLevel;
+
     const data = {
       selectedColorNum: selectedColorNum,
       selectedPatternNum: selectedPatternNum,
-      brightnessLevel: brightnessLevel,
+      brightnessLevel: brightnessLevelToSend,
       selectedFrequencyNum: selectedFrequencyNum,
     };
   
@@ -348,18 +393,61 @@ const updateMarkerIcon = (marker, color) => {
     }
   };
 
+  const handleStopDesign = async () => {
+    const data = {
+      selectedColorNum: 0,
+      selectedPatternNum: 0,
+      brightnessLevel: 0,
+      selectedFrequencyNum: 0,
+    };
+  
+    try {
+      const response = await fetch('http://localhost:5000/deploy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const responseData = await response.json();
+      console.log(responseData);
+  
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  
+    // Reset all state values to their default or 0 values
+    setSliderValue(100);
+    setSelectedColor('#FFFFFF');
+    setSelectedColorNum(0);
+    setSelectedPattern('Pattern');
+    setClickedMarkerColor(null);
+    setSelectedPatternNum(0);
+    setSelectedFrequency('Frequency');
+    setSelectedFrequencyNum(0);
+    setBrightnessLevel(0);
+  };
+
+
+
+
 
   return (
     <Layout>
       <div className="dashboard-content">
         {/* Existing buttons */}
-        <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect stop-design" type="submit">
+        <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect stop-design" onClick={handleStopDesign} type="submit">
           <span>Stop Design</span>
         </button>
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect deploy-button" onClick={handleDeploy} type="submit">
           <span>Deploy</span>
         </button>
-        <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect select-all" type="submit">
+        <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect select-all" onClick={handleSelectAll} type="submit">
           <span>Select All</span>
         </button>
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect clear-all" onClick={clearMarker} type="submit">
