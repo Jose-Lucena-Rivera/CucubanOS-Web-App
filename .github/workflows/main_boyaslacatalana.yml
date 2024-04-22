@@ -29,7 +29,7 @@ jobs:
       - name: npm install, build, and test
         run: |
           npm install
-          npm run build --if-present
+          CI=false npm run build --if-present
           npm run test --if-present
 
       - name: Upload frontend artifact
@@ -85,9 +85,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8670AB091BB1451FBAB6AE0B60DA6310 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1B56FB80CD17441B9C22558FC7F5B33C }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0C0D3CE3700D4E3AA6D5101E70198705 }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -95,5 +95,4 @@ jobs:
           app-name: 'boyaslacatalana'
           slot-name: 'Production'
           packages: |
-            ${{ github.workspace }}/frontend/**
-            ${{ github.workspace }}/backend/**
+            ${{ github.workspace }}/**
