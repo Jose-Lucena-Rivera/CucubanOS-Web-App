@@ -79,7 +79,7 @@ jobs:
       - name: Start Gunicorn server
         run: |
           cd backend
-          gunicorn -b :8000 app:app &
+          gunicorn -b :8000 backend.app:app &
           sleep 3
 
       - name: Login to Azure
