@@ -12,6 +12,9 @@ const Network = () => {
   const [buoyId, setBuoyId] = useState('');
   const [coordinates, setCoordinates] = useState('');
   const [newBuoyCoordinates, setNewBuoyCoordinates] = useState(null);
+  const [appKey, setAppKey] = useState('');
+  const backendUrl = '';// Default to localhost if not set
+
 
 
   useEffect(() => {
@@ -43,9 +46,9 @@ const Network = () => {
   
 
   useEffect(() => {
-    localStorage.setItem('selectedBuoys', JSON.stringify(selectedBuoys));
-  }, [selectedBuoys]);
-
+    fetchBuoys(); // Fetch buoys when the component mounts
+  }, []);
+  
   const handleRemoveBuoyClick = () => {
     setIsRemoveDialogOpen(true);
   };
@@ -54,11 +57,42 @@ const Network = () => {
     setIsRemoveDialogOpen(false);
   };
 
-  const handleSubmitRemoveDialog = () => {
+  const handleSubmitRemoveDialog = async () => {
     const selectedBuoysToDelete = selectedBuoys.filter(buoy => buoy.isSelected);
-    setSelectedBuoys(selectedBuoys.filter(buoy => !buoy.isSelected)); // Keep only unselected buoys
-    handleCloseRemoveDialog();
+    const requestBuoyData = {
+      name: buoyId,
+      eui: networkId,
+    };
+  
+    try {
+      // Delete buoys from the database
+      for (const buoy of selectedBuoysToDelete) {
+        const encodedBuoyId = encodeURIComponent(buoy.id); // Encode the buoy ID
+        const response = await fetch(`http://localhost:5000/delete-buoy/${encodedBuoyId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBuoyData),
+        });
+  
+        const responseBuoyData = await response.json();
+  
+        if (!response.ok) {
+          console.error(`Error deleting buoy with ID ${buoy.id}`);
+          return;
+        }
+      }
+  
+      // Update the frontend by removing the selected buoys
+      setSelectedBuoys(selectedBuoys.filter(buoy => !buoy.isSelected));
+  
+      handleCloseRemoveDialog();
+    } catch (error) {
+      console.error('Error deleting buoys:', error);
+    }
   };
+  
 
   const handleAddBuoyClick = () => {
     setIsAddCardOpen(true);
@@ -68,24 +102,40 @@ const Network = () => {
     setIsAddCardOpen(false);
   };
 
-  const handleSubmitAddCard = (event) => {
+  const handleSubmitAddCard = async (event) => {
     event.preventDefault();
-  console.log('Submitting form...');
+    console.log("Submitting form");
   
-    const lat = parseFloat(coordinates.split(',')[0].trim());
-    const lng = parseFloat(coordinates.split(',')[1].trim());
-
-  console.log('Parsed Lat:', lat);
-  console.log('Parsed Lng:', lng);
-    const batteryPercentage = `${Math.floor(Math.random() * 100)}%`;
+    //const batteryPercentage = `${Math.floor(Math.random() * 100)}%`;
   
-    setSelectedBuoys([...selectedBuoys, { id: buoyId, battery: batteryPercentage, coordinates, isSelected: false }]);
-    setNewBuoyCoordinates({ lat, lng });
+    // Prepare the data to send to the backend
+    const buoyData = {
+      name: buoyId,
+      eui: networkId,
+    };
   
-    console.log('New Buoy Coordinates:', newBuoyCoordinates);
+    try {
+      let response = await fetch('http://localhost:5000/add-buoy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(buoyData),
+      });
   
-    handleCloseAddCard();
-  };
+      const data = await response.json();
+  
+      if (response.ok) {
+        setSelectedBuoys([...selectedBuoys, { id: buoyId, coordinates, isSelected: false }]);
+        handleCloseAddCard();
+      } else {
+        console.error('Error creating buoy:', data.error);
+      }
+    } catch (error) {
+      console.error('Error creating buoy:', error);
+    }
+  }
+  
   const handleNetworkIdChange = (event) => {
     setNetworkId(event.target.value);
   };
@@ -97,6 +147,11 @@ const Network = () => {
   const handleCoordinatesChange = (event) => {
     setCoordinates(event.target.value);
   };
+
+  const handleAppKeyChange = (event) => {
+    setAppKey(event.target.value);
+  };
+  
 
   const handleRowClick = (buoy) => {
     const isAlreadySelected = selectedBuoys.some(selectedBuoy => selectedBuoy.id === buoy.id);
@@ -111,6 +166,32 @@ const Network = () => {
     }
   };
 
+  const fetchBuoys = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/get-buoys');
+      const data = await response.json();
+  
+      console.log('Fetched buoys:', data); // Log fetched data
+  
+      if (response.ok) {
+        const mappedBuoys = data.map(buoyArray => ({
+          id: buoyArray[0], // Assuming the ID is at index 4
+          battery: buoyArray[2], // Assuming the battery percentage is at index 2
+          coordinates: buoyArray[1], // Assuming the coordinates are at index 1
+          isSelected: false,
+        }));
+  
+        console.log('Mapped buoys:', mappedBuoys); // Log mapped buoys
+  
+        setSelectedBuoys(mappedBuoys);
+      } else {
+        console.error('Error fetching buoys:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching buoys:', error);
+    }
+  };
+
   
 
   return (
@@ -121,6 +202,11 @@ const Network = () => {
           <i className="material-icons">add</i>
           <span>Add a Buoy</span>
         </button>
+        <div className="refresh-container">
+      <button className="mdl-js-button refresh-buoys" onClick={fetchBuoys}>
+        <i className="material-icons">refresh</i>
+      </button>
+      </div>
         <table className="mdl-data-table mdl-js-data-table mdl-shadow--2dp custom-width-network">
           <thead>
             <tr>
@@ -131,17 +217,17 @@ const Network = () => {
             </tr>
           </thead>
           <tbody>
-            {selectedBuoys.map(buoy => (
-              <tr key={buoy.id}>
-                <td>
-                  <input type="checkbox" onChange={() => handleRowClick(buoy)} />
-                </td>
-                <td className="mdl-data-table__cell--non-numeric">{buoy.id}</td>
-                <td>{buoy.battery}</td>
-                <td>{buoy.coordinates}</td>
-              </tr>
-            ))}
-          </tbody>
+          {selectedBuoys.map(buoy => buoy && (
+          <tr key={buoy.id}>
+            <td>
+              <input type="checkbox" onChange={() => handleRowClick(buoy)} />
+            </td>
+            <td className="mdl-data-table__cell--non-numeric">{buoy.id}</td>
+            <td>{buoy.battery}</td>
+            <td>{buoy.coordinates}</td>
+          </tr>
+        ))}
+        </tbody>
         </table>
         <button className="mdl-button-network mdl-button--colored mdl-js-button mdl-js-ripple-effect remove-buoy" onClick={handleRemoveBuoyClick} type="submit">
           <i className="material-icons">remove</i>
@@ -196,17 +282,6 @@ const Network = () => {
                     <input
                       className="mdl-textfield__input"
                       type="text"
-                      id="networkId"
-                      value={networkId}
-                      onChange={handleNetworkIdChange}
-                      required
-                    />
-                    <label className="mdl-textfield__label" htmlFor="networkId">Dev ID:</label>
-                  </div>
-                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input
-                      className="mdl-textfield__input"
-                      type="text"
                       id="buoyId"
                       value={buoyId}
                       onChange={handleBuoyIdChange}
@@ -218,12 +293,23 @@ const Network = () => {
                     <input
                       className="mdl-textfield__input"
                       type="text"
-                      id="coordinates"
-                      value={coordinates}
-                      onChange={handleCoordinatesChange}
+                      id="networkId"
+                      value={networkId}
+                      onChange={handleNetworkIdChange}
                       required
                     />
-                    <label className="mdl-textfield__label" htmlFor="coordinates">Coordinates:</label>
+                    <label className="mdl-textfield__label" htmlFor="networkId">Dev EUI:</label>
+                  </div>
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input
+                      className="mdl-textfield__input"
+                      type="text"
+                      id="appkey"
+                      value={appKey}
+                      onChange={handleAppKeyChange}
+                      required
+                    />
+                    <label className="mdl-textfield__label" htmlFor="appkey">App Key:</label>
                   </div>
                   <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300 add-submit" type="submit">
                     Submit

@@ -273,6 +273,10 @@ body {
 .mdl-button-login.mdl-js-ripple-effect .mdl-button__ripple-container {
   border-radius: 24px;
 }
+.mdl-button-network.mdl-js-ripple-effect{
+  border-radius: 24px;
+
+}
 
 
 /************************* Login ends ************************/
@@ -347,6 +351,7 @@ body {
   width: 15%; 
   height: 45px;
   position: absolute;
+  cursor: pointer;
 }
 .mdl-button-network i {
   font-size: 1.5em;
@@ -395,6 +400,7 @@ body {
 }
 .add-submit{
   left: 200px;
+  cursor: pointer;
  }
 
  
@@ -441,6 +447,29 @@ body {
 .custom-width-network tbody::-webkit-scrollbar-thumb {
   background-color: #888;
 }
+
+
+/* Refresh button */
+.refresh-container {
+  position: absolute;
+  right: 125px;
+  top: 180px;
+}
+
+/* Refresh button */
+.refresh-button {
+  top: 10px;
+  position: absolute;
+  right: -100px;
+  cursor: pointer;
+  
+}
+
+
+
+
+
+
 
 /* Responsive adjustments for mobile */
 @media (max-width: 768px) {
@@ -493,6 +522,22 @@ body {
     left: 230px; /* Adjust left position */
    
   }
+
+  /* Refresh button */
+.refresh-container {
+  position: absolute;
+  right:10px;
+  top: 180px;
+}
+
+  /* Refresh button */
+.refresh-button {
+  top: 10px;
+  position: absolute;
+  right: -100px;
+  cursor: pointer;
+  
+}
 }
 
 
@@ -535,11 +580,14 @@ body {
   width: 15%; 
   height: 45px;
   position: absolute;
+  cursor: pointer;
 }
 .mdl-button-account i {
   font-size: 1.5em;
   vertical-align: middle;
+  
 }
+
 
 .mdl-data-table__cell--non-numeric label {
   margin-right: -35px; /* Adjust margin as needed */
