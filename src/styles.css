@@ -333,7 +333,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 110vh;
 }
 
 .custom-width-network {
@@ -378,7 +378,7 @@ body {
 .dialog-close-button-network{
   position: absolute;
   bottom: 10px;
-  left: 550px;
+  left: 525px;
 }
 
 .dialog-content-network{
@@ -393,13 +393,12 @@ body {
   height:370px;
   
 }
-.dialog-actions-submit-network-add {
-  position: absolute;
-  bottom: -390px;
-  right: 0px;
-  margin: 0px;
+.add-submit{
+  left: 200px;
+ }
+
  
-}
+
 
 .mdl-card__supporting-text-network{ 
   margin-bottom: 60px; 
@@ -486,13 +485,16 @@ body {
   .mdl-card__supporting-text-network {
     margin-bottom: 40px; /* Adjust margin for mobile */
   }
+
+
+    .dialog-close-button-network {
+    position: absolute;
+    bottom: 10px;
+    left: 230px; /* Adjust left position */
+   
+  }
 }
-.dialog-close-button-network {
-  position: absolute;
-  bottom: 10px;
-  left: 230px; /* Adjust left position */
-  z-index: 1000; /* Ensure it's above other elements */
-}
+
 
 /************************* Network ends ************************/
 
