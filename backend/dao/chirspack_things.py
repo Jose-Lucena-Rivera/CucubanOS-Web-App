@@ -38,7 +38,7 @@ class ChirpstackThing():
             req = api.CreateDeviceRequest()
             req.device.dev_eui = device_eui
             req.device.name = device_name
-            req.device.description = description
+            # req.device.description = description
             req.device.application_id = application_id
             req.device.device_profile_id = device_profile_id
             req.device.skip_fcnt_check = True

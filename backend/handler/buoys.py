@@ -168,15 +168,15 @@ class BuoyHandler():
             return jsonify({"error": "EUI or buoy name is required to delete buoy."}), 400
 
         buoy = BuoyDAO()
-        eui = eui.lower()
-        name = name.lower() 
 
         if not eui:
+            name = name.lower() 
             eui = buoy.get_buoy_by_name(name)
             if not eui:
                 buoy.close_connection()
                 return jsonify({"error": "Buoy with this name does not exist."}), 400
         else:
+            eui = eui.lower()
             name = buoy.get_buoy_by_eui(eui)
             if not name:
                 buoy.close_connection()
