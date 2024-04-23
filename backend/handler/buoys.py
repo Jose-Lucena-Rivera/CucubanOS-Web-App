@@ -155,15 +155,16 @@ class BuoyHandler():
         buoy_info=buoy.get_all_from_buoy(eui)
         return jsonify(buoy_info), 200
     
-    def delete_buoy(self):
+    def delete_buoy(self, bname):
         ########################### Check if user is logged in with valid token
 
 
         #######################################################################
 
-        data = request.get_json()
-        eui = data.get('eui')
-        name = data.get('name')
+        # data = request.get_json()
+        # eui = data.get('eui')
+        eui = None
+        name = bname
         if (not eui) and (not name):
             return jsonify({"error": "EUI or buoy name is required to delete buoy."}), 400
 

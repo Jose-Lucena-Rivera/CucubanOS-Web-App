@@ -51,6 +51,10 @@ class MessageHandler():
         eui = data.get('eui')
         name = data.get('name')
         payload = data.get('payload')   ### still not sure como me van a mandar el payload
+        color = data.get("selectedColorNum")        #: 1, 
+        pattern= data.get("selectedPatternNum")     #: 2, 
+        brightness=data.get("brightnessLevel")      #: 4, 
+        frequency=data.get("selectedFrequencyNum")  #: 4
 
         if (not eui) and (not name):
             return jsonify({"error": "EUI or buoy name is required to update buoy."}), 400

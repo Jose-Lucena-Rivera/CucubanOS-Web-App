@@ -99,11 +99,11 @@ def get_buoys():
     return buoy.get_buoys()
 
 
-@app.route("/delete-buoy", methods=["DELETE"])
-@app.route("/delete-buoy/", methods=["DELETE"])
-def delete_buoy():
+@app.route("/delete-buoy/<string:bname>", methods=["DELETE"])
+@app.route("/delete-buoy/<string:bname>/", methods=["DELETE"])
+def delete_buoy(bname):
     buoy = BuoyHandler()
-    return buoy.delete_buoy()
+    return buoy.delete_buoy(bname)
 
 
 @app.route("/update-buoy/", methods=["PUT"])
