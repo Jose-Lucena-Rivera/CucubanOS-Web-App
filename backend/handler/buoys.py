@@ -230,8 +230,8 @@ class BuoyHandler():
             return jsonify({"error": "EUI or buoy name is required to update buoy."}), 400
 
         buoy = BuoyDAO()
-
-        if not eui:
+        ##test 
+        if not eui: 
             eui = buoy.get_buoy_by_name(name)
             eui = eui.lower() 
             if not eui:
