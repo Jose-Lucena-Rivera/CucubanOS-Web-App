@@ -50,7 +50,7 @@ class MessageHandler():
         data=request.get_json()
         eui = data.get('eui')
         name = data.get('name')
-        payload = data.get('payload')   ### still not sure como me van a mandar el payload
+        # payload = data.get('payload')   ### still not sure como me van a mandar el payload
         color = data.get("selectedColorNum")        #: 1, 
         pattern= data.get("selectedPatternNum")     #: 2, 
         brightness=data.get("brightnessLevel")      #: 4, 

@@ -175,7 +175,7 @@ class BuoyHandler():
             eui = buoy.get_buoy_by_name(name)
             if not eui:
                 buoy.close_connection()
-                return jsonify({"error": "Buoy with this name does not exist."}), 400
+                return jsonify({"error": f"Buoy with name {bname} does not exist."}), 400
         else:
             eui = eui.lower()
             name = buoy.get_buoy_by_eui(eui)
@@ -230,16 +230,16 @@ class BuoyHandler():
             return jsonify({"error": "EUI or buoy name is required to update buoy."}), 400
 
         buoy = BuoyDAO()
-        name = name.lower()
-        eui = eui.lower() 
 
         if not eui:
             eui = buoy.get_buoy_by_name(name)
+            eui = eui.lower() 
             if not eui:
                 buoy.close_connection()
                 return jsonify({"error": "Buoy with this name does not exist."}), 400
         else:
             name = buoy.get_buoy_by_eui(eui)
+            name = name.lower()
             if not name:
                 buoy.close_connection()
                 return jsonify({"error": "Buoy with this EUI does not exist."}), 400
