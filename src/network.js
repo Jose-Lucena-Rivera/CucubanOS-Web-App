@@ -130,7 +130,7 @@ const Network = () => {
     };
   
     try {
-      let response = await fetch('http://localhost:5000/add-buoy', {
+      let response = await fetch('https://boyaslacatalana.azurewebsites.net/add-buoy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -183,7 +183,7 @@ const Network = () => {
 
   const fetchBuoys = async () => {
     try {
-      const response = await fetch('http://localhost:5000/get-buoys');
+      const response = await fetch('https://boyaslacatalana.azurewebsites.net/get-buoys');
       const data = await response.json();
   
       console.log('Fetched buoys:', data); // Log fetched data
