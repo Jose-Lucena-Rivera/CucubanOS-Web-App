@@ -22,6 +22,15 @@ port = int(os.environ.get("PORT", 5000))
 #     return jsonify({"message": "Hello, Personas!"})
 
 
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    return response
+
+
+
 @app.route("/publish", methods=["POST"])
 def publish():
     # Retrieve message data from user input

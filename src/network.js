@@ -7,42 +7,57 @@ import './styles.css';
 const Network = () => {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [isAddCardOpen, setIsAddCardOpen] = useState(false);
-  const [selectedBuoys, setSelectedBuoys] = useState(JSON.parse(localStorage.getItem('selectedBuoys')) || []); 
   const [networkId, setNetworkId] = useState('');
   const [buoyId, setBuoyId] = useState('');
   const [coordinates, setCoordinates] = useState('');
   const [newBuoyCoordinates, setNewBuoyCoordinates] = useState(null);
   const [appKey, setAppKey] = useState('');
-  const backendUrl = '';// Default to localhost if not set
+  
 
 
 
   useEffect(() => {
     const handleTouchStart = (event) => {
-      event.target.classList.add('touched'); // Add a class to indicate touch
+      event.target.classList.add('touched');
     };
-
+  
     const handleTouchEnd = (event) => {
-      event.target.classList.remove('touched'); // Remove the touch class
-      event.target.click(); // Trigger the button click
+      event.target.classList.remove('touched');
+      event.target.click();
     };
-
-    // Add touch event listeners to all buttons
-    document.querySelectorAll('button').forEach((button) => {
+  
+    const buttons = document.querySelectorAll('.mdl-button-network'); // Target specific buttons
+    buttons.forEach((button) => {
       button.addEventListener('touchstart', handleTouchStart);
       button.addEventListener('touchend', handleTouchEnd);
     });
-
-    // Cleanup: Remove event listeners when the component unmounts
+  
     return () => {
-      document.querySelectorAll('button').forEach((button) => {
+      buttons.forEach((button) => {
         button.removeEventListener('touchstart', handleTouchStart);
         button.removeEventListener('touchend', handleTouchEnd);
       });
     };
-  }, []); // Empty dependency array means this useEffect runs once when the component mounts
+  }, []);
 
-
+    const [selectedBuoys, setSelectedBuoys] = useState(() => {
+    try {
+      // Attempt to parse data from localStorage
+      const storedBuoys = JSON.parse(localStorage.getItem('selectedBuoys'));
+  
+      // Check if the parsed data is an array
+      if (Array.isArray(storedBuoys)) {
+        return storedBuoys;
+      }
+      
+      // If not an array or null, return an empty array
+      return [];
+    } catch (error) {
+      console.error('Error parsing selectedBuoys from localStorage:', error);
+      return []; // Return an empty array in case of errors
+    }
+  });
+  
   
 
   useEffect(() => {
