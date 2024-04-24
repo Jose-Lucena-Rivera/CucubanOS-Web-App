@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS, cross_origin
 import os
 from mqtt import *
@@ -29,7 +29,15 @@ def add_cors_headers(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     return response
 
-
+# Serve React frontend from src directory
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists("src/" + path):
+        return send_from_directory('src', path)
+    else:
+        return send_from_directory('src', 'index.html')
+    
 
 @app.route("/publish", methods=["POST"])
 def publish():
