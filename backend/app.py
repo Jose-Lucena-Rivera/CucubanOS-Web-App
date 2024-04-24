@@ -29,14 +29,14 @@ def add_cors_headers(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     return response
 
-# Serve React frontend from src directory
+# Catch-all route to serve the frontend
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
-    if path != "" and os.path.exists("src/" + path):
-        return send_from_directory('src', path)
+    if path != "" and os.path.exists(f"build/{path}"):
+        return send_from_directory('build', path)
     else:
-        return send_from_directory('src', 'index.html')
+        return send_from_directory('build', 'index.html')
     
 
 @app.route("/publish", methods=["POST"])
