@@ -9,7 +9,8 @@ from handler.messages import *
 
 # Create the application instance
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.net"}})
+
 
 load_dotenv()
 debugging = os.getenv("DEBUGGING") if not None else os.environ.get("DEBUGGING")
