@@ -29,14 +29,7 @@ def add_cors_headers(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     return response
 
-# Catch-all route to serve the frontend
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(f"build/{path}"):
-        return send_from_directory('build', path)
-    else:
-        return send_from_directory('build', 'index.html')
+
     
 
 @app.route("/publish", methods=["POST"])
@@ -154,6 +147,16 @@ def send_one_buoy_data():
 def see_multimessage():
     message = MessageHandler()
     return message.see_multimessage()
+
+# Route to serve index.html
+@app.route('/')
+def serve_index():
+    return send_from_directory('build', 'index.html')
+
+# Route to serve static files
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('build', path)
 
 if __name__ == '__main__':
     if debugging:
