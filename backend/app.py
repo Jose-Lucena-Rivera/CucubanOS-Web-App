@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS, cross_origin
 import os
 from mqtt import *
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from handler.users import *
 from handler.buoys import *
 from handler.messages import *
@@ -12,8 +12,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.net"}})
 
 
-load_dotenv()
-debugging = os.getenv("DEBUGGING") if not None else os.environ.get("DEBUGGING")
+# load_dotenv()
 
 port = int(os.environ.get("PORT", 80))
 
@@ -166,5 +165,4 @@ if __name__ == '__main__':
         app.run(debug=True)
     else:
         app.run(host='0.0.0.0', port = port)
-        # app.run(host='https://boyaslacatalana.azurewebsites.net/chirpstack-updates', port = 80)
-    # app.run(host='https://boyaslacatalana.azurewebsites.net/chirpstack-updates')
+        
