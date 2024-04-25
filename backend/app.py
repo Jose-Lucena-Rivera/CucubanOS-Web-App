@@ -30,7 +30,8 @@ def add_cors_headers(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     return response
 
-
+for key, value in os.environ.items():
+    print(f"{key}: {value}")
     
 
 @app.route("/publish", methods=["POST"])
