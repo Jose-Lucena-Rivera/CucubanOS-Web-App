@@ -190,9 +190,9 @@ const Network = () => {
   
       if (response.ok) {
         const mappedBuoys = data.map(buoyArray => ({
-          id: buoyArray[0], // Assuming the ID is at index 4
-          battery: buoyArray[2], // Assuming the battery percentage is at index 2
-          coordinates: buoyArray[1], // Assuming the coordinates are at index 1
+          id: buoyArray[0], 
+          battery: buoyArray[2], 
+          coordinates: buoyArray[1], 
           isSelected: false,
         }));
   
