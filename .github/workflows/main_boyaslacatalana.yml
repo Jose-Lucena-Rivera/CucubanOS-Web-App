@@ -77,11 +77,29 @@ jobs:
           name: backend
           path: ./backend
 
+
+      - name: Install Supervisor on Azure Web App (using Kudu Bash)
+        run: |
+          az webapp config appsettings set \
+            --name WEBSITE_AUTH_DISABLED \
+            --resource-group "Web_App_final" \
+            --name "boyaslacatalana" \
+            --subscription "CucubanOS_Jose Lucena_Green" \
+            --settings WEBSITE_AUTH_DISABLED=true
+          
+          curl -u https://boyaslacatalana.scm.azurewebsites.net/api/command?command=apt-get%20update%20&&%20apt-get%20install%20supervisor
+
+          az webapp config appsettings set \
+            --name WEBSITE_AUTH_DISABLED \
+            --resource-group "Web_App_final" \
+            --name "boyaslacatalana" \
+            --subscription "CucubanOS_Jose Lucena_Green" \
+            --settings WEBSITE_AUTH_DISABLED=false
+
       - name: Start Gunicorn server
         run: |
           cd backend
-          gunicorn -b :8000 backend.app:app &
-          sleep 3
+          supervisord -c supervisor.conf
 
       - name: Login to Azure
         uses: azure/login@v1
