@@ -75,31 +75,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: backend
-          path: ./backend
-
-
-      - name: Install Supervisor on Azure Web App (using Kudu Bash)
-        run: |
-          az login --use-managed-identity
-          
-          az webapp config appsettings set \
-            --name WEBSITE_AUTH_DISABLED \
-            --resource-group "Web_App_final" \
-            --name "boyaslacatalana" \
-            --subscription "CucubanOS_Jose Lucena_Green" \
-            --settings WEBSITE_AUTH_DISABLED=true
-          
-          curl -u https://boyaslacatalana.scm.azurewebsites.net/api/command?command=apt-get%20update%20&&%20apt-get%20install%20supervisor
-
-          az webapp config appsettings set \
-            --name WEBSITE_AUTH_DISABLED \
-            --resource-group "Web_App_final" \
-            --name "boyaslacatalana" \
-            --subscription "CucubanOS_Jose Lucena_Green" \
-            --settings WEBSITE_AUTH_DISABLED=false
+          path: ./backend          
 
       - name: Start Gunicorn server
         run: |
+          curl -u https://boyaslacatalana.scm.azurewebsites.net/api/command?command=apt-get%20update%20&&%20apt-get%20install%20supervisor
           cd backend
           supervisord -c supervisor.conf
 
