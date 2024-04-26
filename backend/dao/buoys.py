@@ -3,7 +3,7 @@ from flask import current_app
 import os
 from dotenv import load_dotenv
 
-database_url = os.getenv('DATABASE_URL') if not None else os.environ.get('DATABASE_URL')
+database_url = os.environ.get('DATABASE_URL')
 class BuoyDAO():
     def __init__(self):
         load_dotenv()

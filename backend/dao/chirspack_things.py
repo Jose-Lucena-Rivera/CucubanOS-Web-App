@@ -10,20 +10,20 @@ import sys
 import grpc
 from chirpstack_api import api
 
-load_dotenv()
+# load_dotenv()
 
-debugging = os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
+debugging = True#os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
 # server = os.getenv('TEST_CHIRPSTACK_URL')
 # application_id = os.getenv('TEST_CHIRPSTACK_APP_ID')
 # api_token = os.getenv('TEST_CHIRPSTACK_API_KEY')
 # device_profile_id = os.getenv('TEST_DEVICE_PROFILE_ID')
 # multicast_group_id = os.getenv('TEST_MULTICAST_GROUP_ID')
 
-server = os.getenv('CHIRPSTACK_URL') if not None else os.environ.get('CHIRPSTACK_URL')
-application_id = os.getenv('CHIRPSTACK_APP_ID') if not None else os.environ.get('CHIRPSTACK_APP_ID')
-api_token = os.getenv('CHIRPSTACK_API_KEY') if not None else os.environ.get('CHIRPSTACK_API_KEY')
-device_profile_id = os.getenv('CHIRPSTACK_DEVICE_PROFILE_ID') if not None else os.environ.get('CHIRPSTACK_DEVICE_PROFILE_ID')
-multicast_group_id = os.getenv('CHIRPSTACK_MULTICAST_GROUP_ID') if not None else os.environ.get('CHIRPSTACK_MULTICAST_GROUP_ID')
+server = os.environ.get('CHIRPSTACK_URL')
+application_id = os.environ.get('CHIRPSTACK_APP_ID')
+api_token =  os.environ.get('CHIRPSTACK_API_KEY')
+device_profile_id = os.environ.get('CHIRPSTACK_DEVICE_PROFILE_ID')
+multicast_group_id = os.environ.get('CHIRPSTACK_MULTICAST_GROUP_ID')
 
 class ChirpstackThing():
    
@@ -63,7 +63,7 @@ class ChirpstackThing():
         except grpc.RpcError as e:
             print('exception: '+ str(e))
             return None
-        print (resp)
+        # print (resp)
         return resp
     
 
@@ -140,7 +140,7 @@ class ChirpstackThing():
             device_queue_item = api.DeviceQueueItem()
             device_queue_item.dev_eui = eui
             device_queue_item.confirmed = False
-            device_queue_item.f_port = 1
+            device_queue_item.f_port = 8
             device_queue_item.data = payload
 
             device_queue_req = api.EnqueueDeviceQueueItemRequest()

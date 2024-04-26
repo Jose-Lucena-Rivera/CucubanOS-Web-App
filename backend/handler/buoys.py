@@ -7,9 +7,9 @@ import random
 import string
 from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
-debugging = os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
+debugging = False#os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
 
 class BuoyHandler():
 
