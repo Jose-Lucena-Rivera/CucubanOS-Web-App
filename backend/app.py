@@ -14,7 +14,7 @@ CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.n
 
 # load_dotenv()
 
-port = int(os.environ.get("PORT", 80))
+port = int(os.environ.get("PORT", 5000))
 
 # Create a URL route in our application for "/"
 # @app.route('/')
@@ -158,6 +158,36 @@ def serve_index():
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory('build', path)
+
+@app.route('/deploy', methods=['POST'])
+def deploy():
+    print("Deploy function called")
+    data = request.json
+    
+    # Define the desired order of keys
+    ordered_keys = ['selectedColorNum', 'selectedPatternNum', 'brightnessLevel', 'selectedFrequencyNum']
+
+    # Create a new dictionary with keys in the desired order
+    ordered_data = {key: data.get(key) for key in ordered_keys}
+
+    # Process the received data
+    selectedColorNum = ordered_data.get('selectedColorNum')
+    selectedPatternNum = ordered_data.get('selectedPatternNum')
+    brightnessLevel = ordered_data.get('brightnessLevel')
+    selectedFrequencyNum = ordered_data.get('selectedFrequencyNum')
+
+    # Here you can process the received data further
+
+    # Return the processed data
+    response_data = {
+        'selectedColorNum': selectedColorNum,
+        'selectedPatternNum': selectedPatternNum,
+        'brightnessLevel': brightnessLevel,
+        'selectedFrequencyNum': selectedFrequencyNum,
+    }
+
+    return jsonify(response_data), 200
+
 
 if __name__ == '__main__':
     if debugging:

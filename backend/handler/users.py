@@ -4,6 +4,7 @@ from config.APIs import *
 import re
 from random import randint
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 

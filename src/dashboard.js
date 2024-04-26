@@ -20,64 +20,143 @@ const Dashboard = () => {
   const [brightnessLevel, setBrightnessLevel] = useState(0);
   const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
   const [markers, setMarkers] = useState([]); // State to store all markers
+  const [validMarkers, setValidMarkers] = useState([]);
+  
 
-  const loadMap = () => {
-    if (!window.google || !window.google.maps) {
-      console.error('Google Maps API is not loaded.');
-      return;
-    }
-
+  const fetchBuoys = async () => {
     try {
-      const position = { lat: 18.262550, lng: -66.656294 };
-      const mapOptions = {
-        zoom: 13.5,
-        center: position,
-      };
+      const response = await fetch('http://localhost:5000/get-buoys');
+      const data = await response.json();
   
-      const newMap = new window.google.maps.Map(mapRef.current, {
-        ...mapOptions,
-        key: GOOGLE_MAPS_API_KEY,
-      });
+      console.log('Fetched buoys:', data);
   
-      const marker = new window.google.maps.Marker({
-        position: position,
-        map: newMap,
-        icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
-          fillColor: localStorage.getItem('clickedMarkerColor') || '#FFFFFF',
-          fillOpacity: 1,
-          strokeWeight: 0,
-          scale: 8,
-        }
-      });
+      if (response.ok) {
+        const markersData = data.map((buoyArray) => {
+          const [name, coordinatesStr, _, __, id] = buoyArray;
   
-      marker.addListener('click', () => {
-        if (clickedMarkerColor === selectedColor) {
-          clearMarker();
-        } else {
-          setClickedMarkerColor(selectedColor);
-          updateMarkerIcon(marker, selectedColor);
-        }
-      });
+          if (coordinatesStr === '(0,0)') {
+            return null;
+          }
   
-      markerRef.current = marker;
-      setMap(newMap);
-      setMarkers(prevMarkers => [...prevMarkers, marker]); // Store the new marker in the markers state
+          const [latStr, lngStr] = coordinatesStr.split(',').map(coord => parseFloat(coord.trim()));
+  
+          if (isNaN(latStr) || isNaN(lngStr)) {
+            return null;
+          }
+  
+          return {
+            name,
+            lat: latStr,
+            lng: lngStr,
+            id,
+          };
+        }).filter(Boolean);
+  
+        console.log('Valid markers:', markersData);
+  
+        setMarkers(markersData);
+        loadMap(markersData); // Load the map with the new markers
+      } else {
+        console.error('Error fetching buoys:', data.error);
+      }
     } catch (error) {
-      console.error('Error loading map:', error);
+      console.error('Error fetching buoys:', error);
     }
   };
   
+  useEffect(() => {
+    fetchBuoys();
+  }, []);
+  
+  // Update the loadMap function to store marker instances
+const loadMap = async (markersData) => {
+  if (!window.google || !window.google.maps) {
+    console.error('Google Maps API is not loaded.');
+    return;
+  }
+
+  try {
+    const position = { lat: 18.2208, lng: -66.4000 };
+    const mapOptions = {
+      zoom: 8.5,
+      center: position,
+    };
+
+    const newMap = new window.google.maps.Map(mapRef.current, {
+      ...mapOptions,
+      key: GOOGLE_MAPS_API_KEY,
+    });
+
+    if (markers && markers.length > 0) {
+      markers.forEach((marker) => {
+        if (marker) {
+          marker.setMap(null);
+        }
+      });
+    }
+
+    const newMarkers = await Promise.all(markersData.map((buoy) => {
+      return new Promise((resolve) => {
+        const initialColor = localStorage.getItem('clickedMarkerColor') || '#FFFFFF';
+    
+        const marker = new window.google.maps.Marker({
+          position: { lat: buoy.lat, lng: buoy.lng },
+          map: newMap,
+          icon: {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            fillColor: initialColor,
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scale: 8,
+          },
+          title: buoy.name,
+        });
+    
+        marker.addListener('click', () => {
+          const selectedColor = localStorage.getItem('selectedColor') || '#FFFFFF';
+    
+          if (marker.getIcon().fillColor !== selectedColor) {
+            marker.setIcon({
+              path: window.google.maps.SymbolPath.CIRCLE,
+              fillColor: selectedColor,
+              fillOpacity: 1,
+              strokeWeight: 0,
+              scale: 8,
+            });
+            localStorage.setItem('clickedMarkerColor', selectedColor);
+          }
+          console.log('Marker clicked:', buoy);
+        });
+    
+        resolve(marker);
+      });
+    }));
+
+    setMap(newMap);
+    setMarkers(newMarkers); // Store the new marker instances in the markers state
+
+  } catch (error) {
+    console.error('Error loading map:', error);
+  }
+};
+  
   window.initMap = () => {
-    loadMap();
+    loadMap(markers);
   };
 
   const updateAllMarkersColor = (color) => {
     markers.forEach((marker) => {
-      updateMarkerIcon(marker, color);
+      if (marker && marker.setIcon && typeof marker.setIcon === 'function') {
+        marker.setIcon({
+          path: window.google.maps.SymbolPath.CIRCLE,
+          fillColor: color,
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scale: 8,
+        });
+      }
     });
   };
-
   const handleSelectAll = () => {
     updateAllMarkersColor(selectedColor);
   };
@@ -116,78 +195,86 @@ const Dashboard = () => {
   }, [selectedColor]);
 
   useEffect(() => {
+    document.documentElement.style.setProperty('--selected-color', selectedColor);
+}, [selectedColor]);
+
+useEffect(() => {
     window.componentHandler.upgradeAllRegistered();
 
     const handleClickOutside = (event) => {
-      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target) && displayColorPicker) {
-        setDisplayColorPicker(false);
-      }
+        if (colorPickerRef.current && !colorPickerRef.current.contains(event.target) && displayColorPicker) {
+            setDisplayColorPicker(false);
+        }
     };
 
-    
     if (!GOOGLE_MAPS_API_KEY) {
-      console.error("Google Maps API key is not provided.");
-      return;
+        console.error("Google Maps API key is not provided.");
+        return;
     }
 
     window.addEventListener('click', handleClickOutside);
 
     // Check if Google Maps API script is already loaded
     if (!window.google || !window.google.maps) {
-      const existingScript = document.querySelector('script[src^="https://maps.googleapis.com/maps/api/js"]');
-      
-      if (!existingScript) {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        script.onerror = () => {
-          console.error('Error loading Google Maps API.');
-        };
-        document.head.appendChild(script);
-      } else {
-        // Wait for the Google Maps API to load
-        existingScript.addEventListener('load', () => {
-          loadMap();
-        });
-      }
+        const existingScript = document.querySelector('script[src^="https://maps.googleapis.com/maps/api/js"]');
+        
+        if (!existingScript) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            script.onerror = () => {
+                console.error('Error loading Google Maps API.');
+            };
+            document.head.appendChild(script);
+        } else {
+            // Wait for the Google Maps API to load
+            existingScript.addEventListener('load', () => {
+                // Removed the loadMap call here
+            });
+        }
     } else {
-      loadMap();
+        // Removed the loadMap call here
     }
 
     return () => {
-      window.removeEventListener('click', handleClickOutside);
+        window.removeEventListener('click', handleClickOutside);
     };
-  }, [selectedColor, displayColorPicker, clickedMarkerColor]);
+    }, [selectedColor, displayColorPicker, clickedMarkerColor]);
 
-  const clearMarker = () => {
-  const marker = markerRef.current;
-  if (marker) {
-    setClickedMarkerColor(null);
-    marker.setIcon({
-      path: window.google.maps.SymbolPath.CIRCLE,
-      fillColor: '#FFFFFF',
-      fillOpacity: 1,
-      strokeWeight: 0,
-      scale: 10,
+  // Function to clear the selected marker
+  const clearAllMarkersColor = () => {
+    markers.forEach((marker) => {
+      if (marker && marker.setIcon && typeof marker.setIcon === 'function') {
+        marker.setIcon({
+          path: window.google.maps.SymbolPath.CIRCLE,
+          fillColor: '#FFFFFF',
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scale: 8,
+        });
+      }
     });
-    localStorage.removeItem('clickedMarkerColor');
-  }
-};
+  };
+  
+  const updateMarkerIcon = (marker, color) => {
+    if (marker && marker.setIcon && typeof marker.setIcon === 'function') {
+      marker.setIcon({
+        path: window.google.maps.SymbolPath.CIRCLE,
+        fillColor: color,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scale: 8,
+      });
+      localStorage.setItem('clickedMarkerColor', color);
+    }
+  };
 
-const updateMarkerIcon = (marker, color) => {
-  if (marker && window.google && window.google.maps) { // Check if marker and google maps are loaded
-    marker.setIcon({
-      path: window.google.maps.SymbolPath.CIRCLE,
-      fillColor: color,
-      fillOpacity: 1,
-      strokeWeight: 0,
-      scale: 10,
-    });
-    localStorage.setItem('clickedMarkerColor', color);
-  }
-};
 
+  
+    const handleClearAll = () => {
+      clearAllMarkersColor();
+    };
   const handleClick = (event) => {
     event.stopPropagation();
     setDisplayColorPicker(!displayColorPicker);
@@ -195,6 +282,7 @@ const updateMarkerIcon = (marker, color) => {
 
   const handleColorClick = (color) => {
     setSelectedColor(color);
+    localStorage.setItem('selectedColor', color); // Set selected color in localStorage
     const colorNum = getColorNum(color); // Get color number based on color
     setSelectedColorNum(colorNum); // Update color number state
     console.log(`Selected Color Number: ${colorNum}`); // Log color number
@@ -418,7 +506,7 @@ const updateMarkerIcon = (marker, color) => {
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect select-all" onClick={handleSelectAll} type="submit">
           <span>Select All</span>
         </button>
-        <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect clear-all" onClick={clearMarker} type="submit">
+        <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect clear-all" onClick={handleClearAll} type="submit">
           <span>Clear All</span>
         </button>
         <button id="pattern-menu" className="mdl-button mdl-js-button mdl-button--raised" style={{ marginLeft: '10px' }}>
