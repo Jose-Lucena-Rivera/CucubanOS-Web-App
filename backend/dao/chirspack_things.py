@@ -41,7 +41,7 @@ class ChirpstackThing():
             # req.device.description = description
             req.device.application_id = application_id
             req.device.device_profile_id = device_profile_id
-            req.device.skip_fcnt_check = True
+            req.device.skip_fcnt_check = False
             req.device.is_disabled = False
             resp = client.Create(req, metadata=auth_token)
         except grpc.RpcError as e:
