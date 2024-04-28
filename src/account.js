@@ -48,10 +48,20 @@ const Account = () => {
 
   const handleCloseChangePassword = () => {
     setIsChangePasswordOpen(false);
+      setIsChangePasswordOpen(false);
+    // Reset input fields
+    setCurrentPassword('');
+    // Reset error message
+    setPasswordsMatch(true);
   };
 
   const handleCloseConfirmPassword = () => {
     setIsConfirmPasswordOpen(false);
+        // Reset input fields
+      setNewPassword('');
+      setConfirmPassword('');
+      // Reset error message
+      setPasswordsMatch(true);
   };
 
   const handleSubmitChangePassword = (event) => {

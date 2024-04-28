@@ -67,7 +67,7 @@ const ChangePassword = () => {
                 onChange={handlePasswordChange}
                 required
               />
-              <label className="mdl-textfield__label" htmlFor="password">New Password...</label>
+              <label className="mdl-textfield__label" htmlFor="password">New Password:</label>
               <span className="material-icons password-toggle" onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? 'visibility_off' : 'visibility'}
               </span>
@@ -82,7 +82,7 @@ const ChangePassword = () => {
                 onChange={handleConfirmPasswordChange}
                 required
               />
-              <label className="mdl-textfield__label" htmlFor="confirmPassword">Confirm Password...</label>
+              <label className="mdl-textfield__label" htmlFor="confirmPassword">Confirm Password:</label>
               <span className="material-icons password-toggle" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                 {showConfirmPassword ? 'visibility_off' : 'visibility'}
               </span>

@@ -79,7 +79,7 @@ const Login = () => {
                 onChange={handleEmailChange}
                 required
               />
-              <label className="mdl-textfield__label" htmlFor="email">Email...</label>
+              <label className="mdl-textfield__label" htmlFor="email">Email:</label>
               {emailError && <span className="error-message">{emailErrorMessage}</span>}
             </div>
            
@@ -92,7 +92,7 @@ const Login = () => {
                 onChange={handlePasswordChange}
                 required
               />
-              <label className="mdl-textfield__label" htmlFor="password">Password...</label>
+              <label className="mdl-textfield__label" htmlFor="password">Password:</label>
               {passwordError && <span className="error-message">Please enter your password</span>}
             </div>
             <div style={{ marginBottom: '16px' }}> {/* Add margin-bottom style */}

@@ -199,6 +199,12 @@ _:-ms-input-placeholder, :root .demo-graph {
   
 }
 
+.error-message {
+  color: red; /* Set the color of the error message */
+  font-size: 13px; /* Set the font size of the error message */
+  margin-top: 5px; /* Set the top margin to provide spacing between the input field and the error message */
+}
+
 @media screen and (max-width: 1024px) {
   .mdl-layout--fixed-drawer > .mdl-layout__content {
     margin-left: 340px; /* Adjust this value as needed */
@@ -387,7 +393,7 @@ body {
 }
 
 .dialog-content-network{
-  margin-bottom: 60px;
+  margin-bottom: 10px;
   padding: 20px;
   margin-top: 5px;
 }
@@ -395,11 +401,13 @@ body {
 .add-buoy-dialog{
 
   width: 600px;
-  height:370px;
+  max-height:400px;
+  overflow-y: auto;
   
 }
 .add-submit{
   left: 200px;
+  top: 0px;
   cursor: pointer;
  }
 
@@ -407,7 +415,7 @@ body {
 
 
 .mdl-card__supporting-text-network{ 
-  margin-bottom: 60px; 
+  margin-bottom: 10px; 
 }
 
 .table-title-network {
@@ -466,6 +474,9 @@ body {
 }
 
 
+.custom-input-width {
+  width: 320px !important; /* Adjust the width as needed */
+}
 
 
 
@@ -505,6 +516,7 @@ body {
 
  .add-submit{
   left: 200px;
+  top: 10px;
  }
 
   .remove-buoy-dialog{
@@ -538,6 +550,16 @@ body {
   cursor: pointer;
   
 }
+
+
+/* Adjust spacing for specific columns if needed */
+.custom-width-network tbody tr td:nth-child(3){
+
+  right: 30px;
+
+}
+
+
 }
 
 

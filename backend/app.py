@@ -159,6 +159,25 @@ def serve_index():
 def serve_static(path):
     return send_from_directory('build', path)
 
+@app.route("/update-marker-ids", methods=["POST"])
+def update_marker_ids():
+    try:
+        # Extract marker IDs from the request data
+        marker_ids = request.json.get("markerIds")
+        # Filter out duplicates
+        unique_marker_ids = list(set(marker_ids))
+        print("Unique marker IDs:", unique_marker_ids)
+
+        # Process the unique marker IDs (e.g., store them in a database)
+        # Your code to handle the marker IDs goes here
+
+        # Optionally, return a success response
+        return jsonify({"message": "Marker IDs received successfully"}), 200
+    except Exception as e:
+        # Return an error response if something goes wrong
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/deploy', methods=['POST'])
 def deploy():
     print("Deploy function called")
@@ -187,6 +206,7 @@ def deploy():
     }
 
     return jsonify(response_data), 200
+    
 
 
 if __name__ == '__main__':

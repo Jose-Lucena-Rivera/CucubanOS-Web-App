@@ -12,6 +12,8 @@ const Network = () => {
   const [coordinates, setCoordinates] = useState('');
   const [newBuoyCoordinates, setNewBuoyCoordinates] = useState(null);
   const [appKey, setAppKey] = useState('');
+  const [devEuiError, setDevEuiError] = useState('');
+  const [appKeyError, setAppKeyError] = useState('');
   
 
 
@@ -115,20 +117,45 @@ const Network = () => {
 
   const handleCloseAddCard = () => {
     setIsAddCardOpen(false);
+        // Reset input fields
+      setNetworkId('');
+      setBuoyId('');
+      setAppKey('');
+      // Reset error messages
+      setDevEuiError('');
+      setAppKeyError('');
   };
 
   const handleSubmitAddCard = async (event) => {
     event.preventDefault();
     console.log("Submitting form");
   
-    //const batteryPercentage = `${Math.floor(Math.random() * 100)}%`;
+    // Validate Dev EUI (16 hexadecimal characters)
+    const devEUIPattern = /^[0-9A-Fa-f]{16}$/;
+    if (!devEUIPattern.test(networkId)) {
+      setDevEuiError('Dev EUI must be 16 hexadecimal characters');
+      return;
+    } else {
+      setDevEuiError('');
+    }
+
+    // Validate App Key (32 hexadecimal characters)
+    const appKeyPattern = /^[0-9A-Fa-f]{32}$/;
+    if (!appKeyPattern.test(appKey)) {
+      setAppKeyError('App Key must be 32 hexadecimal characters');
+      return;
+    } else {
+      setAppKeyError('');
+    }
   
     // Prepare the data to send to the backend
     const buoyData = {
       name: buoyId,
       eui: networkId,
+      appKey: appKey
     };
-  
+    console.log('Buoy data:', buoyData);
+
     try {
       let response = await fetch('http://localhost:5000/add-buoy', {
         method: 'POST',
@@ -150,9 +177,12 @@ const Network = () => {
       console.error('Error creating buoy:', error);
     }
   }
+
+  
   
   const handleNetworkIdChange = (event) => {
     setNetworkId(event.target.value);
+    setDevEuiError(''); // Reset error message for Dev EUI
   };
 
   const handleBuoyIdChange = (event) => {
@@ -165,6 +195,7 @@ const Network = () => {
 
   const handleAppKeyChange = (event) => {
     setAppKey(event.target.value);
+    setAppKeyError(''); // Reset error message for App Key
   };
   
 
@@ -191,7 +222,7 @@ const Network = () => {
       if (response.ok) {
         const mappedBuoys = data.map(buoyArray => ({
           id: buoyArray[0], 
-          battery: buoyArray[2], 
+          eui: buoyArray[4], 
           coordinates: buoyArray[1], 
           isSelected: false,
         }));
@@ -227,7 +258,7 @@ const Network = () => {
             <tr>
               <th></th>
               <th className="mdl-data-table__cell--non-numeric">ID</th>
-              <th>Battery %</th>
+              <th>EUI</th>
               <th>Coordinates</th>
             </tr>
           </thead>
@@ -238,7 +269,7 @@ const Network = () => {
               <input type="checkbox" onChange={() => handleRowClick(buoy)} />
             </td>
             <td className="mdl-data-table__cell--non-numeric">{buoy.id}</td>
-            <td>{buoy.battery}</td>
+            <td>{buoy.eui}</td>
             <td>{buoy.coordinates}</td>
           </tr>
         ))}
@@ -260,7 +291,7 @@ const Network = () => {
                 <ul>
                   {selectedBuoys.map(buoy => buoy.isSelected && (
                     <li key={buoy.id}>
-                      ID: {buoy.id}, Battery %: {buoy.battery}, Coordinates: {buoy.coordinates}
+                      ID: {buoy.id}, EUI: {buoy.eui}, Coordinates: {buoy.coordinates}
                     </li>
                   ))}
                   {selectedBuoys.every(buoy => !buoy.isSelected) && (
@@ -290,7 +321,7 @@ const Network = () => {
               <div className="add-buoy-card">
                 <h3 className="dialog-content-network"> Add a Buoy</h3>
                 <div className="mdl-card__supporting-text-account">
-                  To add a buoy you must place the network id, an id for the buoy, and its coordinates.
+                  To add a buoy you must place a name for the buoy, the Dev EUI and the App Key.
                 </div>
                 <form onSubmit={handleSubmitAddCard}>
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -311,20 +342,24 @@ const Network = () => {
                       id="networkId"
                       value={networkId}
                       onChange={handleNetworkIdChange}
+                      maxLength={16}
                       required
                     />
                     <label className="mdl-textfield__label" htmlFor="networkId">Dev EUI:</label>
+                    {devEuiError && <span className="error-message">{devEuiError}</span>}
                   </div>
-                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label custom-input-width">
                     <input
                       className="mdl-textfield__input"
                       type="text"
                       id="appkey"
                       value={appKey}
                       onChange={handleAppKeyChange}
+                      maxLength={32}
                       required
                     />
                     <label className="mdl-textfield__label" htmlFor="appkey">App Key:</label>
+                    {appKeyError && <span className="error-message">{appKeyError}</span>}
                   </div>
                   <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300 add-submit" type="submit">
                     Submit

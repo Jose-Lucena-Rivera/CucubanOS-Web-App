@@ -36,7 +36,7 @@ const ForgotPassword = () => {
                 onChange={handleEmailChange}
                 required
               />
-              <label className="mdl-textfield__label" htmlFor="email">Email...</label>
+              <label className="mdl-textfield__label" htmlFor="email">Email:</label>
             </div>
             <div className="forgotpassword-button">
               <button className="mdl-button-login mdl-button mdl-js-button mdl-js-ripple-effect" type="submit">

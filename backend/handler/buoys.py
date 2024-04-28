@@ -35,6 +35,7 @@ class BuoyHandler():
 
         # get data from request
         data = request.get_json()
+        print("Received buoy data:", data)
         name = data.get('name')
         description = data.get('description')
 
@@ -44,7 +45,7 @@ class BuoyHandler():
             app_key = self.generate_random_app_key()
         else: 
             eui = data.get('eui')
-            app_key = data.get('app_key')
+            app_key = data.get('appKey')
 
         
         # check if required fields are present and correctly formatted

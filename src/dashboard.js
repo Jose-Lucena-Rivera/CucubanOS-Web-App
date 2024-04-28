@@ -5,7 +5,7 @@ import './styles.css';
 const Dashboard = () => {
   const [sliderValue, setSliderValue] = useState(100);
   const [selectedColor, setSelectedColor] = useState('#FFFFFF');
-  const [selectedColorNum, setSelectedColorNum] = useState(0);
+  const [selectedColorNum, setSelectedColorNum] = useState([]);
   const [selectedPattern, setSelectedPattern] = useState('Pattern');
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const mapRef = useRef(null);
@@ -21,7 +21,32 @@ const Dashboard = () => {
   const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
   const [markers, setMarkers] = useState([]); // State to store all markers
   const [validMarkers, setValidMarkers] = useState([]);
+  const [markerIds, setMarkerIds] = useState([]);
+  let markersData = [];
   
+
+
+  // Use useEffect to initialize selectedColorNum once markers state is updated
+  useEffect(() => {
+    // Check if markers array has been initialized
+    if (markers.length > 0) {
+      // Initialize selectedColorNum with all markers set to 0
+      setSelectedColorNum(Array(markers.length).fill(0));
+    }
+  }, [markers]);
+
+    // Add a useEffect hook to clear the stored color value from localStorage when the component unmounts
+    useEffect(() => {
+      // Define a function to clear the stored color value
+      const clearStoredColor = () => {
+        localStorage.removeItem('selectedColor');
+      };
+  
+      // Call the function to clear the stored color value when the component unmounts
+      return () => {
+        clearStoredColor();
+      };
+    }, []);
 
   const fetchBuoys = async () => {
     try {
@@ -32,7 +57,7 @@ const Dashboard = () => {
   
       if (response.ok) {
         const markersData = data.map((buoyArray) => {
-          const [name, coordinatesStr, _, __, id] = buoyArray;
+          const [name, coordinatesStr, color, __, id] = buoyArray;
   
           if (coordinatesStr === '(0,0)') {
             return null;
@@ -48,6 +73,7 @@ const Dashboard = () => {
             name,
             lat: latStr,
             lng: lngStr,
+            color,
             id,
           };
         }).filter(Boolean);
@@ -67,7 +93,10 @@ const Dashboard = () => {
   useEffect(() => {
     fetchBuoys();
   }, []);
-  
+
+   
+    
+      
   // Update the loadMap function to store marker instances
 const loadMap = async (markersData) => {
   if (!window.google || !window.google.maps) {
@@ -78,14 +107,17 @@ const loadMap = async (markersData) => {
   try {
     const position = { lat: 18.2208, lng: -66.4000 };
     const mapOptions = {
-      zoom: 8.5,
       center: position,
+      zoom:8.5,
     };
 
     const newMap = new window.google.maps.Map(mapRef.current, {
       ...mapOptions,
       key: GOOGLE_MAPS_API_KEY,
     });
+
+       // Create a LatLngBounds object to store the bounds of all markers
+       const bounds = new window.google.maps.LatLngBounds();
 
     if (markers && markers.length > 0) {
       markers.forEach((marker) => {
@@ -94,14 +126,63 @@ const loadMap = async (markersData) => {
         }
       });
     }
+      // Track the current marker ID
+      let currentMarkerId = 1;
+      let selectedColor = '#FFFFFF'; // Initialize selectedColor with a default color
+
+            // Inside the handleMarkerClick function
+      function handleMarkerClick(marker) {
+        let colorNumber = getColorNum(marker.color || '#FFFFFF'); // Default to 0 if marker has no color
+        // Inside the handleMarkerClick function, after updating the marker's color
+        localStorage.setItem(`markerColor${marker.id}`, marker.color || '#FFFFFF');
+        console.log('Marker clicked:', {
+          name: marker.name,
+          position: marker.position.toString(),
+          colorNumber: colorNumber,
+          id: marker.id
+        });
+
+        // Update selectedColorNum state with the clicked marker's color number
+        setSelectedColorNum(prevColorNums => {
+          const newColorNums = [...prevColorNums];
+          newColorNums[marker.id - 1] = colorNumber; // Assuming marker IDs start from 1
+          return newColorNums;
+        });
+
+         // Store the clicked marker's color and ID in localStorage
+        localStorage.setItem(`markerColor${marker.id}`, marker.color || '#FFFFFF');
+
+              // Update the marker's color in the markers array
+        const updatedMarkers = markers.map(m => {
+          if (m.id === marker.id) {
+            return { ...m, color: marker.color };
+          }
+          return m;
+        });
+        setMarkers(updatedMarkers);
+        // If you want to log the color hex code as well
+        console.log('Selected color:', colorNumber);
+
+       
+        setMarkers(newMarkers);
+        localStorage.setItem(`markerColor${marker.id}`, selectedColor);
+      }
+
+   
+      // When the user selects a color
+      function onSelectColor(color) {
+        selectedColor = color; // Update selectedColor with the chosen color
+      }
 
     const newMarkers = await Promise.all(markersData.map((buoy) => {
       return new Promise((resolve) => {
-        const initialColor = localStorage.getItem('clickedMarkerColor') || '#FFFFFF';
+        const initialColor = buoy.color || '#FFFFFF';
+        
     
         const marker = new window.google.maps.Marker({
           position: { lat: buoy.lat, lng: buoy.lng },
           map: newMap,
+          color:selectedColor,
           icon: {
             path: window.google.maps.SymbolPath.CIRCLE,
             fillColor: initialColor,
@@ -110,39 +191,169 @@ const loadMap = async (markersData) => {
             scale: 8,
           },
           title: buoy.name,
+          id: currentMarkerId++,
         });
-    
-        marker.addListener('click', () => {
-          const selectedColor = localStorage.getItem('selectedColor') || '#FFFFFF';
-    
-          if (marker.getIcon().fillColor !== selectedColor) {
-            marker.setIcon({
-              path: window.google.maps.SymbolPath.CIRCLE,
-              fillColor: selectedColor,
-              fillOpacity: 1,
-              strokeWeight: 0,
-              scale: 8,
-            });
-            localStorage.setItem('clickedMarkerColor', selectedColor);
+
+            // Inside the loadMap function, after creating markers
+        markersData.forEach((buoy) => {
+          // Retrieve the marker color from local storage
+          const storedColor = localStorage.getItem(`markerColor${buoy.id}`);
+          if (storedColor) {
+            buoy.color = storedColor;
+            updateMarkerIcon(marker, storedColor);
           }
-          console.log('Marker clicked:', buoy);
         });
-    
-        resolve(marker);
+
+
+
+
+        // Extend the bounds to include the marker's position
+        bounds.extend(marker.getPosition());
+          // Retrieve the marker color from local storage
+          const storedColor = localStorage.getItem(`markerColor${marker.id}`);
+          if (storedColor) {
+            marker.color = storedColor;
+            updateMarkerIcon(marker, storedColor);
+          }
+        
+          marker.addListener('click', () => {
+            const selectedColor = localStorage.getItem('selectedColor') || '#FFFFFF';
+            const defaultColor = '#FFFFFF';
+            marker.color = selectedColor; // Update marker's color property
+             handleMarkerClick(marker); // Call function to handle marker click event
+
+            if (marker.getIcon().fillColor !== selectedColor && selectedColor !== defaultColor) {
+              marker.setIcon({
+                path: window.google.maps.SymbolPath.CIRCLE,
+                fillColor: selectedColor,
+                fillOpacity: 1,
+                strokeWeight: 0,
+                scale: 8,
+              });
+              localStorage.setItem('clickedMarkerColor', selectedColor);
+            }
+            
+            // Find the clicked marker in the markers array
+            const clickedMarker = markers.find(m => m.id === marker.id);
+            if (clickedMarker) {
+              const colorNum = getColorNum(clickedMarker.color);
+              console.log('Marker clicked:', buoy, 'Marker ID:', marker.id, 'Color Number:', colorNum);
+            } else {
+              //console.log('Marker clicked:', buoy, 'Marker ID:', marker.id);
+            }
+          });
+
+              if (markersData.length > 0) {
+                // If there are markers, fit the map to the bounds of all markers
+                newMap.fitBounds(bounds);
+
+              } else {
+                // If there are no markers, set a default zoom level
+                newMap.setCenter(mapOptions.center);
+              }
+              // Add the new marker ID to the markerIds state
+              setMarkerIds((prevMarkerIds) => [...prevMarkerIds, marker.id]);
+
+              resolve(marker);
+            });
+          }));
+
+          // Set the map and markers states and trigger sending marker IDs to the backend
+          setMap(newMap);
+          setMarkers(newMarkers);
+          sendMarkerIdsToBackend();
+
+        } catch (error) {
+          console.error('Error loading map:', error);
+        }
+      };
+
+      
+
+      window.initMap = () => {
+        loadMap(markers);
+      };
+
+      
+
+      
+
+  // Function to send marker IDs to the backend
+  const sendMarkerIdsToBackend = async () => {
+    try {
+      // Make a POST request to your backend API endpoint
+      const response = await fetch('http://localhost:5000/update-marker-ids', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ markerIds }), // Send the marker IDs in the request body
       });
-    }));
 
-    setMap(newMap);
-    setMarkers(newMarkers); // Store the new marker instances in the markers state
-
-  } catch (error) {
-    console.error('Error loading map:', error);
-  }
-};
-  
-  window.initMap = () => {
-    loadMap(markers);
+      if (response.ok) {
+        console.log('Marker IDs updated successfully in the backend.');
+      } else {
+        console.error('Failed to update marker IDs in the backend.');
+      }
+    } catch (error) {
+      console.error('Error updating marker IDs in the backend:', error);
+    }
   };
+
+  // useEffect hook to automatically send marker IDs to the backend whenever they change
+  useEffect(() => {
+    sendMarkerIdsToBackend();
+  }, [markerIds]); // Trigger the effect whenever markerIds change
+
+  
+
+    // Modify handleUpdateMarker to include color parameter
+const handleUpdateMarker = (updatedMarkerId, updatedColor,color) => {
+  // Find the marker with the updated ID
+  const updatedMarkers = markers.map(marker => {
+    if (marker.id === updatedMarkerId) {
+      return { ...marker, color: color || updatedColor }; // Update the marker's color
+    }
+    return marker;
+  });
+
+  // Update the markers state with the updated markers
+  setMarkers(updatedMarkers);
+  // Inside the handleUpdateMarker function, after updating the marker's color
+  localStorage.setItem(`markerColor${updatedMarkerId}`, color || updatedColor);
+
+  const markerColorData = JSON.parse(localStorage.getItem('markerColorData')) || {};
+  markerColorData[updatedMarkerId] = updatedColor;
+  localStorage.setItem('markerColorData', JSON.stringify(markerColorData));
+
+   // Update selectedColorNum with the updated number of markers
+   setSelectedColorNum(prevColorNums => {
+    const newColorNums = [...prevColorNums];
+    // Ensure the number of color numbers matches the number of markers
+    while (newColorNums.length < updatedMarkers.length) {
+      newColorNums.push(updatedColor);
+    }
+    // Limit the number of color numbers to the number of markers
+    return newColorNums.slice(0, updatedMarkers.length);
+    });
+  };
+
+    // Inside the useEffect to retrieve marker color data from local storage upon component mount
+    useEffect(() => {
+      const storedMarkerColorData = localStorage.getItem('markerColorData');
+
+      if (storedMarkerColorData) {
+        const markerColorData = JSON.parse(storedMarkerColorData);
+
+        // Iterate through the stored data and apply colors to markers
+        markers.forEach(marker => {
+          const storedColor = markerColorData[marker.id];
+          if (storedColor) {
+            updateMarkerIcon(marker, storedColor);
+          }
+        });
+      }
+    }, []);
 
   const updateAllMarkersColor = (color) => {
     markers.forEach((marker) => {
@@ -158,7 +369,12 @@ const loadMap = async (markersData) => {
     });
   };
   const handleSelectAll = () => {
+        // Update all markers to have the selected color
     updateAllMarkersColor(selectedColor);
+
+    // Update selectedColorNum to match the selected color for all markers
+    const colorNumber = getColorNum(selectedColor);
+    setSelectedColorNum(Array(markers.length).fill(colorNumber));
   };
 
 
@@ -253,6 +469,7 @@ useEffect(() => {
           strokeWeight: 0,
           scale: 8,
         });
+        marker.color = '#FFFFFF'; // Update marker's color property
       }
     });
   };
@@ -266,28 +483,46 @@ useEffect(() => {
         strokeWeight: 0,
         scale: 8,
       });
-      localStorage.setItem('clickedMarkerColor', color);
+      
     }
   };
 
 
   
-    const handleClearAll = () => {
-      clearAllMarkersColor();
-    };
-  const handleClick = (event) => {
+  const handleClearAll = () => {
+    // Call clearAllMarkersColor to ensure all markers are cleared visually
+    clearAllMarkersColor();
+  
+    // Reset selectedColorNum to an array of 0s with the same length as markers
+    setSelectedColorNum(Array(markers.length).fill(0));
+    // Clear the stored marker color data from local storage
+  localStorage.removeItem('markerColorData');
+  };
+
+
+
+   const handleClick = (event) => {
     event.stopPropagation();
     setDisplayColorPicker(!displayColorPicker);
   };
 
   const handleColorClick = (color) => {
-    setSelectedColor(color);
-    localStorage.setItem('selectedColor', color); // Set selected color in localStorage
-    const colorNum = getColorNum(color); // Get color number based on color
-    setSelectedColorNum(colorNum); // Update color number state
-    console.log(`Selected Color Number: ${colorNum}`); // Log color number
+    let colorNum = 0; // Default to 0 if no color is selected
+    if (color) {
+      colorNum = getColorNum(color); // Get color number based on color
+      setSelectedColor(color);
+      localStorage.setItem('selectedColor', color); // Set selected color in localStorage
+    }
+     // Retrieve the selected color from local storage when the component mounts
+      const storedColor = localStorage.getItem('selectedColor');
+      if (storedColor) {
+        setSelectedColor(storedColor);
+      }
+    
     setDisplayColorPicker(false);
   };
+
+
   const getColorNum = (color) => {
     const colorMap = {
       '#FF0303': 1,
@@ -413,11 +648,25 @@ useEffect(() => {
 
     const brightnessLevelToSend = sliderValue === 100 ? 5 : brightnessLevel;
 
+     // Map the colors to color numbers, replacing null with 0 for markers without color
+    const colorNums = markers.map(marker => marker.color ? getColorNum(marker.color) : 0);
+    // Determine the pattern number
+    let patternToSend = selectedPatternNum;
+    if (selectedPattern === 'Pattern') {
+      patternToSend = 7; // No Pattern
+    }
+
+    // Determine the frequency number
+    let frequencyToSend = selectedFrequencyNum;
+    if (selectedFrequency === 'Frequency') {
+      frequencyToSend = 1; // X1
+    }
+ 
     const data = {
       selectedColorNum: selectedColorNum,
-      selectedPatternNum: selectedPatternNum,
+      selectedPatternNum: patternToSend,
       brightnessLevel: brightnessLevelToSend,
-      selectedFrequencyNum: selectedFrequencyNum,
+      selectedFrequencyNum: frequencyToSend,
     };
   
     try {
@@ -454,12 +703,12 @@ useEffect(() => {
 
   const handleStopDesign = async () => {
     const data = {
-      selectedColorNum: 0,
+      selectedColorNum: Array(markers.length).fill(0), 
       selectedPatternNum: 0,
       brightnessLevel: 0,
       selectedFrequencyNum: 0,
     };
-  
+    clearAllMarkersColor()
     try {
       const response = await fetch('http://localhost:5000/deploy', {
         method: 'POST',
@@ -483,7 +732,7 @@ useEffect(() => {
     // Reset all state values to their default or 0 values
     setSliderValue(100);
     setSelectedColor('#FFFFFF');
-    setSelectedColorNum(0);
+    setSelectedColorNum(Array(markers.length).fill(0));
     setSelectedPattern('Pattern');
     setClickedMarkerColor(null);
     setSelectedPatternNum(0);
@@ -491,6 +740,11 @@ useEffect(() => {
     setSelectedFrequencyNum(0);
     setBrightnessLevel(0);
   };
+
+  useEffect(() => {
+    // Save selectedColor to local storage when it changes
+    localStorage.setItem('selectedColor', selectedColor);
+  }, [selectedColor]);
 
 
   return (
