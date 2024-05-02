@@ -23,9 +23,17 @@ const Dashboard = () => {
   const [validMarkers, setValidMarkers] = useState([]);
   const [markerIds, setMarkerIds] = useState([]);
   let markersData = [];
+
   
-
-
+  useEffect(() => {
+    // Check if the user is logged in (i.e., if there's a token in local storage)
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // If no token found, redirect the user to the login page
+      window.location.href = '/';
+    }
+  }, []);
+  
   // Use useEffect to initialize selectedColorNum once markers state is updated
   useEffect(() => {
     // Check if markers array has been initialized
@@ -98,40 +106,40 @@ const Dashboard = () => {
     
       
   // Update the loadMap function to store marker instances
-const loadMap = async (markersData) => {
-  if (!window.google || !window.google.maps) {
-    console.error('Google Maps API is not loaded.');
-    return;
-  }
-
-  try {
-    const position = { lat: 18.2208, lng: -66.4000 };
-    const mapOptions = {
-      center: position,
-      zoom:8.5,
-    };
-
-    const newMap = new window.google.maps.Map(mapRef.current, {
-      ...mapOptions,
-      key: GOOGLE_MAPS_API_KEY,
-    });
-
-       // Create a LatLngBounds object to store the bounds of all markers
-       const bounds = new window.google.maps.LatLngBounds();
-
-    if (markers && markers.length > 0) {
-      markers.forEach((marker) => {
-        if (marker) {
-          marker.setMap(null);
-        }
-      });
+  const loadMap = async (markersData) => {
+    if (!window.google || !window.google.maps) {
+      console.error('Google Maps API is not loaded.');
+      return;
     }
+  
+    try {
+      const position = { lat: 18.2208, lng: -66.4000 };
+      const mapOptions = {
+        center: position,
+        zoom: 8.5,
+      };
+  
+      const newMap = new window.google.maps.Map(mapRef.current, {
+        ...mapOptions,
+        key: GOOGLE_MAPS_API_KEY,
+      });
+  
+      // Create a LatLngBounds object to store the bounds of all markers
+      const bounds = new window.google.maps.LatLngBounds();
+  
+      if (markers && markers.length > 0) {
+        markers.forEach((marker) => {
+          if (marker) {
+            marker.setMap(null);
+          }
+        });
+      }
+  
       // Track the current marker ID
       let currentMarkerId = 1;
       let selectedColor = '#FFFFFF'; // Initialize selectedColor with a default color
-
-            // Inside the handleMarkerClick function
-      function handleMarkerClick(marker) {
+  
+      const handleMarkerClick = (marker) => {
         let colorNumber = getColorNum(marker.color || '#FFFFFF'); // Default to 0 if marker has no color
         // Inside the handleMarkerClick function, after updating the marker's color
         localStorage.setItem(`markerColor${marker.id}`, marker.color || '#FFFFFF');
@@ -141,18 +149,17 @@ const loadMap = async (markersData) => {
           colorNumber: colorNumber,
           id: marker.id
         });
-
-        // Update selectedColorNum state with the clicked marker's color number
+  
         setSelectedColorNum(prevColorNums => {
           const newColorNums = [...prevColorNums];
           newColorNums[marker.id - 1] = colorNumber; // Assuming marker IDs start from 1
           return newColorNums;
         });
-
-         // Store the clicked marker's color and ID in localStorage
+  
+        // Store the clicked marker's color and ID in localStorage
         localStorage.setItem(`markerColor${marker.id}`, marker.color || '#FFFFFF');
-
-              // Update the marker's color in the markers array
+  
+        // Update the marker's color in the markers array
         const updatedMarkers = markers.map(m => {
           if (m.id === marker.id) {
             return { ...m, color: marker.color };
@@ -162,67 +169,84 @@ const loadMap = async (markersData) => {
         setMarkers(updatedMarkers);
         // If you want to log the color hex code as well
         console.log('Selected color:', colorNumber);
-
-       
-        setMarkers(newMarkers);
-        localStorage.setItem(`markerColor${marker.id}`, selectedColor);
-      }
-
-   
-      // When the user selects a color
-      function onSelectColor(color) {
-        selectedColor = color; // Update selectedColor with the chosen color
-      }
-
-    const newMarkers = await Promise.all(markersData.map((buoy) => {
-      return new Promise((resolve) => {
-        const initialColor = buoy.color || '#FFFFFF';
-        
-    
-        const marker = new window.google.maps.Marker({
-          position: { lat: buoy.lat, lng: buoy.lng },
-          map: newMap,
-          color:selectedColor,
-          icon: {
-            path: window.google.maps.SymbolPath.CIRCLE,
-            fillColor: initialColor,
-            fillOpacity: 1,
-            strokeWeight: 0,
-            scale: 8,
-          },
-          title: buoy.name,
-          id: currentMarkerId++,
-        });
-
-            // Inside the loadMap function, after creating markers
-        markersData.forEach((buoy) => {
-          // Retrieve the marker color from local storage
-          const storedColor = localStorage.getItem(`markerColor${buoy.id}`);
-          if (storedColor) {
-            buoy.color = storedColor;
-            updateMarkerIcon(marker, storedColor);
-          }
-        });
-
-
-
-
-        // Extend the bounds to include the marker's position
-        bounds.extend(marker.getPosition());
+      };
+  
+      const setMarkerIconColor = (marker, color) => {
+        const markerIcon = {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          fillColor: color,
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scale: 8,
+        };
+        marker.setIcon(markerIcon);
+      };
+  
+      const updateMarkerIcon = (marker, color) => {
+        const markerIcon = {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          fillColor: color,
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scale: 8,
+        };
+        marker.setIcon(markerIcon);
+      };
+  
+      const newMarkers = await Promise.all(markersData.map((buoy) => {
+        return new Promise((resolve) => {
+          const initialColor = buoy.color || '#FFFFFF';
+  
+          const marker = new window.google.maps.Marker({
+            position: { lat: buoy.lat, lng: buoy.lng },
+            map: newMap,
+            color: initialColor,
+            icon: {
+              path: window.google.maps.SymbolPath.CIRCLE,
+              fillColor: initialColor,
+              fillOpacity: 1,
+              strokeWeight: 0,
+              scale: 8,
+            },
+            title: buoy.name,
+            id: currentMarkerId++,
+          });
+  
+          // Inside the loadMap function, after creating markers
+          markersData.forEach((buoy) => {
+            // Retrieve the marker color from local storage
+            const storedColor = localStorage.getItem(`markerColor${buoy.id}`);
+            if (storedColor) {
+              buoy.color = storedColor;
+              updateMarkerIcon(marker, storedColor);
+            }
+          });
+  
+          // Extend the bounds to include the marker's position
+          bounds.extend(marker.getPosition());
           // Retrieve the marker color from local storage
           const storedColor = localStorage.getItem(`markerColor${marker.id}`);
           if (storedColor) {
             marker.color = storedColor;
             updateMarkerIcon(marker, storedColor);
           }
-        
+  
           marker.addListener('click', () => {
             const selectedColor = localStorage.getItem('selectedColor') || '#FFFFFF';
             const defaultColor = '#FFFFFF';
             marker.color = selectedColor; // Update marker's color property
-             handleMarkerClick(marker); // Call function to handle marker click event
-
-            if (marker.getIcon().fillColor !== selectedColor && selectedColor !== defaultColor) {
+            handleMarkerClick(marker); // Call function to handle marker click event
+  
+            // Update the marker's color in the markers array
+            const updatedMarkers = markers.map(m => {
+              if (m.id === marker.id) {
+                return { ...m, color: marker.color };
+              }
+              return m;
+            });
+            setMarkers(updatedMarkers);
+  
+            if (marker.getIcon() && marker.getIcon().fillColor !== selectedColor && selectedColor !== defaultColor) {
               marker.setIcon({
                 path: window.google.maps.SymbolPath.CIRCLE,
                 fillColor: selectedColor,
@@ -232,48 +256,38 @@ const loadMap = async (markersData) => {
               });
               localStorage.setItem('clickedMarkerColor', selectedColor);
             }
-            
-            // Find the clicked marker in the markers array
-            const clickedMarker = markers.find(m => m.id === marker.id);
-            if (clickedMarker) {
-              const colorNum = getColorNum(clickedMarker.color);
-              console.log('Marker clicked:', buoy, 'Marker ID:', marker.id, 'Color Number:', colorNum);
-            } else {
-              //console.log('Marker clicked:', buoy, 'Marker ID:', marker.id);
-            }
+  
+            // Handle marker click after updating marker's color
+            handleMarkerClick(marker);
           });
-
-              if (markersData.length > 0) {
-                // If there are markers, fit the map to the bounds of all markers
-                newMap.fitBounds(bounds);
-
-              } else {
-                // If there are no markers, set a default zoom level
-                newMap.setCenter(mapOptions.center);
-              }
-              // Add the new marker ID to the markerIds state
-              setMarkerIds((prevMarkerIds) => [...prevMarkerIds, marker.id]);
-
-              resolve(marker);
-            });
-          }));
-
-          // Set the map and markers states and trigger sending marker IDs to the backend
-          setMap(newMap);
-          setMarkers(newMarkers);
-          sendMarkerIdsToBackend();
-
-        } catch (error) {
-          console.error('Error loading map:', error);
-        }
-      };
-
-      
-
-      window.initMap = () => {
-        loadMap(markers);
-      };
-
+  
+          if (markersData.length > 0) {
+            // If there are markers, fit the map to the bounds of all markers
+            newMap.fitBounds(bounds);
+          } else {
+            // If there are no markers, set a default zoom level
+            newMap.setCenter(mapOptions.center);
+          }
+          // Add the new marker ID to the markerIds state
+          setMarkerIds((prevMarkerIds) => [...prevMarkerIds, marker.id]);
+  
+          resolve(marker);
+        });
+      }));
+  
+      // Set the map and markers states and trigger sending marker IDs to the backend
+      setMap(newMap);
+      setMarkers(newMarkers);
+      sendMarkerIdsToBackend();
+  
+    } catch (error) {
+      console.error('Error loading map:', error);
+    }
+  };
+  
+  window.initMap = () => {
+    loadMap(markers);
+  };
       
 
       
@@ -472,6 +486,8 @@ useEffect(() => {
         marker.color = '#FFFFFF'; // Update marker's color property
       }
     });
+    // Clear the stored marker color data from local storage
+    localStorage.removeItem('markerColorData');
   };
   
   const updateMarkerIcon = (marker, color) => {
@@ -496,7 +512,7 @@ useEffect(() => {
     // Reset selectedColorNum to an array of 0s with the same length as markers
     setSelectedColorNum(Array(markers.length).fill(0));
     // Clear the stored marker color data from local storage
-  localStorage.removeItem('markerColorData');
+    localStorage.removeItem('markerColorData');
   };
 
 

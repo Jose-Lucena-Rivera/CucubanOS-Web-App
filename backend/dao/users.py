@@ -15,6 +15,8 @@ class UsersDAO():
     def close_connection(self):
         self.conn.close()
 
+    
+
 
     def create_user(self, userid, email, uName):
         cursor = self.conn.cursor()
@@ -34,13 +36,20 @@ class UsersDAO():
     
     def get_user_by_email(self, email):
         cursor = self.conn.cursor()
-
-        query = "select id from users where email = %s;"
-        cursor.execute(query, (email,))
-        uid = cursor.fetchone()[0] if cursor.rowcount > 0 else None
-        print ("user id: ",uid)
-        cursor.close()
-        # self.conn.close()
+        uid = None
+        try:
+            print("Attempting to fetch user with email:", email)  # Debug print statement
+            query = "SELECT id FROM users WHERE email = %s;"
+            cursor.execute(query, (email,))
+            if cursor.rowcount > 0:
+                uid = cursor.fetchone()[0]
+                print("User found with ID:", uid)  # Debug print statement
+            else:
+                print("No user found with email:", email)  # Debug print statement
+        except Exception as e:
+            print("Error fetching user by email:", e)
+        finally:
+            cursor.close()
         return uid
     
     def get_user(self, email):
@@ -50,7 +59,8 @@ class UsersDAO():
         result = cursor.fetchone() if cursor.rowcount > 0 else None
         cursor.close()
         self.conn.close()
-        return result
+    # Ensure that the result is converted to a dictionary with column names as keys
+        return dict(zip([column[0] for column in cursor.description], result)) if result else None
     
 
     def get_all_users(self):
@@ -112,3 +122,33 @@ class UsersDAO():
             self.conn.close()
 
         return updated
+    
+    def get_password(self, email):
+        cursor = self.conn.cursor()
+        query = "SELECT password FROM users WHERE email = %s;"
+        cursor.execute(query, (email,))
+        result = cursor.fetchone()
+        cursor.close()
+        self.conn.close()
+        return result[0] if result else None
+    
+    def update_password(self, email, new_password):
+        cursor = self.conn.cursor()
+        updated = None
+        try:
+            # Check if new_password is not null
+            if new_password is None:
+                raise ValueError("New password cannot be null")
+            
+            query = "UPDATE users SET password = %s WHERE email = %s RETURNING id, uname, email;"
+            cursor.execute(query, (new_password, email))
+            updated = cursor.fetchone()
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+            self.conn.rollback()  # Roll back the transaction if an error occurs
+            return False  # Return False or handle the error in an appropriate way
+        finally:
+            cursor.close()
+        return updated
+

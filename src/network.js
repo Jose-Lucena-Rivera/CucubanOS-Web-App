@@ -15,7 +15,14 @@ const Network = () => {
   const [devEuiError, setDevEuiError] = useState('');
   const [appKeyError, setAppKeyError] = useState('');
   
-
+  useEffect(() => {
+    // Check if the user is logged in (i.e., if there's a token in local storage)
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // If no token found, redirect the user to the login page
+      window.location.href = '/';
+    }
+  }, []);
 
 
   useEffect(() => {
@@ -28,20 +35,22 @@ const Network = () => {
       event.target.click();
     };
   
-    const buttons = document.querySelectorAll('.mdl-button-network'); // Target specific buttons
-    buttons.forEach((button) => {
+    // Add touch event listeners to all buttons
+      document.querySelectorAll('button').forEach((button) => {
       button.addEventListener('touchstart', handleTouchStart);
       button.addEventListener('touchend', handleTouchEnd);
     });
   
+    // Cleanup: Remove event listeners when the component unmounts
     return () => {
-      buttons.forEach((button) => {
+      document.querySelectorAll('button').forEach((button) => {
         button.removeEventListener('touchstart', handleTouchStart);
         button.removeEventListener('touchend', handleTouchEnd);
       });
     };
-  }, []);
+  }, []); // Empty dependency array means this useEffect runs once when the component mounts
 
+  
     const [selectedBuoys, setSelectedBuoys] = useState(() => {
     try {
       // Attempt to parse data from localStorage
