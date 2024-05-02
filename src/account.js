@@ -95,7 +95,7 @@ const Account = () => {
       const email = localStorage.getItem('email');
   
       // Fetch user information from the backend
-      const response = await fetch(`http://localhost:5000/verify-password?email=${email}&currentPassword=${currentPassword}`);
+      const response = await fetch(`https://boyaslacatalana-api.azurewebsites.net/verify-password?email=${email}&currentPassword=${currentPassword}`);
   
       if (response.ok) {
         // Response status is in the range 200-299, indicating success
@@ -150,7 +150,7 @@ const Account = () => {
       // Send a request to update the password only if the new password is different
       if (newPassword !== currentPassword) {
         // Send a request to the backend to update the password
-        const response = await fetch('http://localhost:5000/update-password', {
+        const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/update-password', {
           method: 'PUT', // Use PUT method
           headers: {
             'Content-Type': 'application/json',

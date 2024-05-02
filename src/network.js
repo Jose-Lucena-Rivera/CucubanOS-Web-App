@@ -94,7 +94,7 @@ const Network = () => {
       // Delete buoys from the database
       for (const buoy of selectedBuoysToDelete) {
         const encodedBuoyId = encodeURIComponent(buoy.id); // Encode the buoy ID
-        const response = await fetch(`http://localhost:5000/delete-buoy/${encodedBuoyId}`, {
+        const response = await fetch(`https://boyaslacatalana-api.azurewebsites.net/delete-buoy/${encodedBuoyId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ const Network = () => {
     console.log('Buoy data:', buoyData);
 
     try {
-      let response = await fetch('http://localhost:5000/add-buoy', {
+      let response = await fetch('https://boyaslacatalana-api.azurewebsites.net/add-buoy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -223,7 +223,7 @@ const Network = () => {
 
   const fetchBuoys = async () => {
     try {
-      const response = await fetch('http://localhost:5000/get-buoys');
+      const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/get-buoys');
       const data = await response.json();
   
       console.log('Fetched buoys:', data); // Log fetched data

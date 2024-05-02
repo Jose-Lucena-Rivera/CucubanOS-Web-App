@@ -58,7 +58,7 @@ const Dashboard = () => {
 
   const fetchBuoys = async () => {
     try {
-      const response = await fetch('http://localhost:5000/get-buoys');
+      const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/get-buoys');
       const data = await response.json();
   
       console.log('Fetched buoys:', data);
@@ -296,7 +296,7 @@ const Dashboard = () => {
   const sendMarkerIdsToBackend = async () => {
     try {
       // Make a POST request to your backend API endpoint
-      const response = await fetch('http://localhost:5000/update-marker-ids', {
+      const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/update-marker-ids', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -686,7 +686,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch('http://localhost:5000/deploy', {
+      const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/deploy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -726,7 +726,7 @@ useEffect(() => {
     };
     clearAllMarkersColor()
     try {
-      const response = await fetch('http://localhost:5000/deploy', {
+      const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/deploy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
