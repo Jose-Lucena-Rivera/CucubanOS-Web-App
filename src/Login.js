@@ -5,7 +5,6 @@ import 'material-design-lite/material';
 import 'material-design-lite/material.css';
 import './styles.css';
 import Account from './account';
-import axios from 'axios';
 
 const RedirectIfAuthenticated = () => {
   const location = useLocation();
