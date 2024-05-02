@@ -181,31 +181,35 @@ def update_marker_ids():
 @app.route('/deploy', methods=['POST'])
 def deploy():
     print("Deploy function called")
-    data = request.json
+
+    message = MessageHandler()
+    return message.deploy_buoy()
+
+    # data = request.json
     
-    # Define the desired order of keys
-    ordered_keys = ['selectedColorNum', 'selectedPatternNum', 'brightnessLevel', 'selectedFrequencyNum']
+    # # Define the desired order of keys
+    # ordered_keys = ['selectedColorNum', 'selectedPatternNum', 'brightnessLevel', 'selectedFrequencyNum']
 
-    # Create a new dictionary with keys in the desired order
-    ordered_data = {key: data.get(key) for key in ordered_keys}
+    # # Create a new dictionary with keys in the desired order
+    # ordered_data = {key: data.get(key) for key in ordered_keys}
 
-    # Process the received data
-    selectedColorNum = ordered_data.get('selectedColorNum')
-    selectedPatternNum = ordered_data.get('selectedPatternNum')
-    brightnessLevel = ordered_data.get('brightnessLevel')
-    selectedFrequencyNum = ordered_data.get('selectedFrequencyNum')
+    # # Process the received data
+    # selectedColorNum = ordered_data.get('selectedColorNum')
+    # selectedPatternNum = ordered_data.get('selectedPatternNum')
+    # brightnessLevel = ordered_data.get('brightnessLevel')
+    # selectedFrequencyNum = ordered_data.get('selectedFrequencyNum')
 
-    # Here you can process the received data further
+    # # Here you can process the received data further
 
-    # Return the processed data
-    response_data = {
-        'selectedColorNum': selectedColorNum,
-        'selectedPatternNum': selectedPatternNum,
-        'brightnessLevel': brightnessLevel,
-        'selectedFrequencyNum': selectedFrequencyNum,
-    }
+    # # Return the processed data
+    # response_data = {
+    #     'selectedColorNum': selectedColorNum,
+    #     'selectedPatternNum': selectedPatternNum,
+    #     'brightnessLevel': brightnessLevel,
+    #     'selectedFrequencyNum': selectedFrequencyNum,
+    # }
 
-    return jsonify(response_data), 200
+    # return jsonify(response_data), 200
     
 
 
