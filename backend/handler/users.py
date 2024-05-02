@@ -173,6 +173,8 @@ class UserHandler():
         email = data.get('email')
         usr = UsersDAO()
         user = usr.get_user(email)
+
+        
         
         if user is None:
             return jsonify({"error": "User not found"}), 404
@@ -192,3 +194,52 @@ class UserHandler():
             return jsonify({"error": "No users found"}), 404
         else:
             return jsonify({"message": f"Users found: "}, users), 200
+        
+
+    def verify_password(self):
+        try:
+            # Get the email and current password from the query parameters
+            email = request.args.get('email')
+            current_password = request.args.get('currentPassword')
+
+            # Check if email and current password are provided
+            if not email or not current_password:
+                return jsonify({'message': 'Email and current password are required.', 'success': False}), 400
+
+            # Fetch the user from the database using the email
+            users_dao = UsersDAO()
+            user = users_dao.get_user(email)
+            users_dao.close_connection()
+
+            if user:
+                # Compare the current password with the password stored in the database
+                if user['password'] == current_password:
+                    return jsonify({'success': True}), 200
+                else:
+                    return jsonify({'success': False, 'message': 'Incorrect current password'}), 401
+            else:
+                return jsonify({'success': False, 'message': 'User not found'}), 404
+        except Exception as e:
+            return jsonify({'message': str(e), 'success': False}), 500
+        
+            
+
+    # Helper method to update the password in the database
+    def update_password_in_database(self, email, new_password):
+        try:
+            # Fetch the user from the database using the email
+            users_dao = UsersDAO()
+            user = users_dao.get_user(email)
+
+            if user:
+                # Update the password in the database with the new password
+                updated = users_dao.update_password(email, new_password)
+                users_dao.close_connection()
+                return updated  # Return True if password is updated successfully, False otherwise
+            else:
+                return False  # User not found
+        except Exception as e:
+            # Handle exceptions
+            return False
+        
+        

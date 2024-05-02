@@ -1,69 +1,92 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
-import 'material-design-lite/material'; 
+import 'material-design-lite/material';
 import 'material-design-lite/material.css';
 import './styles.css';
+import Account from './account';
+import axios from 'axios';
+
+const RedirectIfAuthenticated = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    // Check if the user is authenticated and trying to access the dashboard page
+    if (token && location.pathname !== '/') {
+      window.location.href = '/dashboard';
+    }
+  }, [location]);
+
+  return null;
+};
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState('');
-  const [redirectToDashboard, setRedirectToDashboard] = useState(false); // State to control redirection
- 
- 
+  const [errorMessage, setErrorMessage] = useState('');
+  const [redirectToDashboard, setRedirectToDashboard] = useState(false);
+
+
+
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
-    setEmailError(false); // Reset email error state when the user starts typing again
+    setEmailError(false);
+    setErrorMessage(''); // Clear error message when email changes
   };
+
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
-    setPasswordError(false); // Reset password error state when the user starts typing again
+    setPasswordError(false);
+    setErrorMessage(''); // Clear error message when password changes
   };
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Validation for email format
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (!email || !emailRegex.test(email)) {
-      setEmailError(true);
-      setEmailErrorMessage("The email address must have a '.'");
-      return;
-    }
-  
-    // Additional validation for email domain
-    if (!email.endsWith('.com')) {
-      const allowedDomains = ['.com', '.edu', '.org', '.net'];
-      const isValidDomain = allowedDomains.some(domain => email.endsWith(domain));
-      if (!isValidDomain) {
-        setEmailError(true);
-        setEmailErrorMessage("The email address must end with '.com', '.edu', '.org', or '.net'"); // Fixed typo here
+
+    if (!email || !password) {
+        setErrorMessage('Please enter both email and password.');
         return;
-      }
     }
-  
-    // Validation for password
-    if (!password) {
-      setPasswordError(true);
-      return;
+
+    try {
+        const response = await fetch('http://localhost:5000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            // Save token and email to local storage
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('email', email);
+            // Redirect to dashboard
+            setRedirectToDashboard(true);
+        } else {
+            const data = await response.json();
+            setErrorMessage(data.message || 'Authentication failed. Please try again.');
+        }
+    } catch (error) {
+        console.error('Authentication error:', error);
+        setErrorMessage('An error occurred. Please try again later.');
     }
-  
-    // Assuming login is successful, set state to redirect to Dashboard
-    setRedirectToDashboard(true);
-    // Reset the form
-    setEmail('');
-    setPassword('');
-  };
-  
-  // Redirect to Dashboard if redirectToDashboard state is true
+};
+ 
+
   if (redirectToDashboard) {
     return <Navigate to="/dashboard" />;
   }
-
+  
 
   return (
+    
     <div className="center-container-login">
+       <RedirectIfAuthenticated />
       <div className="demo-card-square mdl-card mdl-shadow--3dp">
         <div className="mdl-card__title mdl-card--expand">
           <h2 className="mdl-card__title-text">Login</h2>
@@ -80,9 +103,8 @@ const Login = () => {
                 required
               />
               <label className="mdl-textfield__label" htmlFor="email">Email:</label>
-              {emailError && <span className="error-message">{emailErrorMessage}</span>}
             </div>
-           
+
             <div className={`mdl-textfield mdl-js-textfield mdl-textfield--floating-label ${passwordError ? 'is-invalid' : ''}`}>
               <input
                 className="mdl-textfield__input"
@@ -93,21 +115,22 @@ const Login = () => {
                 required
               />
               <label className="mdl-textfield__label" htmlFor="password">Password:</label>
-              {passwordError && <span className="error-message">Please enter your password</span>}
             </div>
-            <div style={{ marginBottom: '16px' }}> {/* Add margin-bottom style */}
-              {/* Use Link component to navigate to Forgot Password page */}
-              <Link to="/forgot_password" className="forgot-password">Forgot Password?</Link>
-            </div>
+            <div className="error-message">{errorMessage}</div>
             <div className="center-btn">
               <button className="mdl-button-login mdl-button mdl-js-button mdl-js-ripple-effect" type="submit">
                 Login
               </button>
             </div>
           </form>
+          <div style={{ marginTop: '16px' }}> {/* Add margin-top style */}
+            {/* Use Link component to navigate to Forgot Password page */}
+            <Link to="/forgot_password" className="forgot-password">Forgot Password?</Link>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
 export default Login;

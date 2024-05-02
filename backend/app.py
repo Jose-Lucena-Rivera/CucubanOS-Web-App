@@ -2,17 +2,25 @@ from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS, cross_origin
 import os
 from mqtt import *
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from handler.users import *
 from handler.buoys import *
 from handler.messages import *
+import jwt
+from handler.users import UserHandler
+from hashlib import sha256
+from dao.users import UsersDAO
 
+
+
+secret_key = os.environ.get('SECRET_KEY')
 # Create the application instance
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.net"}})
+user_handler = UserHandler()
+#user_dao = UsersDAO()
 
-
-# load_dotenv()
+load_dotenv()
 
 port = int(os.environ.get("PORT", 5000))
 
@@ -206,7 +214,73 @@ def deploy():
     }
 
     return jsonify(response_data), 200
+
+@app.route("/verify-password", methods=["GET"])
+def verify_password():
+    return user_handler.verify_password()
+
+
+@app.route("/update-password", methods=["PUT"])
+def update_password():
+    data = request.get_json()
+    email = data.get('email')
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
     
+    # Check if new_password is not null
+    if new_password is None:
+        return jsonify({"error": "New password cannot be null"}), 400
+    
+    # Initialize UsersDAO within the route function
+    user_dao = UsersDAO()
+    
+    try:
+        # Assuming user_dao.update_password returns True on success and False on failure
+        success = user_dao.update_password(email, new_password)
+        
+        if success:
+            return jsonify({"message": "Password updated successfully"}), 200
+        else:
+            return jsonify({"error": "Failed to update password"}), 500
+    finally:
+        # Close the database connection after using it
+        user_dao.close_connection()
+
+    
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        # Get the email and password from the request body
+        data = request.json
+        email = data.get('email')
+        password = data.get('password')
+
+        # Check if email and password are provided
+        if not email or not password:
+            return jsonify({'message': 'Email and password are required.'}), 400
+
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(database_url)
+        cursor = conn.cursor()
+
+        # Execute a SQL query to authenticate the user
+        cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))
+        user = cursor.fetchone()
+
+        if user:
+            # Generate JWT token
+            token = jwt.encode({'email': email}, secret_key, algorithm='HS256')
+
+            print("Generated Token:", token)
+            return jsonify({'token': token}), 200
+        else:
+            return jsonify({'message': 'Invalid email or password.'}), 401
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+    finally:
+        # Close the database connection
+        cursor.close()
+        conn.close()
 
 
 if __name__ == '__main__':
