@@ -3,7 +3,7 @@ import Layout from './Layout';
 import 'material-design-lite/material';
 import 'material-design-lite/material.css';
 import './styles.css';
-import axios from 'axios';
+
 
 
 const Account = () => {
@@ -95,70 +95,89 @@ const Account = () => {
       const email = localStorage.getItem('email');
   
       // Fetch user information from the backend
-      const response = await axios.get(`http://localhost:5000/verify-password?email=${email}&currentPassword=${currentPassword}`);
+      const response = await fetch(`http://localhost:5000/verify-password?email=${email}&currentPassword=${currentPassword}`);
   
-      if (response.data.success) {
-        // Current password is correct, proceed to the Confirm Password dialog
-        handleCloseChangePassword();
-        setIsConfirmPasswordOpen(true);
-        // Reset current password error
-        setCurrentPasswordError('');
+      if (response.ok) {
+        // Response status is in the range 200-299, indicating success
+        const data = await response.json();
+        if (data.success) {
+          // Current password is correct, proceed to the Confirm Password dialog
+          handleCloseChangePassword();
+          setIsConfirmPasswordOpen(true);
+          // Reset current password error
+          setCurrentPasswordError('');
+        } else {
+          // Current password is incorrect, display an error message
+          console.log('Incorrect current password');
+          setCurrentPasswordError('Incorrect current password');
+        }
       } else {
-        // Current password is incorrect, display an error message
-        
-        console.log('Incorrect current password');
+        // Server returned an error response
+        console.error('Error verifying current password:', response.statusText);
+        setCurrentPasswordError('Error verifying current password');
       }
     } catch (error) {
-      setCurrentPasswordError('Incorrect current password');
+      setCurrentPasswordError('Error verifying current password');
       console.error('Error verifying current password:', error);
     }
   };
   
-const handleSubmitConfirmPassword = async (event) => {
-  event.preventDefault();
-
-  // Check if new password is the same as the current password
-  if (newPassword === currentPassword) {
-    // Display an error message to the user
-    setConfirmPasswordError('New password cannot be the same as the current password');
-    return;
-  } else {
-    setConfirmPasswordError(''); // Reset confirm password error
-  }
-
-  // Check if passwords match
-  if (newPassword !== confirmPassword) {
-    // Display an error message to the user
-    setConfirmPasswordError('Passwords do not match');
-    return;
-  } else {
-    setConfirmPasswordError(''); // Reset confirm password error
-  }
-
-  try {
-    // Fetch user information from local storage
-    const email = localStorage.getItem('email');
-
-    // Send a request to update the password only if the new password is different
-    if (newPassword !== currentPassword) {
-      // Send a request to the backend to update the password
-      const response = await axios.put('http://localhost:5000/update-password', { email, currentPassword, newPassword });
-      if (response.data.message) {
-        // Password updated successfully
-        console.log('Password updated successfully');
-        handleCloseConfirmPassword(); // Close the dialog
-      } else {
-        // Failed to update password, display an error message
-        console.log('Failed to update password');
-      }
+  const handleSubmitConfirmPassword = async (event) => {
+    event.preventDefault();
+  
+    // Check if new password is the same as the current password
+    if (newPassword === currentPassword) {
+      // Display an error message to the user
+      setConfirmPasswordError('New password cannot be the same as the current password');
+      return;
     } else {
-      // New password is the same as the current password, display an error message
-      console.error('New password cannot be the same as the current password');
+      setConfirmPasswordError(''); // Reset confirm password error
     }
-  } catch (error) {
-    console.error('Error updating password:', error);
-  }
-};
+  
+    // Check if passwords match
+    if (newPassword !== confirmPassword) {
+      // Display an error message to the user
+      setConfirmPasswordError('Passwords do not match');
+      return;
+    } else {
+      setConfirmPasswordError(''); // Reset confirm password error
+    }
+  
+    try {
+      // Fetch user information from local storage
+      const email = localStorage.getItem('email');
+  
+      // Send a request to update the password only if the new password is different
+      if (newPassword !== currentPassword) {
+        // Send a request to the backend to update the password
+        const response = await fetch('http://localhost:5000/update-password', {
+          method: 'PUT', // Use PUT method
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            currentPassword,
+            newPassword,
+          }),
+        });
+        
+        if (response.ok) {
+          // Password updated successfully
+          console.log('Password updated successfully');
+          handleCloseConfirmPassword(); // Close the dialog
+        } else {
+          // Failed to update password, display an error message
+          console.log('Failed to update password');
+        }
+      } else {
+        // New password is the same as the current password, display an error message
+        console.error('New password cannot be the same as the current password');
+      }
+    } catch (error) {
+      console.error('Error updating password:', error);
+    }
+  };
 
   // Function to toggle visibility of new password
   const toggleNewPasswordVisibility = () => {
