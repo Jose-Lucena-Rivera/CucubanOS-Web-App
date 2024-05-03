@@ -158,3 +158,13 @@ class MessageHandler():
             return jsonify({"error": "Error sending message to buoys."}), 400
         
         return jsonify({"message": f"Message {payload} sent to buoys.", "ordered data":ordered_data}), 200
+
+
+    def delete_multicast_queue(self):
+        message = ChirpstackThing()
+        resp = message.flush_multicast_queue()
+
+        if resp is None:
+            return jsonify({"error": "Error flushing messages from multicast queue."}), 400
+        
+        return jsonify({"message": f"Multicast queue flushed: {resp}"}), 200

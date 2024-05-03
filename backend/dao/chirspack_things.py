@@ -170,3 +170,19 @@ class ChirpstackThing():
             return None
         
         return resp
+    
+    def flush_multicast_queue(self):
+        channel = grpc.insecure_channel(server)
+        client = api.MulticastGroupServiceStub(channel)
+        auth_token = [("authorization", "Bearer %s" % api_token)]
+
+        try:
+            req = api.FlushMulticastGroupQueueRequest()
+            req.multicast_group_id = multicast_group_id
+            resp = client.FlushQueue(req, metadata=auth_token)
+
+        except grpc.RpcError as e:
+            print('exception: '+ str(e))
+            return None
+        
+        return resp

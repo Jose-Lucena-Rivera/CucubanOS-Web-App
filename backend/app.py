@@ -157,6 +157,12 @@ def see_multimessage():
     message = MessageHandler()
     return message.see_multimessage()
 
+@app.route("/delete-multicast-queue", methods=["DELETE"])
+def delete_multicast():
+    message = MessageHandler()
+    return message.delete_multicast_queue()
+
+
 # Route to serve index.html
 @app.route('/')
 def serve_index():
