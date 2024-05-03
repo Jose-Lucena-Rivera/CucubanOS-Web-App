@@ -241,5 +241,3 @@ class UserHandler():
         except Exception as e:
             # Handle exceptions
             return False
-        
-        

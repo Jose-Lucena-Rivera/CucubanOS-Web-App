@@ -109,8 +109,8 @@ class MessageHandler():
     
 
     def chirpstack_updates(self): ################################for processing lo que chirpstack me manda a traves de http
-        if request.method == 'POST':
-            # print(request.get_json())
+        
+            print(request.get_json())
 
             return jsonify({"message": "Chirpstack updates received.", "json":request.get_json()}), 200
         
