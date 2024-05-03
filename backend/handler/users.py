@@ -21,6 +21,7 @@ class UserHandler():
         data = request.get_json()
         email = data.get('email')
         uName = data.get('name')
+        password = data.get('password')
 
         
         # return jsonify({"message": "all good hasta aqui"}), 200
@@ -33,6 +34,10 @@ class UserHandler():
             return jsonify({"error": "Name is required to create new user."}), 400
         if len(uName) > 20:
             return jsonify({"error": "Name is too long. Must be 20 characters or less."}), 400
+        if not password:
+            return jsonify({"error": "Password is required to create new user."}), 400
+        if len(password) < 8 :
+            return jsonify({"error": "Invalid password. Must be at least 8 characters long."}), 400
         
         usr=UsersDAO()
 
@@ -41,28 +46,11 @@ class UserHandler():
             usr.close_connection()
             return jsonify({"error": "User with this email already exists."}), 400
         
-        # Generate password with the password generator API
-        if (debugging):
-            password = 'Abc87.1.'
-        else:
-            password = generate_password(8)
 
-        ###################################    Call al API de AZURE AD B2C #####################################
-        
-        #recuerda decirle al api que la proxima vez que haga login lo lleve a cambiar su password
-        # https://learn.microsoft.com/en-us/graph/api/user-post-users?view=graph-rest-1.0&tabs=python
-
-        # obtained from what the azure api call returns in the json (azure nos da el uid)
-        if (debugging): ##########  Debugging offline. Luego, cuando se conecte lo del api de azure se puede dejar lo de debugging y que retorne el user id real
-            userid = data.get('uid')
-        else:
-            userid = '' #Get from what the azure api call returns in the json
-
-        ########################################################################################################
-
+       
         #check aqui. ya no me importa el user id solo quiero saber un bool pa si se creo ()
         # usr = UsersDAO()
-        created=usr.create_user(userid, email, uName)
+        created=usr.create_user(email, uName, password)
         
 
         # send email with password
@@ -92,21 +80,12 @@ class UserHandler():
         email = data.get('email')
 
         usr = UsersDAO()
-        uid = usr.get_user_by_email(email)
+        uname = usr.get_user_by_email(email)
 
-        if uid is None:
+        if uname is None:
             usr.close_connection()
             return jsonify({"error": "User not found"}), 404
         
-
-        ##########################################Call to azure api to delete user and pass uid or what it needs########
-
-        
-
-
-
-        ####################################################################################################################
-
         # delete from local db
 
         deleted=usr.delete_user(email)
@@ -133,9 +112,9 @@ class UserHandler():
         updated_name = data.get('updated_name')
 
         usr = UsersDAO()
-        uid = usr.get_user_by_email(email)
+        uname = usr.get_user_by_email(email)
         
-        if uid is None:
+        if uname is None:
             usr.close_connection()
             return jsonify({"error": "User not found"}), 404
             
@@ -147,13 +126,6 @@ class UserHandler():
             if len(updated_name) > 20:
                 return jsonify({"error": "Name is too long. Must be 20 characters or less."}), 400
             
-
-        ########################################### call to azure api to update user and pass uid or what it needs
-
-
-
-
-        ####################################################################################################################
 
         # update local db
         updated_user = usr.update_user(email, updated_email, updated_name)
@@ -179,7 +151,7 @@ class UserHandler():
         if user is None:
             return jsonify({"error": "User not found"}), 404
         else:
-            return jsonify({"message": f"User found: {user}"}), 200
+            return user
         
 
     def get_all_users(self):

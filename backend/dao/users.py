@@ -18,12 +18,12 @@ class UsersDAO():
     
 
 
-    def create_user(self, userid, email, uName):
+    def create_user(self, email, uName, password):
         cursor = self.conn.cursor()
         created = None
         try:
-            query = "INSERT INTO users (id, email, uname) VALUES (%s, %s, %s) RETURNING id, uname;"
-            cursor.execute(query, (userid, email, uName))
+            query = "INSERT INTO users (email, uname, password) VALUES (%s, %s, %s) RETURNING id, uname;"
+            cursor.execute(query, (email, uName, password))
             created = cursor.fetchone()
             self.conn.commit()
             
@@ -36,21 +36,21 @@ class UsersDAO():
     
     def get_user_by_email(self, email):
         cursor = self.conn.cursor()
-        uid = None
+        uname = None
         try:
             print("Attempting to fetch user with email:", email)  # Debug print statement
-            query = "SELECT id FROM users WHERE email = %s;"
+            query = "SELECT uname FROM users WHERE email = %s;"
             cursor.execute(query, (email,))
             if cursor.rowcount > 0:
-                uid = cursor.fetchone()[0]
-                print("User found with ID:", uid)  # Debug print statement
+                uname = cursor.fetchone()[0]
+                print("User found with ID:", uname)  # Debug print statement
             else:
                 print("No user found with email:", email)  # Debug print statement
         except Exception as e:
             print("Error fetching user by email:", e)
         finally:
             cursor.close()
-        return uid
+        return uname
     
     def get_user(self, email):
         cursor = self.conn.cursor()
