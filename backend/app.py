@@ -173,24 +173,44 @@ def serve_index():
 def serve_static(path):
     return send_from_directory('build', path)
 
+
 @app.route("/update-marker-ids", methods=["POST"])
 def update_marker_ids():
     try:
-        # Extract marker IDs from the request data
-        marker_ids = request.json.get("markerIds")
-        # Filter out duplicates
-        unique_marker_ids = list(set(marker_ids))
-        print("Unique marker IDs:", unique_marker_ids)
+        # Extract marker IDs and DevEUIs from the request data
+        marker_ids_devEUIs = request.get_json()
+        print("Data Recieved:", marker_ids_devEUIs)
+        # Check if request data is None or empty
+        if marker_ids_devEUIs is None:
+            return jsonify({"error": "No JSON data received"}), 400
 
-        # Process the unique marker IDs (e.g., store them in a database)
-        # Your code to handle the marker IDs goes here
+        # Check if 'markers' key exists and it's a list
+        markers_list = marker_ids_devEUIs.get("markers")
+        if not isinstance(markers_list, list):
+            return jsonify({"error": "Invalid 'markers' format or missing 'markers' key"}), 400
+        
+        # Process the received marker IDs and DevEUIs
+        for marker in markers_list:
+            marker_id = marker.get("markerId")
+            devEUI = marker.get("devEUI")
+            if marker_id is None or devEUI is None:
+                return jsonify({"error": "Missing 'markerId' or 'devEUI' in marker data"}), 400
+            # Your code to handle the marker ID and DevEUI goes here
+            print("Marker ID:", marker_id)
+            print("DevEUI:", devEUI)
+            
+            # Example: Store marker ID and DevEUI in a database
 
         # Optionally, return a success response
         return jsonify({"message": "Marker IDs received successfully"}), 200
+
+    except ValueError as ve:
+        # JSON decoding error
+        return jsonify({"error": "Invalid JSON data in the request: " + str(ve)}), 400
+
     except Exception as e:
         # Return an error response if something goes wrong
-        return jsonify({"error": str(e)}), 500
-
+        return jsonify({"error": "An unexpected error occurred: " + str(e)}), 500
 
 @app.route('/deploy', methods=['POST'])
 def deploy():
@@ -257,9 +277,16 @@ def update_password():
         user_dao.close_connection()
 
     
+failed_login_attempts = {}
+
+
+
 @app.route('/login', methods=['POST'])
 def login():
     try:
+        # Define MAX_LOGIN_ATTEMPTS here
+        MAX_LOGIN_ATTEMPTS = 10
+        
         # Get the email and password from the request body
         data = request.json
         email = data.get('email')
@@ -278,20 +305,33 @@ def login():
         user = cursor.fetchone()
 
         if user:
+            # Reset failed login attempts for this user
+            failed_login_attempts.pop(email, None)
+
             # Generate JWT token
             token = jwt.encode({'email': email}, secret_key, algorithm='HS256')
 
             print("Generated Token:", token)
             return jsonify({'token': token}), 200
         else:
-            return jsonify({'message': 'Invalid email or password.'}), 401
+            # Increment failed login attempts counter for this user
+            failed_attempts = failed_login_attempts.get(email, 0) + 1
+            failed_login_attempts[email] = failed_attempts
+
+            # Log the number of failed login attempts for this user
+            print(f"Failed login attempts for {email}: {failed_attempts}")
+
+            # Check if the user has exceeded the maximum attempts
+            if failed_attempts >= MAX_LOGIN_ATTEMPTS:
+                return jsonify({'message': 'You have been locked due to failed login attempts. Please try again in 5 minutes.'}), 401
+            else:
+                return jsonify({'message': 'Invalid email or password.'}), 401
     except Exception as e:
         return jsonify({'message': str(e)}), 500
     finally:
         # Close the database connection
         cursor.close()
         conn.close()
-
 
 if __name__ == '__main__':
     if debugging:

@@ -3,6 +3,8 @@ import Layout from './Layout';
 import 'material-design-lite/material';
 import 'material-design-lite/material.css';
 import './styles.css';
+import logoCatalana from './images/logoCatalana-removebg-preview.png'; 
+
 
 
 
@@ -18,7 +20,12 @@ const Account = () => {
   const [email, setEmail] = useState('');
   const [currentPasswordError, setCurrentPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState(''); // State variable for confirm password error
+  const [showNotification, setShowNotification] = useState(false);
+  
 
+
+
+ 
 
   useEffect(() => {
     // Check if the user is logged in (i.e., if there's a token in local storage)
@@ -28,6 +35,18 @@ const Account = () => {
       window.location.href = '/';
     }
   }, []);
+
+  useEffect(() => {
+    if (showNotification) {
+      // Set a timeout to hide the notification after 3 seconds
+      const timeout = setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+
+      // Clear the timeout when the component unmounts or when showNotification changes
+      return () => clearTimeout(timeout);
+    }
+  }, [showNotification]);
 
 
   useEffect(() => {
@@ -143,6 +162,16 @@ const Account = () => {
       setConfirmPasswordError(''); // Reset confirm password error
     }
   
+    // Check if the new password meets the criteria
+    const passwordRegex = /^(?=.*[0-9]).{8,12}$/;
+    if (!passwordRegex.test(newPassword)) {
+      // Display an error message to the user
+      setConfirmPasswordError('Password must be 8-12 characters long and contain at least 1 number');
+      return;
+    } else {
+      setConfirmPasswordError(''); // Reset confirm password error
+    }
+  
     try {
       // Fetch user information from local storage
       const email = localStorage.getItem('email');
@@ -165,6 +194,7 @@ const Account = () => {
         if (response.ok) {
           // Password updated successfully
           console.log('Password updated successfully');
+          setShowNotification(true); // Show the notification
           handleCloseConfirmPassword(); // Close the dialog
         } else {
           // Failed to update password, display an error message
@@ -178,6 +208,7 @@ const Account = () => {
       console.error('Error updating password:', error);
     }
   };
+  
 
   // Function to toggle visibility of new password
   const toggleNewPasswordVisibility = () => {
@@ -197,10 +228,21 @@ const Account = () => {
         </div>
         <div className="user-info-content">
           <h5>Email:</h5>
-          <h5>jose.lucena@upr.edu</h5>
+          <h5>{localStorage.getItem('email')}</h5>
         </div>
       </div>
+     
       <div className="dashboard-content center-account-container">
+      <div className="image-container">
+      <img src={logoCatalana} alt="Catalana Logo" />
+        </div>
+      {showNotification && (
+        <div className="notification-container">
+          <div className="notification-card">
+            <div className="notification-text">Password updated successfully!</div>
+          </div>
+        </div>
+      )}
         {/* Sign out button */}
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect sign-out" type="submit" onClick={handleSignOut}>
           <span>Sign Out</span>
@@ -259,6 +301,7 @@ const Account = () => {
               <div className="mdl-card__supporting-text-account">
                 {/* Supporting text */}
                 You are about to change your password please enter a new password and confirm it below.
+                Your password must have 8-12 letters and a number.
               </div>
               <form onSubmit={handleSubmitConfirmPassword}>
                 <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label password-input">
