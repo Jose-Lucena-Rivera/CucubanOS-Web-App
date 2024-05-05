@@ -65,13 +65,14 @@ const Dashboard = () => {
   
       if (response.ok) {
         const markersData = data.map((buoyArray) => {
-          const [name, coordinatesStr, color, __, id] = buoyArray;
+          const [name, coordinatesStr, color, __, devEUI] = buoyArray;
   
           if (coordinatesStr === '(0,0)') {
             return null;
           }
   
           const [latStr, lngStr] = coordinatesStr.split(',').map(coord => parseFloat(coord.trim()));
+          const devEUIString = devEUI.toString(); // Convert devEUI to string if it's not already
   
           if (isNaN(latStr) || isNaN(lngStr)) {
             return null;
@@ -82,11 +83,12 @@ const Dashboard = () => {
             lat: latStr,
             lng: lngStr,
             color,
-            id,
+            devEUI: devEUIString,
           };
         }).filter(Boolean);
   
         console.log('Valid markers:', markersData);
+        
   
         setMarkers(markersData);
         loadMap(markersData); // Load the map with the new markers
@@ -144,32 +146,34 @@ const Dashboard = () => {
         // Inside the handleMarkerClick function, after updating the marker's color
         localStorage.setItem(`markerColor${marker.id}`, marker.color || '#FFFFFF');
         console.log('Marker clicked:', {
-          name: marker.name,
-          position: marker.position.toString(),
-          colorNumber: colorNumber,
-          id: marker.id
+            name: marker.name,
+            position: marker.position.toString(),
+            colorNumber: colorNumber,
+            id: marker.id
         });
-  
+    
         setSelectedColorNum(prevColorNums => {
-          const newColorNums = [...prevColorNums];
-          newColorNums[marker.id - 1] = colorNumber; // Assuming marker IDs start from 1
-          return newColorNums;
+            const newColorNums = [...prevColorNums];
+            newColorNums[marker.id - 1] = colorNumber; // Assuming marker IDs start from 1
+            return newColorNums;
         });
-  
+    
         // Store the clicked marker's color and ID in localStorage
         localStorage.setItem(`markerColor${marker.id}`, marker.color || '#FFFFFF');
-  
-        // Update the marker's color in the markers array
+    
+        // Create a copy of the markers array with the updated marker
         const updatedMarkers = markers.map(m => {
-          if (m.id === marker.id) {
-            return { ...m, color: marker.color };
-          }
-          return m;
+            if (m.id === marker.id) {
+                return { ...m, color: marker.color };
+            }
+            return m;
         });
+    
+        // Set state with the updated markers array
         setMarkers(updatedMarkers);
         // If you want to log the color hex code as well
         console.log('Selected color:', colorNumber);
-      };
+    };
   
       const setMarkerIconColor = (marker, color) => {
         const markerIcon = {
@@ -210,6 +214,7 @@ const Dashboard = () => {
             },
             title: buoy.name,
             id: currentMarkerId++,
+            devEUI: buoy.devEUI,
           });
   
           // Inside the loadMap function, after creating markers
@@ -225,17 +230,13 @@ const Dashboard = () => {
           // Extend the bounds to include the marker's position
           bounds.extend(marker.getPosition());
           // Retrieve the marker color from local storage
-          const storedColor = localStorage.getItem(`markerColor${marker.id}`);
-          if (storedColor) {
-            marker.color = storedColor;
-            updateMarkerIcon(marker, storedColor);
-          }
+         
   
           marker.addListener('click', () => {
             const selectedColor = localStorage.getItem('selectedColor') || '#FFFFFF';
             const defaultColor = '#FFFFFF';
             marker.color = selectedColor; // Update marker's color property
-            handleMarkerClick(marker); // Call function to handle marker click event
+            //handleMarkerClick(marker); // Call function to handle marker click event
   
             // Update the marker's color in the markers array
             const updatedMarkers = markers.map(m => {
@@ -295,32 +296,52 @@ const Dashboard = () => {
   // Function to send marker IDs to the backend
   const sendMarkerIdsToBackend = async () => {
     try {
-      // Make a POST request to your backend API endpoint
-      const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/update-marker-ids', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ markerIds }), // Send the marker IDs in the request body
-      });
+        // Check if markers array is not empty
+        if (markers.length === 0) {
+            console.error('No markers to send to the backend.');
+            return;
+        }
 
-      if (response.ok) {
-        console.log('Marker IDs updated successfully in the backend.');
-      } else {
-        console.error('Failed to update marker IDs in the backend.');
-      }
+        const markerIdsData = {
+            markers: markers.map(marker => {
+                // Verify each marker object has id and devEUI properties
+                if (!marker.id || !marker.devEUI) {
+                    console.error('Invalid marker object:', marker);
+                    throw new Error('Invalid marker object');
+                }
+                return {
+                    markerId: marker.id,
+                    devEUI: marker.devEUI,
+                };
+            }),
+        };
+
+        console.log("Marker IDs data:", markerIdsData);
+
+        const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/update-marker-ids', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(markerIdsData),
+        });
+
+        console.log("Response status:", response.status);
+        console.log("Response headers:", response.headers);
+
+        if (response.ok) {
+            console.log('Marker IDs updated successfully in the backend.');
+        } else {
+            console.error('Failed to update marker IDs in the backend.');
+        }
     } catch (error) {
-      console.error('Error updating marker IDs in the backend:', error);
+        console.error('Error updating marker IDs in the backend:', error);
     }
-  };
+};
 
-  // useEffect hook to automatically send marker IDs to the backend whenever they change
-  useEffect(() => {
+useEffect(() => {
     sendMarkerIdsToBackend();
-  }, [markerIds]); // Trigger the effect whenever markerIds change
-
-  
-
+}, [markerIds]);
     // Modify handleUpdateMarker to include color parameter
 const handleUpdateMarker = (updatedMarkerId, updatedColor,color) => {
   // Find the marker with the updated ID

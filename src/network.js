@@ -14,6 +14,8 @@ const Network = () => {
   const [appKey, setAppKey] = useState('');
   const [devEuiError, setDevEuiError] = useState('');
   const [appKeyError, setAppKeyError] = useState('');
+  const [showNotification, setShowNotification] = useState(false);
+
   
   useEffect(() => {
     // Check if the user is logged in (i.e., if there's a token in local storage)
@@ -23,6 +25,17 @@ const Network = () => {
       window.location.href = '/';
     }
   }, []);
+  useEffect(() => {
+    if (showNotification) {
+      // Set a timeout to hide the notification after 3 seconds
+      const timeout = setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+
+      // Clear the timeout when the component unmounts or when showNotification changes
+      return () => clearTimeout(timeout);
+    }
+  }, [showNotification]);
 
 
   useEffect(() => {
@@ -178,6 +191,7 @@ const Network = () => {
   
       if (response.ok) {
         setSelectedBuoys([...selectedBuoys, { id: buoyId, coordinates, isSelected: false }]);
+        setShowNotification(true); // Show the notification
         handleCloseAddCard();
       } else {
         console.error('Error creating buoy:', data.error);
@@ -253,6 +267,13 @@ const Network = () => {
     <Layout>
       <div className="dashboard-content center-network-container">
         <h3 className="table-title-network">Buoy Information</h3>
+        {showNotification && (
+        <div className="notification-container">
+          <div className="notification-card">
+            <div className="notification-text">You have added a buoy to the network!</div>
+          </div>
+        </div>
+      )}
         <button className="mdl-button-network mdl-button--colored mdl-js-button mdl-js-ripple-effect add-buoy" onClick={handleAddBuoyClick} type="submit">
           <i className="material-icons">add</i>
           <span>Add a Buoy</span>
