@@ -9,7 +9,7 @@ from handler.messages import *
 import jwt
 from handler.users import UserHandler
 from hashlib import sha256
-from dao.users import UsersDAO
+# from dao.users import UsersDAO
 
 
 
@@ -17,17 +17,13 @@ secret_key = os.environ.get('SECRET_KEY')
 # Create the application instance
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.net"}})
+
 user_handler = UserHandler()
 #user_dao = UsersDAO()
 
 load_dotenv()
 
 port = int(os.environ.get("PORT", 5000))
-
-# Create a URL route in our application for "/"
-# @app.route('/')
-# def index():
-#     return jsonify({"message": "Hello, Personas!"})
 
 
 @app.after_request
@@ -37,25 +33,9 @@ def add_cors_headers(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     return response
 
-for key, value in os.environ.items():
-    print(f"{key}: {value}")
+# for key, value in os.environ.items():
+#     print(f"{key}: {value}")
     
-
-@app.route("/publish", methods=["POST"])
-def publish():
-    # Retrieve message data from user input
-    message = request.form["message"]
-    publish_message(message)
-    # Display confirmation or handle errors
-    return jsonify({"message": "Message sent"}, 200)
-
-
-@app.route("/subscribe", methods=["GET"])
-def subscribe():
-    # Retrieve message data from user input
-    message = subscribe_message()
-    # Display confirmation or handle errors
-    return jsonify({"message": message},200)
 
 @app.route("/add-user", methods=["POST"])
 @app.route("/add-user/", methods=["POST"])
@@ -89,7 +69,7 @@ def get_all_users():
     return user.get_all_users()
 
 @app.route("/forgot-password/", methods=["POST"])
-def forgot_password(username):
+def forgot_password():
     
     pass
 
@@ -142,7 +122,6 @@ def chirpstack_updates():
 @app.route("/send-all-buoys-data/", methods=["POST"])
 @app.route("/send-all-buoys-data", methods=["POST"])
 def send_buoy_data():
-    # https://loraserver.tetaneutral.net/api#!/DeviceQueueService/Enqueue
     message = MessageHandler()
     return message.multicast()
     
@@ -194,36 +173,9 @@ def update_marker_ids():
 
 @app.route('/deploy', methods=['POST'])
 def deploy():
-    print("Deploy function called")
-
     message = MessageHandler()
     return message.deploy_buoy()
 
-    # data = request.json
-    
-    # # Define the desired order of keys
-    # ordered_keys = ['selectedColorNum', 'selectedPatternNum', 'brightnessLevel', 'selectedFrequencyNum']
-
-    # # Create a new dictionary with keys in the desired order
-    # ordered_data = {key: data.get(key) for key in ordered_keys}
-
-    # # Process the received data
-    # selectedColorNum = ordered_data.get('selectedColorNum')
-    # selectedPatternNum = ordered_data.get('selectedPatternNum')
-    # brightnessLevel = ordered_data.get('brightnessLevel')
-    # selectedFrequencyNum = ordered_data.get('selectedFrequencyNum')
-
-    # # Here you can process the received data further
-
-    # # Return the processed data
-    # response_data = {
-    #     'selectedColorNum': selectedColorNum,
-    #     'selectedPatternNum': selectedPatternNum,
-    #     'brightnessLevel': brightnessLevel,
-    #     'selectedFrequencyNum': selectedFrequencyNum,
-    # }
-
-    # return jsonify(response_data), 200
 
 @app.route("/verify-password", methods=["GET"])
 def verify_password():
@@ -232,29 +184,7 @@ def verify_password():
 
 @app.route("/update-password", methods=["PUT"])
 def update_password():
-    data = request.get_json()
-    email = data.get('email')
-    current_password = data.get('currentPassword')
-    new_password = data.get('newPassword')
-    
-    # Check if new_password is not null
-    if new_password is None:
-        return jsonify({"error": "New password cannot be null"}), 400
-    
-    # Initialize UsersDAO within the route function
-    user_dao = UsersDAO()
-    
-    try:
-        # Assuming user_dao.update_password returns True on success and False on failure
-        success = user_dao.update_password(email, new_password)
-        
-        if success:
-            return jsonify({"message": "Password updated successfully"}), 200
-        else:
-            return jsonify({"error": "Failed to update password"}), 500
-    finally:
-        # Close the database connection after using it
-        user_dao.close_connection()
+    return user_handler.update_password()
 
     
 @app.route('/login', methods=['POST'])

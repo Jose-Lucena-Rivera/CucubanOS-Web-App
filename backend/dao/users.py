@@ -22,12 +22,13 @@ class UsersDAO():
         cursor = self.conn.cursor()
         created = None
         try:
-            query = "INSERT INTO users (email, uname, password) VALUES (%s, %s, %s) RETURNING id, uname;"
+            query = "INSERT INTO users (email, uname, password) VALUES (%s, %s, %s) RETURNING uname;"
             cursor.execute(query, (email, uName, password))
             created = cursor.fetchone()
             self.conn.commit()
             
         except Exception as e:
+            self.conn.rollback()
             print(e)
         finally:
             cursor.close()
@@ -58,7 +59,7 @@ class UsersDAO():
         cursor.execute(query, (email,))
         result = cursor.fetchone() if cursor.rowcount > 0 else None
         cursor.close()
-        self.conn.close()
+        # self.conn.close()
     # Ensure that the result is converted to a dictionary with column names as keys
         return dict(zip([column[0] for column in cursor.description], result)) if result else None
     
@@ -115,6 +116,7 @@ class UsersDAO():
             self.conn.commit()
         
         except Exception as e:
+            self.conn.rollback()
             print(e)
 
         finally:
@@ -140,7 +142,7 @@ class UsersDAO():
             if new_password is None:
                 raise ValueError("New password cannot be null")
             
-            query = "UPDATE users SET password = %s WHERE email = %s RETURNING id, uname, email;"
+            query = "UPDATE users SET password = %s WHERE email = %s RETURNING uname, email;"
             cursor.execute(query, (new_password, email))
             updated = cursor.fetchone()
             self.conn.commit()
@@ -150,5 +152,6 @@ class UsersDAO():
             return False  # Return False or handle the error in an appropriate way
         finally:
             cursor.close()
+            self.conn.close()
         return updated
 

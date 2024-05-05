@@ -5,10 +5,16 @@ import re
 from random import randint
 from dotenv import load_dotenv
 import os
+import jwt
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 load_dotenv()
 
 debugging = os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
+pepper = os.getenv('PEPPER') if not None else os.environ.get('PEPPER')
+secret_key = os.environ.get('SECRET_KEY')
+
 
 class UserHandler():
     
@@ -50,7 +56,9 @@ class UserHandler():
        
         #check aqui. ya no me importa el user id solo quiero saber un bool pa si se creo ()
         # usr = UsersDAO()
-        created=usr.create_user(email, uName, password)
+        ph = PasswordHasher()
+        hashed_password = ph.hash(pepper + password)
+        created=usr.create_user(email, uName, hashed_password)
         
 
         # send email with password
@@ -60,7 +68,7 @@ class UserHandler():
             # el mensaje va a decir que se creo una cuenta a su para ellos en la catalana pr. Se le va a enviar el email que se loggeo y el password randomly generado
             # tambien se le va a decir lo que podra hacer
 
-            return jsonify({"message": f"Success. User with id and name: {created} was created." }), 201
+            return jsonify({"message": f"Success. User with name: {created} was created." }), 201
 
             ######################################
             
@@ -145,8 +153,7 @@ class UserHandler():
         email = data.get('email')
         usr = UsersDAO()
         user = usr.get_user(email)
-
-        
+        usr.close_connection()
         
         if user is None:
             return jsonify({"error": "User not found"}), 404
@@ -171,45 +178,114 @@ class UserHandler():
     def verify_password(self):
         try:
             # Get the email and current password from the query parameters
-            email = request.args.get('email')
-            current_password = request.args.get('currentPassword')
+            data = request.get_json()
+            email = data.get('email')
+            current_password = data.get('currentPassword')
 
             # Check if email and current password are provided
             if not email or not current_password:
                 return jsonify({'message': 'Email and current password are required.', 'success': False}), 400
 
+            
             # Fetch the user from the database using the email
             users_dao = UsersDAO()
             user = users_dao.get_user(email)
             users_dao.close_connection()
 
-            if user:
-                # Compare the current password with the password stored in the database
-                if user['password'] == current_password:
+            if user is not None:
+                password = pepper + current_password
+                ph = PasswordHasher()
+                
+                # Compare the current password with the hashed password stored in the database
+                try:
+                    ph.verify(user["password"], password)
                     return jsonify({'success': True}), 200
-                else:
+                except VerifyMismatchError as e:
                     return jsonify({'success': False, 'message': 'Incorrect current password'}), 401
+            
             else:
                 return jsonify({'success': False, 'message': 'User not found'}), 404
+        
         except Exception as e:
             return jsonify({'message': str(e), 'success': False}), 500
         
             
 
     # Helper method to update the password in the database
-    def update_password_in_database(self, email, new_password):
+    def update_password(self):
+        data = request.get_json()
+        email = data.get('email')
+        new_password = data.get('newPassword')
+        
+        # Check if new_password is not null
+        if new_password is None:
+            return jsonify({"error": "New password cannot be null"}), 400
+        
+        new_password = pepper + new_password
+        
         try:
-            # Fetch the user from the database using the email
-            users_dao = UsersDAO()
-            user = users_dao.get_user(email)
+            user_dao = UsersDAO()
+            user = user_dao.get_user(email)
 
-            if user:
-                # Update the password in the database with the new password
-                updated = users_dao.update_password(email, new_password)
-                users_dao.close_connection()
-                return updated  # Return True if password is updated successfully, False otherwise
+            if user is None:
+                return jsonify({"error": "User not found"}), 404
+            
+            ph = PasswordHasher()
+
+            # Check if the new password is the same as the current password
+            try:
+                ph.verify(user["password"], new_password)
+                return jsonify({"error": "New password must be different from the current password"}), 400
+
+            except VerifyMismatchError as e:
+                new_password = ph.hash(new_password)
+                updated = user_dao.update_password(email, new_password)
+            
+            # act depending if the password was updated or not
+            if updated:
+                return jsonify({"message": "Password updated successfully"}), 200
             else:
-                return False  # User not found
+                return jsonify({"error": "Failed to update password"}), 500
+            
         except Exception as e:
-            # Handle exceptions
-            return False
+            return jsonify({"error": str(e)}), 500
+        
+
+    def login(self):
+        try:
+            # Get the email and password from the request body
+            data = request.json
+            email = data.get('email')
+            password = data.get('password')
+
+            # Check if email and password are provided
+            if not email or not password:
+                return jsonify({'message': 'Email and password are required.'}), 400
+
+            # Connect to the PostgreSQL database
+            user = UsersDAO()
+            user = user.get_user(email)
+            user.close_connection()
+
+            if user is None:
+                return jsonify({'message': 'User does not exist'}), 401
+
+            ph = PasswordHasher()
+            password = pepper + password
+
+            try:
+                ph.verify(user["password"], password)
+                
+            except VerifyMismatchError as e:
+                return jsonify({'message': 'Invalid password.'}), 401
+
+
+           
+            # Generate JWT token
+            token = jwt.encode({'email': email}, secret_key, algorithm='HS256')
+
+            print("Generated Token:", token)
+            return jsonify({'token': token}), 200
+            
+        except Exception as e:
+            return jsonify({'message': str(e)}), 500

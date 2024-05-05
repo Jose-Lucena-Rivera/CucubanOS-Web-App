@@ -1,1 +1,17 @@
-{"selectedColorNum": 1, "selectedPatternNum": 2, "brightnessLevel": 4, "selectedFrequencyNum": 4}
+{
+    "selectedColorNum": 1, 
+    "selectedPatternNum": 2, 
+    "brightnessLevel": 4, 
+    "selectedFrequencyNum": 4,
+
+    "markers": [
+        {
+            "markerId": 1,
+            "devEUI": "666e6db8c42c807a"
+        },
+        {
+            "markerId": 2,
+            "devEUI": "1111111111111111"
+        }
+    ]
+}

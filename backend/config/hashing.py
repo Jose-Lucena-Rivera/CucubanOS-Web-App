@@ -20,6 +20,7 @@ p2 = key + p2
 # print (p2)
 try:
     f = ph.verify(hash, p2)
+    print(f)
 except Exception as e:
     
     f = False
