@@ -16,7 +16,8 @@ from hashlib import sha256
 secret_key = os.environ.get('SECRET_KEY')
 # Create the application instance
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.net"}})
+# CORS(app, resources={r"/*": {"origins": "https://boyaslacatalana.azurewebsites.net"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 user_handler = UserHandler()
 #user_dao = UsersDAO()
