@@ -15,6 +15,8 @@ debugging = os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
 pepper = os.getenv('PEPPER') if not None else os.environ.get('PEPPER')
 secret_key = os.environ.get('SECRET_KEY')
 
+failed_login_attempts = {}
+
 
 class UserHandler():
     
@@ -251,8 +253,12 @@ class UserHandler():
             return jsonify({"error": str(e)}), 500
         
 
+
     def login(self):
         try:
+             # Define MAX_LOGIN_ATTEMPTS here
+            MAX_LOGIN_ATTEMPTS = 10
+
             # Get the email and password from the request body
             data = request.json
             email = data.get('email')
@@ -264,23 +270,40 @@ class UserHandler():
 
             # Connect to the PostgreSQL database
             user = UsersDAO()
-            user = user.get_user(email)
+            usr = user.get_user(email)
             user.close_connection()
 
-            if user is None:
+            if usr is None:
                 return jsonify({'message': 'User does not exist'}), 401
 
             ph = PasswordHasher()
             password = pepper + password
 
             try:
-                ph.verify(user["password"], password)
+                v=ph.verify(usr["password"], password) ### the error is here
+                print (v)
                 
-            except VerifyMismatchError as e:
-                return jsonify({'message': 'Invalid password.'}), 401
+            except Exception as e:
+#####
+                print(e)
+                # Increment failed login attempts counter for this user
+                failed_attempts = failed_login_attempts.get(email, 0) + 1
+                failed_login_attempts[email] = failed_attempts
+
+                # Log the number of failed login attempts for this user
+                print(f"Failed login attempts for {email}: {failed_attempts}")
+
+                # Check if the user has exceeded the maximum attempts
+                if failed_attempts >= MAX_LOGIN_ATTEMPTS:
+                    return jsonify({'message': 'You have been locked due to failed login attempts. Please try again in 5 minutes.'}), 401
+                else:
+#####
+                    return jsonify({'message': 'Invalid password.'}), 401
 
 
-           
+            # Reset failed login attempts for this user
+            failed_login_attempts.pop(email, None)
+
             # Generate JWT token
             token = jwt.encode({'email': email}, secret_key, algorithm='HS256')
 
@@ -288,4 +311,4 @@ class UserHandler():
             return jsonify({'token': token}), 200
             
         except Exception as e:
-            return jsonify({'message': str(e)}), 500
+            return jsonify({'error': str(e)}), 500
