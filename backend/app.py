@@ -213,6 +213,10 @@ failed_login_attempts = {}
 
 @app.route('/login', methods=['POST'])
 def login():
+    user = UserHandler()
+    return user.login()
+
+
     try:
         # Define MAX_LOGIN_ATTEMPTS here
         MAX_LOGIN_ATTEMPTS = 10
