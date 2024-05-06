@@ -156,6 +156,8 @@ def serve_static(path):
 
 @app.route("/update-marker-ids", methods=["POST"])
 def update_marker_ids():
+    buoy = BuoyHandler()
+    return buoy.update_marker_ids()
     try:
         # Extract marker IDs and DevEUIs from the request data
         marker_ids_devEUIs = request.get_json()
