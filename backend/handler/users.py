@@ -187,9 +187,9 @@ class UserHandler():
     def verify_password(self):
         try:
             # Get the email and current password from the query parameters
-            data = request.get_json()
-            email = data.get('email')
-            current_password = data.get('currentPassword')
+            args = request.args
+            email = args.get('email')
+            current_password = args.get('currentPassword')
 
             # Check if email and current password are provided
             if not email or not current_password:
