@@ -18,6 +18,13 @@ secret_key = os.environ.get('SECRET_KEY')
 failed_login_attempts = {}
 
 
+def validate_password(password):
+    password_regex = r"^(?=.*[0-9]).{8,12}$"
+    if re.match(password_regex, password):
+        return True
+    else:
+        return False
+
 class UserHandler():
     
     def create_user(self):
@@ -223,6 +230,10 @@ class UserHandler():
         if new_password is None:
             return jsonify({"error": "New password cannot be null"}), 400
         
+        # 
+        if not validate_password(new_password):
+            return jsonify({"error": "Invalid password. Must be at least 8 characters long and contain at least one digit."}), 400
+        
         new_password = pepper + new_password
         
         try:
@@ -239,7 +250,7 @@ class UserHandler():
                 ph.verify(user["password"], new_password)
                 return jsonify({"error": "New password must be different from the current password"}), 400
 
-            except VerifyMismatchError as e:
+            except Exception as e:
                 new_password = ph.hash(new_password)
                 updated = user_dao.update_password(email, new_password)
             
