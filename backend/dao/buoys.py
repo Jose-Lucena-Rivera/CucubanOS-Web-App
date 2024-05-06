@@ -94,3 +94,38 @@ class BuoyDAO():
             cursor.close()
             self.conn.close()
         return updated
+    
+    def count_buoys(self):
+        cursor = self.conn.cursor()
+        query = "SELECT COUNT(*) FROM buoy;"
+        cursor.execute(query)
+        count = cursor.fetchone()[0]
+        cursor.close()
+        self.conn.close()
+        return count
+    
+    def set_frequency(self, f):
+        cursor = self.conn.cursor()
+        try:
+            query = "UPDATE buoy SET frequency = %s;"
+            cursor.execute(query, (f,))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print(e)
+        finally:
+            cursor.close()
+            self.conn.close()
+
+    def update_color(self, id, color):
+        cursor = self.conn.cursor()
+        try:
+            query = "UPDATE buoy SET bcolor = %s WHERE id = %s;"
+            cursor.execute(query, (color, id))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print(e)
+        finally:
+            cursor.close()
+            return True
