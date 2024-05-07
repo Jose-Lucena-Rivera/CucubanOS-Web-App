@@ -199,6 +199,7 @@ const Account = () => {
         } else {
           // Failed to update password, display an error message
           console.log('Failed to update password');
+          setConfirmPasswordError('New password cannot be the same as the current password');
         }
       } else {
         // New password is the same as the current password, display an error message
