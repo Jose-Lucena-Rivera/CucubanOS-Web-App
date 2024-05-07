@@ -68,11 +68,13 @@ html, body {
     font-size: 2.0rem; /* Adjust the size as needed */
     margin-right: 10px; /* Add some spacing between the icon and the title */
     vertical-align: middle;
+    
   }
   
   .drawer-title {
     font-size: 1.8rem;
-    vertical-align: middle; 
+    vertical-align: middle;
+
   }
 
 
@@ -243,7 +245,7 @@ body {
 
 .demo-card-square.mdl-card {
   width: 320px;
-  height: 355px;
+  height: 395px;
   border-radius: 8px; /* Adjust the border-radius as needed */
   overflow: hidden; /* Ensure content doesn't overflow rounded corners */
   
@@ -251,8 +253,12 @@ body {
 }
 .demo-card-square > .mdl-card__title {
   color: #000000;
-  background-color: #85d8cb;
+  /*background-color: #85d8cb;*/
+  background-color: #16ba68;
   
+}
+.mdl-card__title-text{
+  height: 80%;
 }
 
 .center-container-login {
@@ -277,13 +283,14 @@ body {
 .center-btn {
   display: flex;
   justify-content: center;
+  padding: 10px;
 }
 
 /* Additional styling for button */
 .demo-card-square .mdl-button-login {
   border-radius: 24px; /* Adjust the border radius as needed */
   color: #000000;
-  background-color: #9fe2d8;
+  background-color: #16ba68;
   width: 40%; 
   height: 40px;
 }
@@ -563,6 +570,17 @@ body {
   right: -100px;
   cursor: pointer;
   
+}
+
+.table-title-network {
+  position: absolute;
+  top: 20%;
+  left: 10%;
+ 
+ }
+ .custom-width-network {
+  width: 90%; 
+  top: -10%;
 }
 
 
