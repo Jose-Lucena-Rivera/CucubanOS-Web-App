@@ -143,38 +143,37 @@ const Dashboard = () => {
   
       const handleMarkerClick = (marker) => {
         let colorNumber = getColorNum(marker.color || '#FFFFFF'); // Default to 0 if marker has no color
-        // Inside the handleMarkerClick function, after updating the marker's color
-        localStorage.setItem(`markerColor${marker.id}`, marker.color || '#FFFFFF');
-        console.log('Marker clicked:', {
-            name: marker.name,
-            position: marker.position.toString(),
-            colorNumber: colorNumber,
-            id: marker.id
-        });
-    
-        setSelectedColorNum(prevColorNums => {
-            const newColorNums = [...prevColorNums];
-            newColorNums[marker.id - 1] = colorNumber; // Assuming marker IDs start from 1
-            return newColorNums;
-        });
-    
-        // Store the clicked marker's color and ID in localStorage
-        localStorage.setItem(`markerColor${marker.id}`, marker.color || '#FFFFFF');
-    
+        const selectedColor = localStorage.getItem('selectedColor') || '#FFFFFF';
+        
+        // Update marker's color property
+        marker.color = selectedColor;
+      
+        // Update the marker's icon with the selected color
+        updateMarkerIcon(marker, selectedColor);
+      
+        // Store the clicked marker's color in local storage
+        localStorage.setItem(`markerColor${marker.id}`, selectedColor);
+        
+        // Update the state if necessary
         // Create a copy of the markers array with the updated marker
         const updatedMarkers = markers.map(m => {
-            if (m.id === marker.id) {
-                return { ...m, color: marker.color };
-            }
-            return m;
+          if (m.id === marker.id) {
+            return { ...m, color: selectedColor };
+          }
+          return m;
         });
-    
+        setSelectedColorNum(prevColorNums => {
+          const newColorNums = [...prevColorNums];
+          newColorNums[marker.id - 1] = colorNumber; // Assuming marker IDs start from 1
+          return newColorNums;
+        });
+        
+      
         // Set state with the updated markers array
         setMarkers(updatedMarkers);
-        // If you want to log the color hex code as well
-        console.log('Selected color:', colorNumber);
-    };
-  
+        setMarkers(newMarkers);
+      };
+    
       const setMarkerIconColor = (marker, color) => {
         const markerIcon = {
           path: window.google.maps.SymbolPath.CIRCLE,
@@ -230,13 +229,18 @@ const Dashboard = () => {
           // Extend the bounds to include the marker's position
           bounds.extend(marker.getPosition());
           // Retrieve the marker color from local storage
+          const storedColor = localStorage.getItem(`markerColor${marker.id}`);
+          if (storedColor) {
+            marker.color = storedColor;
+            updateMarkerIcon(marker, storedColor);
+          }
          
   
           marker.addListener('click', () => {
             const selectedColor = localStorage.getItem('selectedColor') || '#FFFFFF';
             const defaultColor = '#FFFFFF';
             marker.color = selectedColor; // Update marker's color property
-            //handleMarkerClick(marker); // Call function to handle marker click event
+            handleMarkerClick(marker); // Call function to handle marker click event
   
             // Update the marker's color in the markers array
             const updatedMarkers = markers.map(m => {
@@ -255,7 +259,7 @@ const Dashboard = () => {
                 strokeWeight: 0,
                 scale: 8,
               });
-              localStorage.setItem('clickedMarkerColor', selectedColor);
+              //localStorage.setItem('clickedMarkerColor', selectedColor);
             }
   
             // Handle marker click after updating marker's color
@@ -339,7 +343,7 @@ const Dashboard = () => {
     }
 };
 
-useEffect(() => {
+  useEffect(() => {
     sendMarkerIdsToBackend();
 }, [markerIds]);
     // Modify handleUpdateMarker to include color parameter
@@ -376,19 +380,26 @@ const handleUpdateMarker = (updatedMarkerId, updatedColor,color) => {
     // Inside the useEffect to retrieve marker color data from local storage upon component mount
     useEffect(() => {
       const storedMarkerColorData = localStorage.getItem('markerColorData');
-
+  
       if (storedMarkerColorData) {
-        const markerColorData = JSON.parse(storedMarkerColorData);
-
-        // Iterate through the stored data and apply colors to markers
-        markers.forEach(marker => {
-          const storedColor = markerColorData[marker.id];
-          if (storedColor) {
-            updateMarkerIcon(marker, storedColor);
-          }
-        });
+          const markerColorData = JSON.parse(storedMarkerColorData);
+  
+          // Iterate through the stored data and apply colors to markers
+          const updatedMarkers = markers.map(marker => {
+              const storedColor = markerColorData[marker.id];
+              if (storedColor) {
+                  // Update marker icon with the stored color
+                  updateMarkerIcon(marker, storedColor);
+                  // Update marker's color property
+                  return { ...marker, color: storedColor };
+              }
+              return marker;
+          });
+  
+          // Set state with the updated markers array
+          setMarkers(updatedMarkers);
       }
-    }, []);
+  }, [markers]);
 
   const updateAllMarkersColor = (color) => {
     markers.forEach((marker) => {
@@ -403,15 +414,34 @@ const handleUpdateMarker = (updatedMarkerId, updatedColor,color) => {
       }
     });
   };
+
+
   const handleSelectAll = () => {
-        // Update all markers to have the selected color
+    // Update all markers to have the selected color
     updateAllMarkersColor(selectedColor);
 
-    // Update selectedColorNum to match the selected color for all markers
-    const colorNumber = getColorNum(selectedColor);
-    setSelectedColorNum(Array(markers.length).fill(colorNumber));
-  };
+    // Store the selected color for all markers in local storage
+    markers.forEach(marker => {
+        marker.color = selectedColor;
+        localStorage.setItem(`markerColor${marker.id}`, selectedColor);
+    });
 
+    // Update selectedColorNum to match the selected color for all markers
+    const updatedColorNums = markers.map(marker => {
+        const storedColor = localStorage.getItem(`markerColor${marker.id}`);
+        if (storedColor) {
+            // Convert stored hex color to color number
+            const colorNum = getColorNum(storedColor);
+            console.log(`Stored color: ${storedColor}, Color number: ${colorNum}`);
+            return colorNum;
+        }
+        return 0; // Default color number if no color is found
+    });
+
+    // Update selectedColorNum with the updated color numbers
+    console.log('Updated color numbers:', updatedColorNums);
+    setSelectedColorNum(updatedColorNums);
+};
 
   useEffect(() => {
     const handleTouchStart = (event) => {
@@ -529,12 +559,19 @@ useEffect(() => {
   const handleClearAll = () => {
     // Call clearAllMarkersColor to ensure all markers are cleared visually
     clearAllMarkersColor();
-  
+
     // Reset selectedColorNum to an array of 0s with the same length as markers
     setSelectedColorNum(Array(markers.length).fill(0));
+
     // Clear the stored marker color data from local storage
     localStorage.removeItem('markerColorData');
-  };
+
+    // Clear the marker color for each marker and update local storage
+    markers.forEach(marker => {
+        marker.color = '#FFFFFF'; // Set default color or any other desired color
+        localStorage.setItem(`markerColor${marker.id}`, '#FFFFFF'); // Update local storage
+    });
+};
 
 
 
@@ -608,7 +645,46 @@ useEffect(() => {
     const updatedColor = adjustBrightness(selectedColor, value);
     document.documentElement.style.setProperty('--brightness', `${value}%`);
     buttonRef.current.style.backgroundColor = updatedColor;
-  };
+
+    // Store both slider value and brightness level number in local storage
+    localStorage.setItem('sliderValue', value);
+    localStorage.setItem('brightnessLevelNum', brightnessLevelNum);
+};
+// Function to handle retrieving brightness level number from local storage
+const retrieveBrightnessLevelNum = () => {
+  const storedBrightnessLevelNum = localStorage.getItem('brightnessLevelNum');
+  return storedBrightnessLevelNum ? parseInt(storedBrightnessLevelNum) : 5; // Default: 5 if not found
+};
+
+// Call retrieveBrightnessLevelNum when component mounts to set initial brightness level number
+useEffect(() => {
+  const initialBrightnessLevelNum = retrieveBrightnessLevelNum();
+  setBrightnessLevel(initialBrightnessLevelNum);
+}, []);
+
+// Add retrieveBrightnessLevelNum to dependencies array to ensure it's only called once on mount
+useEffect(() => {
+  const initialBrightnessLevelNum = retrieveBrightnessLevelNum();
+  setBrightnessLevel(initialBrightnessLevelNum);
+}, [retrieveBrightnessLevelNum]);
+
+// Function to handle retrieving slider value from local storage
+const retrieveSliderValue = () => {
+  const storedSliderValue = localStorage.getItem('sliderValue');
+  return storedSliderValue ? parseInt(storedSliderValue) : 100; // Default: 100 if not found
+};
+
+// Call retrieveSliderValue when component mounts to set initial slider value
+useEffect(() => {
+  const initialSliderValue = retrieveSliderValue();
+  setSliderValue(initialSliderValue);
+}, []);
+
+// Add retrieveSliderValue to dependencies array to ensure it's only called once on mount
+useEffect(() => {
+  const initialSliderValue = retrieveSliderValue();
+  setSliderValue(initialSliderValue);
+}, [retrieveSliderValue]);
 
   const getBrightnessLevelNum = (value) => {
     const brightnessMap = {
@@ -642,12 +718,15 @@ useEffect(() => {
     handleSliderChange(snappedValue);
   };
 
-    const handlePatternSelect = (pattern) => {
+  const handlePatternSelect = (pattern) => {
     setSelectedPattern(pattern);
+    localStorage.setItem('selectedPattern', pattern); // Store pattern name in local storage
+    console.log(`Selected Pattern: ${pattern}`);
     const patternNum = getPatternNum(pattern); // Get pattern number based on pattern
     setSelectedPatternNum(patternNum); // Update pattern number state
+    localStorage.setItem('selectedPatternNum', patternNum.toString()); // Store pattern number in local storage
     console.log(`Selected Pattern Number: ${patternNum}`); // Log pattern number
-  };
+};
 
   const getPatternNum = (pattern) => {
     const patternMap = {
@@ -663,12 +742,15 @@ useEffect(() => {
     return patternMap[pattern] || 0; // Return pattern number or 0 if pattern not found
   };
 
-   const handleFrequencySelect = (frequency) => {
+  const handleFrequencySelect = (frequency) => {
     setSelectedFrequency(frequency);
+    localStorage.setItem('selectedFrequency', frequency);
+    console.log(`Selected Frequency: ${frequency}`);
     const frequencyNum = getFrequencyNum(frequency); // Get frequency number based on frequency
     setSelectedFrequencyNum(frequencyNum); // Update frequency number state
+    localStorage.setItem('selectedFrequencyNum', frequencyNum.toString()); // Store frequency number in local storage
     console.log(`Selected Frequency Number: ${frequencyNum}`); // Log frequency number
-  };
+};
 
   const getFrequencyNum = (frequency) => {
     const frequencyMap = {
@@ -681,26 +763,50 @@ useEffect(() => {
     return frequencyMap[frequency] || 0; // Return frequency number or 0 if frequency not found
   };
 
+  useEffect(() => {
+    // Retrieve selected pattern and frequency from local storage
+    const storedPattern = localStorage.getItem('selectedPattern');
+    const storedFrequency = localStorage.getItem('selectedFrequency');
+
+    // Update state with the stored values, or set default values if not found
+    setSelectedPattern(storedPattern || 'Pattern');
+    setSelectedFrequency(storedFrequency || 'Frequency');
+}, []);
+
   const handleDeploy = async () => {
+
+    const updatedColorNums = markers.map(marker => {
+      const storedColor = localStorage.getItem(`markerColor${marker.id}`);
+      if (storedColor) {
+          // Convert stored hex color to color number
+          return getColorNum(storedColor);
+      }
+      return 0; // Default color number if no color is found
+  });
+    // Update selectedColorNum with the updated color numbers
+    setSelectedColorNum(updatedColorNums);
+
+    
 
     const brightnessLevelToSend = sliderValue === 100 ? 5 : brightnessLevel;
 
      // Map the colors to color numbers, replacing null with 0 for markers without color
     const colorNums = markers.map(marker => marker.color ? getColorNum(marker.color) : 0);
     // Determine the pattern number
-    let patternToSend = selectedPatternNum;
-    if (selectedPattern === 'Pattern') {
-      patternToSend = 7; // No Pattern
-    }
+    // Retrieve selected pattern and frequency from local storage
+    const storedPatternNum = localStorage.getItem('selectedPatternNum');
+    const storedFrequencyNum = localStorage.getItem('selectedFrequencyNum');
+
+    // Determine the pattern number
+    let patternToSend = storedPatternNum ? parseInt(storedPatternNum) : 7; // Default: No Pattern
 
     // Determine the frequency number
-    let frequencyToSend = selectedFrequencyNum;
-    if (selectedFrequency === 'Frequency') {
-      frequencyToSend = 1; // X1
-    }
- 
+    let frequencyToSend = storedFrequencyNum ? parseInt(storedFrequencyNum) : 1; // Default: X1
+
+    console.log('Pattern to Send:', patternToSend);
+    console.log('Frequency to Send:', frequencyToSend);
     const data = {
-      selectedColorNum: selectedColorNum,
+      selectedColorNum: updatedColorNums,
       selectedPatternNum: patternToSend,
       brightnessLevel: brightnessLevelToSend,
       selectedFrequencyNum: frequencyToSend,
@@ -732,11 +838,13 @@ useEffect(() => {
       //Comment this to download json
       const responseData = await response.json();
       console.log(responseData);
+      
 
     } catch (error) {
       console.error('Error:', error);
     }
   };
+  
 
   const handleStopDesign = async () => {
     const data = {
@@ -745,7 +853,22 @@ useEffect(() => {
       brightnessLevel: 0,
       selectedFrequencyNum: 0,
     };
+     // Clear local storage for pattern and frequency
+     localStorage.removeItem('selectedPattern');
+     localStorage.removeItem('selectedPatternNum');
+     localStorage.removeItem('selectedFrequency');
+     localStorage.removeItem('selectedFrequencyNum');
+     localStorage.removeItem('selectedColorNum');
+     localStorage.removeItem('brightnessLevelNum');
+     localStorage.removeItem('sliderValue');
+     markers.forEach(marker => {
+      marker.color = '#FFFFFF'; // Set default color or any other desired color
+      localStorage.setItem(`markerColor${marker.id}`, '#FFFFFF'); // Update local storage
+  });
+     console.log('localStorage:', localStorage);
     clearAllMarkersColor()
+    
+
     try {
       const response = await fetch('https://boyaslacatalana-api.azurewebsites.net/deploy', {
         method: 'POST',
