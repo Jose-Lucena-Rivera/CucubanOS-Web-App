@@ -39,15 +39,10 @@ class BuoyHandler():
         name = data.get('name')
         description = data.get('description')
 
-        # if debugging, generate random EUI and app key
-        if debugging:
-            eui = self.generate_random_eui()
-            app_key = self.generate_random_app_key()
-        else: 
-            eui = data.get('eui')
-            app_key = data.get('appKey')
+        eui = data.get('eui')
+        app_key = data.get('appKey')
 
-        
+     
         # check if required fields are present and correctly formatted
         if not name:
             return jsonify({"error": "Name is required to create new buoy."}), 400
@@ -76,7 +71,6 @@ class BuoyHandler():
             return jsonify({"error": "Buoy with this name already exists."}), 400
         
         
-        # https://www.chirpstack.io/application-server/api/#create
         # add buoy to chirpstack 
         add_chirp_device = ChirpstackThing()
         resp = add_chirp_device.add_device(eui, name, description)
@@ -111,13 +105,7 @@ class BuoyHandler():
 
 
         #######################################################################
-        
-        # sort_by = request.args.get('sort_by')
-
-        # create instance of BuoyDAO
         buoy = BuoyDAO()
-        
-        # call function to get all buoys from local database
         buoys = buoy.get_all_buoys()
         return jsonify(buoys),200
     
@@ -139,7 +127,7 @@ class BuoyHandler():
         eui = eui.lower()
         name = name.lower()
 
-        # check if buoy exists. If eui was not provided, look for it by name
+        # check if buoy exists. If eui was not provided, look for it by name (This is kinda redundant...)
         if not eui:
             eui = buoy.get_buoy_by_name(name)
             if not eui:
@@ -200,14 +188,14 @@ class BuoyHandler():
         
 
 
-    def update_buoy(self):
+    def update_buoy(self, eui = None, updated_location = None, updated_bcolor = None, updated_battery = None, updated_frequency = None, updated_name = None, buoy_id = 0):
         ########################### Check if user is logged in with valid token
 
 
         #######################################################################
 
         data = request.get_json()
-        eui = data.get('eui')
+        eui = data.get('eui') if eui is None else eui
         name = data.get('name')
 
 
@@ -215,10 +203,10 @@ class BuoyHandler():
 
         ############################# Separar esto pa otra ruta (o sea, una ruta pa que el usuario actualice y otra
         ############################# para lo que recibamos de Chirpstack API) 
-        updated_location = data.get('updated_location')
-        updated_bcolor = data.get('updated_bcolor')
-        updated_battery = data.get('updated_battery')
-        updated_frequency = data.get('updated_frequency')
+        updated_location = data.get('updated_location') if updated_location is None else updated_location
+        updated_bcolor = data.get('updated_bcolor') if updated_bcolor is None else updated_bcolor
+        updated_battery = data.get('updated_battery') if updated_battery is None else updated_battery
+        updated_frequency = data.get('updated_frequency') if updated_frequency is None else updated_frequency
         #####################################
 
 
@@ -273,6 +261,9 @@ class BuoyHandler():
         if updated_frequency:
             updates.append("bFrequency = %s")
             params.append(updated_frequency)
+        if buoy_id != 0:
+            updates.append("id = %s")
+            params.append(buoy_id)
         ################################################
         
         if not updates and not updated_description:
@@ -288,5 +279,55 @@ class BuoyHandler():
             return jsonify({"message": f"Buoy {name} with EUI {eui} has been updated."}, updated), 200
         else:
             return jsonify({"error": "Buoy was not updated."}), 400
+        
+
+    def update_marker_ids(self):
+        try:
+            # Extract marker IDs and DevEUIs from the request data
+            marker_ids_devEUIs = request.get_json()
+            print("Data Recieved:", marker_ids_devEUIs)
+            # Check if request data is None or empty
+            if marker_ids_devEUIs is None:
+                return jsonify({"error": "No JSON data received"}), 400
+
+            # Check if 'markers' key exists and it's a list
+            markers_list = marker_ids_devEUIs.get("markers")
+            if not isinstance(markers_list, list):
+                return jsonify({"error": "Invalid 'markers' format or missing 'markers' key"}), 400
+            
+            message = ChirpstackThing()
+            buoys = BuoyDAO()
+            buoys = buoys.count_buoys()
+
+            # Process the received marker IDs and DevEUIs
+            for marker in markers_list:
+                marker_id = marker.get("markerId")
+                devEUI = marker.get("devEUI")
+                if marker_id is None or devEUI is None:
+                    return jsonify({"error": "Missing 'markerId' or 'devEUI' in marker data"}), 400
+                # Your code to handle the marker ID and DevEUI goes here
+                print("Marker ID:", marker_id)
+                print("DevEUI:", devEUI)
+
+                self.update_buoy(eui = devEUI, buoy_id = marker_id)
+                
+                # Example: Store marker ID and DevEUI in a database   ################################################ send id to buoy individually
+                payload = bytes([0xAA, marker_id, 0xBB, buoys])
+                resp = message.send_message_to_one_buoy(payload, devEUI)
+
+                if resp is None:
+                    return jsonify({"error": f"Error sending message to buoy {devEUI}."}), 400
+                
+            # Optionally, return a success response
+            return jsonify({"message": "Marker IDs received successfully"}), 200
+
+        except ValueError as ve:
+            # JSON decoding error
+            return jsonify({"error": "Invalid JSON data in the request: " + str(ve)}), 400
+
+        except Exception as e:
+            # Return an error response if something goes wrong
+            return jsonify({"error": "An unexpected error occurred: " + str(e)}), 500
+
         
 

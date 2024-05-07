@@ -149,13 +149,19 @@ class MessageHandler():
 
         payload = bytes (colors) + bytes([brightness]) + bytes([frequency]) + bytes([pattern])
 
-        message = ChirpstackThing()
+        # message = ChirpstackThing()
 
-        resp = message.send_multicast_queue(payload)
-        print (resp)
+        # resp = message.send_multicast_queue(payload)
+        # print (resp)
 
-        if resp is None:
-            return jsonify({"error": "Error sending message to buoys."}), 400
+        # if resp is None:
+        #     return jsonify({"error": "Error sending message to buoys."}), 400
+        
+        # buoys = BuoyDAO()
+        # for i in range(len(colors)):
+        #     if not buoys.update_color(i+1, colors[i]):
+        #         return jsonify({"error": f"Error updating buoy {i+1} colors."}), 400
+        # buoys.close_connection()
         
         return jsonify({"message": f"Message {payload} sent to buoys.", "ordered data":ordered_data}), 200
 
