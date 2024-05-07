@@ -3,8 +3,13 @@
 #  #using SendGrid's Python Library
 # # https://github.com/sendgrid/sendgrid-python
 # # import os
-# # from sendgrid import SendGridAPIClient
-# # from sendgrid.helpers.mail import Mail
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import *
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# print (os.environ.get('SENDGRID_API_KEY'))
 
 # # message = Mail(
 # #     from_email='natanael.santiago2@upr.edu',
@@ -18,7 +23,7 @@
 # #     print(response.body)
 # #     print(response.headers)
 # # except Exception as e:
-# #     print(e.message)
+# #     print(e)
 
 
 # import os
@@ -67,3 +72,29 @@
 #     print(response.status_code)
 #     print(response.body)
 #     print(response.headers)
+
+
+
+
+# using SendGrid's Python Library
+# https://github.com/sendgrid/sendgrid-python
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
+mail = Mail()
+mail.from_email = Email('natanael2012@icloud.com')
+mail.template_id = 'd-c3f2266be9b54c419e7c3451ff5174bf'
+p = Personalization()
+p.add_to(Email('santiagonatanael017@gmail.com'))
+# p.dynamic_template_data = {
+#    'name': 'Bob',
+#    'balance': 42
+# }
+mail.add_personalization(p)
+
+sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+response = sg.client.mail.send.post(request_body=mail.get())
+print(response.status_code)
+print(response.headers)
+print(response.body)
