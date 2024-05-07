@@ -194,7 +194,11 @@ const Network = () => {
         setShowNotification(true); // Show the notification
         handleCloseAddCard();
       } else {
-        console.error('Error creating buoy:', data.error);
+        if (response.status === 400 && data.error === 'Buoy with this eui already exists.') {
+          setDevEuiError('Buoy with this EUI already exists');
+        } else {
+          console.error('Error creating buoy:', data.error);
+        }
       }
     } catch (error) {
       console.error('Error creating buoy:', error);
@@ -295,8 +299,8 @@ const Network = () => {
           <tbody>
           {selectedBuoys.map(buoy => buoy && (
           <tr key={buoy.id}>
-            <td>
-              <input type="checkbox" onChange={() => handleRowClick(buoy)} />
+            <td className="checkbox-cell">
+              <input type="checkbox" className="custom-checkbox" onChange={() => handleRowClick(buoy)} />
             </td>
             <td className="mdl-data-table__cell--non-numeric">{buoy.id}</td>
             <td>{buoy.eui}</td>
@@ -310,38 +314,38 @@ const Network = () => {
           <span>Remove a Buoy</span>
         </button>
         {isRemoveDialogOpen && (
-          <>
-            <div className="backdrop" onClick={handleCloseRemoveDialog}></div>
-            <div className="custom-dialog remove-buoy-dialog" style={{ width: '50%' }}>
-              <div className="dialog-content">
-                <h3>Delete Buoy(s)?</h3>
-                <div className="mdl-card__supporting-text-account">
-                  You are about to delete buoy(s) from the network. This action cannot be undone.
-                </div>
-                <ul>
-                  {selectedBuoys.map(buoy => buoy.isSelected && (
-                    <li key={buoy.id}>
-                      ID: {buoy.id}, EUI: {buoy.eui}, Coordinates: {buoy.coordinates}
-                    </li>
-                  ))}
-                  {selectedBuoys.every(buoy => !buoy.isSelected) && (
-                    <li>No buoys selected</li>
-                  )}
-                </ul>
-              </div>
-              <div className="dialog-actions">
-                <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button" onClick={handleCloseRemoveDialog}>
-                  X
+        <>
+          <div className="backdrop" onClick={handleCloseRemoveDialog}></div>
+          <div className="custom-dialog remove-buoy-dialog" >
+            <h3 style={{ margin: '10px 0' }}>Delete Buoy(s)?</h3>
+            <div className="mdl-card__supporting-text-account" >
+              You are about to delete buoy(s) from the network. This action cannot be undone.
+            </div>
+            <div className="dialog-content" style={{ maxHeight: '150px', overflowY: 'auto', padding: '0 10px' }}>
+              <ul>
+                {selectedBuoys.map(buoy => buoy.isSelected && (
+                  <li key={buoy.id}>
+                    ID: {buoy.id}, EUI: {buoy.eui}, Coordinates: {buoy.coordinates}
+                  </li>
+                ))}
+                {selectedBuoys.every(buoy => !buoy.isSelected) && (
+                  <li>No buoys selected</li>
+                )}
+              </ul>
+            </div>
+            <div className="dialog-actions" style={{ padding: '10px', textAlign: 'right' }}>
+              <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent dialog-close-button" onClick={handleCloseRemoveDialog}>
+                X
+              </button>
+              <div className="dialog-actions-submit-network" style={{ display: 'inline-block' }}>
+                <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" onClick={handleSubmitRemoveDialog}>
+                  Submit
                 </button>
-                <div className="dialog-actions-submit-network">
-                  <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--light-blue-300" onClick={handleSubmitRemoveDialog}>
-                    Submit
-                  </button>
-                </div>
               </div>
             </div>
-          </>
-        )}
+          </div>
+        </>
+      )}
         {isAddCardOpen && (
           <div className="backdrop" onClick={handleCloseAddCard}>
             <div className="custom-dialog add-buoy-dialog" onClick={(e) => e.stopPropagation()}>
@@ -361,6 +365,7 @@ const Network = () => {
                       id="buoyId"
                       value={buoyId}
                       onChange={handleBuoyIdChange}
+                      maxLength={20}
                       required
                     />
                     <label className="mdl-textfield__label" htmlFor="buoyId">Buoy Name:</label>

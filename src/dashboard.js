@@ -206,7 +206,7 @@ const Dashboard = () => {
             color: initialColor,
             icon: {
               path: window.google.maps.SymbolPath.CIRCLE,
-              fillColor: initialColor,
+              fillColor: '#FFFFFF',
               fillOpacity: 1,
               strokeWeight: 0,
               scale: 8,
@@ -302,7 +302,7 @@ const Dashboard = () => {
     try {
         // Check if markers array is not empty
         if (markers.length === 0) {
-            console.error('No markers to send to the backend.');
+            //console.error('No markers to send to the backend.');
             return;
         }
 
@@ -330,8 +330,7 @@ const Dashboard = () => {
             body: JSON.stringify(markerIdsData),
         });
 
-        console.log("Response status:", response.status);
-        console.log("Response headers:", response.headers);
+        
 
         if (response.ok) {
             console.log('Marker IDs updated successfully in the backend.');
@@ -926,7 +925,7 @@ useEffect(() => {
         <button id="pattern-menu" className="mdl-button mdl-js-button mdl-button--raised" style={{ marginLeft: '10px' }}>
           {selectedPattern}
         </button>
-        <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="pattern-menu">
+        <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" htmlFor="pattern-menu">
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Blink')}>Blink</li>
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Fade Up')}>Fade Up</li>
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Fade Down')}>Fade Down</li>
@@ -938,7 +937,7 @@ useEffect(() => {
         <button id="frequency-menu" className="mdl-button mdl-js-button mdl-button--raised" style={{ marginLeft: '10px' }}>
           {selectedFrequency}
         </button>
-        <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="frequency-menu">
+        <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" htmlFor="frequency-menu">
           <li className="mdl-menu__item" onClick={() => handleFrequencySelect('X1')}>X1</li>
           <li className="mdl-menu__item" onClick={() => handleFrequencySelect('X2')}>X2</li>
           <li className="mdl-menu__item" onClick={() => handleFrequencySelect('X3')}>X3</li>

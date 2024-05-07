@@ -69,7 +69,7 @@ const Header = () => {
 const Drawer = () => {
   return (
     <div className="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
-      <header className="demo-drawer-header">
+      <header className="demo-drawer-header" style={{ backgroundColor:'#005129' }}>
       <div className="drawer-header-content" style={{ display: 'flex', alignItems: 'center' }}>
         <i className="material-icons bug-icon">bug_report</i>
           <span className="drawer-title">CucubanOS</span>
@@ -80,10 +80,10 @@ const Drawer = () => {
           <div className="mdl-layout-spacer"></div>
         </div>
       </header>
-      <nav className="demo-navigation mdl-navigation mdl-color--blue-grey-100">
-        <a className="mdl-navigation__link" href="/dashboard"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">format_color_fill</i>Dashboard</a>
-        <a className="mdl-navigation__link" href="/network"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">wifi</i>Network</a>
-        <a className="mdl-navigation__link" href="/account"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">person</i>Account</a>
+      <nav className="demo-navigation mdl-navigation " style={{ backgroundColor:'#005129' }}>
+        <a className="mdl-navigation__link mdl-color-text--white" href="/dashboard"><i className="mdl-color-text--white material-icons" role="presentation">format_color_fill</i>Dashboard</a>
+        <a className="mdl-navigation__link mdl-color-text--white" href="/network"><i className="mdl-color-text--white material-icons" role="presentation">wifi</i>Network</a>
+        <a className="mdl-navigation__link mdl-color-text--white" href="/account"><i className="mdl-color-text--white material-icons" role="presentation">person</i>Account</a>
       </nav>
     </div>
   );
