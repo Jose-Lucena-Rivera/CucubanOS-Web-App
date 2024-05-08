@@ -29,12 +29,11 @@ const Account = () => {
 
   useEffect(() => {
     // Check if the user is logged in (i.e., if there's a token in local storage)
-    
     const token = localStorage.getItem('token');
     if (!token) {
-      // If no token found, redirect the user to the login page
-      window.location.reload();
-      window.location.href = '/';
+      // If no token found, redirect the user to the login page with a refresh query parameter
+      const timestamp = new Date().getTime(); // Generate a timestamp
+      window.location.href = `/?refresh=${timestamp}`;
     }
   }, []);
 
@@ -87,11 +86,11 @@ const Account = () => {
     // Remove the token from local storage
     localStorage.removeItem('token');
     
-    // Force a refresh to ensure the page doesn't allow interaction
-    window.location.reload();
-  
-    // Redirect to the login page ("/")
-    window.location.href = '/';
+    // Generate a timestamp or random query parameter to force a hard refresh
+    const timestamp = new Date().getTime(); // You can also use Math.random() to generate a random number
+    
+    // Redirect to the login page ("/") with the timestamp or random query parameter
+    window.location.href = `/login?refresh=${timestamp}`;
   };
 
   const handleCloseChangePassword = () => {
