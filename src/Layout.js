@@ -27,8 +27,8 @@ const Header = () => {
           case 'Sign Out':
               // Handle sign out logic
               localStorage.removeItem('token');
-              const timestamp = new Date().getTime(); // Generate a timestamp
-              window.location.href = `/?refresh=${timestamp}`;
+              window.history.replaceState(null, '', '/');
+              window.location.reload();
               break;
           default:
               break;

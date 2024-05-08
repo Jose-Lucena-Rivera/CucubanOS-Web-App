@@ -20,9 +20,9 @@ const Network = () => {
     // Check if the user is logged in (i.e., if there's a token in local storage)
     const token = localStorage.getItem('token');
     if (!token) {
-      // If no token found, redirect the user to the login page with a refresh query parameter
-      const timestamp = new Date().getTime(); // Generate a timestamp
-      window.location.href = `/?refresh=${timestamp}`;
+      // If no token found, redirect the user to the login page
+      window.history.replaceState(null, '', '/');
+      window.location.reload();
     }
   }, []);
 
