@@ -158,8 +158,8 @@ class UserHandler():
 
         ##########################################
 
-        data = request.get_json()
-        email = data.get('email')
+        args = request.args
+        email = args.get('email')
         usr = UsersDAO()
         user = usr.get_user(email)
         usr.close_connection()
