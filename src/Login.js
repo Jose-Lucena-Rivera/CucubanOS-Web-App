@@ -166,7 +166,7 @@ const Login = () => {
                 type="submit"
                 disabled={lockoutActive || loginAttempts >= MAX_LOGIN_ATTEMPTS}
               >
-                Login
+                Submit
               </button>
             </div>
           </form>

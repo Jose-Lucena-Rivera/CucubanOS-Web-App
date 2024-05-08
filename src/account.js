@@ -82,8 +82,13 @@ const Account = () => {
   }, []); // Empty dependency array means this useEffect runs once when the component mounts
 
   const handleSignOut = () => {
-    // Redirect to the login page ("/")
+    // Remove the token from local storage
     localStorage.removeItem('token');
+    
+    // Force a refresh to ensure the page doesn't allow interaction
+    window.location.reload();
+  
+    // Redirect to the login page ("/")
     window.location.href = '/';
   };
 

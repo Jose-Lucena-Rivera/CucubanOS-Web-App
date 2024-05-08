@@ -292,8 +292,8 @@ body {
 /* Additional styling for button */
 .demo-card-square .mdl-button-login {
   border-radius: 24px; /* Adjust the border radius as needed */
-  color: #000000;
-  background-color: #16ba68;
+  color: #ffffff;
+  background-color: #005129;
   width: 40%; 
   height: 40px;
 }
@@ -341,7 +341,7 @@ body {
 
 .demo-card-square.mdl-card-change {
   width: 350px;
-  height: 400px;
+  height: 450px;
   border-radius: 8px; /* Adjust the border-radius as needed */
   overflow: hidden; /* Ensure content doesn't overflow rounded corners */
   background-color: #ffffff;

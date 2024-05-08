@@ -27,6 +27,7 @@ const Header = () => {
           case 'Sign Out':
               // Handle sign out logic
               localStorage.removeItem('token');
+              window.location.reload();
               window.location.href = '/';
               break;
           default:
