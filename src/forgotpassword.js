@@ -24,19 +24,37 @@ const ForgotPassword = () => {
         // User found, show notification
         setNotification('You have been sent an email to change your password');
         setError('');
+  
+        // Make a POST request to the forgot password route with the email
+        const postResponse = await fetch('https://boyaslacatalana-api.azurewebsites.net/forgot-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: email })
+        });
+  
+        if (postResponse.ok) {
+          // Password reset email sent successfully
+          console.log('Password reset email sent successfully');
+        } else {
+          // Failed to send password reset email
+          console.error('Failed to send password reset email');
+        }
+  
       } else {
         // User not found, display error message
         setError('User email not in system');
         setNotification('');
       }
     } catch (error) {
-      console.error('Error searching for user:', error);
+      console.error('Error:', error.message); // Log the error message
+      setError('Failed to perform operation'); // Update the error state
     }
   
     // Reset the form
     setEmail('');
   };
-
 
   useEffect(() => {
     if (notification) {

@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import 'material-design-lite/material';
 import 'material-design-lite/material.css';
 import './styles.css';
+import linkexpired from './images/linkexpired.png'; 
 
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -96,6 +97,9 @@ const ChangePassword = () => {
 
   return (
     <div className="center-container-login">
+      {/* <div className="image-container">
+      <img src={linkexpired} alt="Expired Link" />
+        </div> */}
       <div className="demo-card-square mdl-card-change mdl-shadow--2dp">
         <div className="mdl-card__title mdl-card--expand">
           <h2 className="mdl-card__title-text">Change Password</h2>
