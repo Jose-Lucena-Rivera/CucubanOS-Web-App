@@ -109,10 +109,38 @@ class MessageHandler():
     
 
     def chirpstack_updates(self): ################################for processing lo que chirpstack me manda a traves de http
-        
-            print(request.get_json())
+            args = request.args
+            event = args.get('event')
 
-            return jsonify({"message": "Chirpstack updates received.", "json":request.get_json()}), 200
+            data = request.get_json()
+
+            if event == 'status':
+                battery =data.get("batteryLevel")
+                dev_eui = data['deviceInfo']['devEui']
+
+                buoy = BuoyDAO()
+                buoy.update_batterylevel(dev_eui, battery)
+
+                return jsonify({"message": "Chirpstack updates received. (Battery updated)"}), 200
+
+            elif event == "location":
+                dev_eui = data['deviceInfo']['devEui']
+                latitude = data['location']['latitude']
+                longitude = data['location']['longitude']
+
+                location = str(latitude) + ", " + str(longitude)
+
+                buoy = BuoyDAO()
+                buoy.update_location(dev_eui, location)
+
+                return jsonify({"message": "Chirpstack updates received. (Location updated)"}), 200
+            
+            print(request.get_json())
+            print("###########")
+            print(request.headers)
+
+
+            return jsonify({"message": "Chirpstack updates received."}), 200
         
 
 
@@ -157,11 +185,11 @@ class MessageHandler():
         # if resp is None:
         #     return jsonify({"error": "Error sending message to buoys."}), 400
         
-        # buoys = BuoyDAO()
-        # for i in range(len(colors)):
-        #     if not buoys.update_color(i+1, colors[i]):
-        #         return jsonify({"error": f"Error updating buoy {i+1} colors."}), 400
-        # buoys.close_connection()
+        buoys = BuoyDAO()
+        for i in range(len(colors)):
+            if not buoys.update_color(i+1, colors[i]):
+                return jsonify({"error": f"Error updating buoy {i+1} colors."}), 400
+        buoys.close_connection()
         
         return jsonify({"message": f"Message {payload} sent to buoys.", "ordered data":ordered_data}), 200
 
