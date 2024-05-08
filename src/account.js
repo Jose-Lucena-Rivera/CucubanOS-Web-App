@@ -83,14 +83,14 @@ const Account = () => {
   }, []); // Empty dependency array means this useEffect runs once when the component mounts
 
   const handleSignOut = () => {
-    // Remove the token from local storage
+    // Remove token from local storage
     localStorage.removeItem('token');
-    
-    // Generate a timestamp or random query parameter to force a hard refresh
-    const timestamp = new Date().getTime(); // You can also use Math.random() to generate a random number
-    
-    // Redirect to the login page ("/") with the timestamp or random query parameter
-    window.location.href = `/login?refresh=${timestamp}`;
+  
+    // Update history state to '/' (optional)
+    window.history.replaceState(null, '', '/');
+  
+    // Reload the page to trigger navigation to the login page
+    window.location.reload();
   };
 
   const handleCloseChangePassword = () => {
