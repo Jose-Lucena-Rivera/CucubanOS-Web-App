@@ -129,3 +129,31 @@ class BuoyDAO():
         finally:
             cursor.close()
             return True
+        
+    def update_batterylevel(self, devEUI, battery):
+        cursor = self.conn.cursor()
+        try:
+            query = "UPDATE buoy SET bbattery = %s WHERE beui = %s;"
+            cursor.execute(query, (battery, devEUI))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print(e)
+        finally:
+            cursor.close()
+            self.conn.close()
+            return True
+        
+    def update_location(self, devEUI, location):
+        cursor = self.conn.cursor()
+        try:
+            query = "UPDATE buoy SET blocation = %s WHERE beui = %s;"
+            cursor.execute(query, (location, devEUI))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print(e)
+        finally:
+            cursor.close()
+            self.conn.close()
+            return True
