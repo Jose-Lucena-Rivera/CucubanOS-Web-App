@@ -21,7 +21,8 @@ const Network = () => {
     const token = localStorage.getItem('token');
     if (!token) {
       // If no token found, redirect the user to the login page
-      window.history.replaceState(null, '', '/');
+      window.history.pushState(null, '', '/'); // Add new history entry
+      window.location.href = '/'; // Redirect to the login page
       window.location.reload();
     }
   }, []);
