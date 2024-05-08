@@ -87,10 +87,8 @@ const Account = () => {
     // Remove token from local storage
     localStorage.removeItem('token');
   
-    // Update history state to '/' (optional)
-    window.history.replaceState(null, '', '/');
-  
-    // Reload the page to trigger navigation to the login page
+    window.history.pushState(null, '', '/'); // Add new history entry
+    window.location.href = '/'; // Redirect to the login page
     window.location.reload();
   };
 
