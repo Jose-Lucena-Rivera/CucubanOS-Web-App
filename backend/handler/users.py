@@ -323,3 +323,21 @@ class UserHandler():
             
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+
+
+    def forgot_password(self):
+        pass
+    
+        if request.method == "POST":
+            # Get the email from the POST request body
+            data = request.json
+            email = data.get("email")
+            print("Received email:", email)
+            
+            # Here you can implement the logic to send an email to the user to reset their password
+            
+            # Return a JSON response to indicate that the request was successful
+            return jsonify({"message": "An email has been sent to reset your password"})
+
+        # Handle other HTTP methods if needed
+        return jsonify({"error": "Method not allowed"}), 405  # Return a 405 Method Not Allowed error for other methods

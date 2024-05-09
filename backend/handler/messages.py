@@ -135,10 +135,10 @@ class MessageHandler():
 
                 return jsonify({"message": "Chirpstack updates received. (Location updated)"}), 200
             
-            print(request.get_json())
-            print("###########")
+            print(request.data)
+            print("#####PRINTING HEADERS######")
             print(request.headers)
-
+            print("##########################")
 
             return jsonify({"message": "Chirpstack updates received."}), 200
         
@@ -175,7 +175,7 @@ class MessageHandler():
         if type(frequency) != int or (frequency not in range (0,6)):
             return jsonify({"error": "Frequency must be an integer between 0 and 5"})
 
-        payload = bytes (colors) + bytes([brightness]) + bytes([frequency]) + bytes([pattern])
+        # payload = bytes (colors) + bytes([brightness]) + bytes([frequency]) + bytes([pattern])
 
         # message = ChirpstackThing()
 
@@ -186,9 +186,17 @@ class MessageHandler():
         #     return jsonify({"error": "Error sending message to buoys."}), 400
         
         buoys = BuoyDAO()
+        message = ChirpstackThing()
         for i in range(len(colors)):
-            if not buoys.update_color(i+1, colors[i]):
+            devEUI = buoys.update_color(i+1, colors[i], frequency)
+            if not devEUI:
                 return jsonify({"error": f"Error updating buoy {i+1} colors."}), 400
+            payload = bytes([colors[i]]) + bytes([brightness]) + bytes([frequency]) + bytes([pattern])
+            resp = message.send_message_to_one_buoy(payload, devEUI )
+
+        if resp is None:
+            return jsonify({"error": "Error sending message to buoys."}), 400
+
         buoys.close_connection()
         
         return jsonify({"message": f"Message {payload} sent to buoys.", "ordered data":ordered_data}), 200

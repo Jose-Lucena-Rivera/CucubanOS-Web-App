@@ -295,7 +295,7 @@ class BuoyHandler():
             if not isinstance(markers_list, list):
                 return jsonify({"error": "Invalid 'markers' format or missing 'markers' key"}), 400
             
-            message = ChirpstackThing()
+            # message = ChirpstackThing()
             buoys = BuoyDAO()
             buoys = buoys.count_buoys()
 
@@ -312,11 +312,11 @@ class BuoyHandler():
                 self.update_buoy(eui = devEUI, buoy_id = marker_id)
                 
                 # Example: Store marker ID and DevEUI in a database   ################################################ send id to buoy individually
-                payload = bytes([0xAA, marker_id, 0xBB, buoys])
-                resp = message.send_message_to_one_buoy(payload, devEUI)
+                # payload = bytes([0xAA, marker_id, 0xBB, buoys])
+                # resp = message.send_message_to_one_buoy(payload, devEUI)
 
-                if resp is None:
-                    return jsonify({"error": f"Error sending message to buoy {devEUI}."}), 400
+                # if resp is None:
+                #     return jsonify({"error": f"Error sending message to buoy {devEUI}."}), 400
                 
             # Optionally, return a success response
             return jsonify({"message": "Marker IDs received successfully"}), 200

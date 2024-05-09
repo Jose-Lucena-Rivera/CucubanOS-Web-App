@@ -71,6 +71,8 @@ def get_all_users():
 
 @app.route("/forgot-password", methods=["POST"])
 def forgot_password():
+    # user = UserHandler()
+    # return user.forgot_password()
     if request.method == "POST":
         # Get the email from the POST request body
         data = request.json

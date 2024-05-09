@@ -117,18 +117,19 @@ class BuoyDAO():
             cursor.close()
             self.conn.close()
 
-    def update_color(self, id, color):
+    def update_color(self, id, color, frequency):
         cursor = self.conn.cursor()
         try:
-            query = "UPDATE buoy SET bcolor = %s WHERE id = %s;"
-            cursor.execute(query, (color, id))
+            query = "UPDATE buoy SET bcolor = %s, bfrequency = %s WHERE id = %s RETURNING bEUI;"
+            cursor.execute(query, (color,frequency, id))
+            devEUI = cursor.fetchone()[0]
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
             print(e)
         finally:
             cursor.close()
-            return True
+            return devEUI
         
     def update_batterylevel(self, devEUI, battery):
         cursor = self.conn.cursor()
