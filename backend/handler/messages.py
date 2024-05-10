@@ -134,6 +134,10 @@ class MessageHandler():
                 buoy.update_location(dev_eui, location)
 
                 return jsonify({"message": "Chirpstack updates received. (Location updated)"}), 200
+
+            elif event =='up':
+                ### recoger el mensaje que llega en el campo 'data' y convertirlo de base64 a hex o txt, depende lo que jonathan me mande
+                pass
             
             print(request.data)
             print("#####PRINTING HEADERS######")
@@ -170,10 +174,10 @@ class MessageHandler():
             return jsonify({"error": "All colors must be integers between 0 and 32"}), 400
         
         if type(brightness) != int or (brightness not in range (0, 6)):
-            return jsonify({"error": "Brightness must be an integer between 0 and 5"})
+            return jsonify({"error": "Brightness must be an integer between 0 and 5"}), 400
         
         if type(frequency) != int or (frequency not in range (0,6)):
-            return jsonify({"error": "Frequency must be an integer between 0 and 5"})
+            return jsonify({"error": "Frequency must be an integer between 0 and 5"}), 400
 
         # payload = bytes (colors) + bytes([brightness]) + bytes([frequency]) + bytes([pattern])
 
@@ -184,7 +188,7 @@ class MessageHandler():
 
         # if resp is None:
         #     return jsonify({"error": "Error sending message to buoys."}), 400
-        
+        all_messages = []
         buoys = BuoyDAO()
         message = ChirpstackThing()
         for i in range(len(colors)):
@@ -192,6 +196,7 @@ class MessageHandler():
             if not devEUI:
                 return jsonify({"error": f"Error updating buoy {i+1} colors."}), 400
             payload = bytes([colors[i]]) + bytes([brightness]) + bytes([frequency]) + bytes([pattern])
+            all_messages.append(payload)
             resp = message.send_message_to_one_buoy(payload, devEUI )
 
         if resp is None:
@@ -199,7 +204,7 @@ class MessageHandler():
 
         buoys.close_connection()
         
-        return jsonify({"message": f"Message {payload} sent to buoys.", "ordered data":ordered_data}), 200
+        return jsonify({"message": f"Message {payload} sent to buoys.", "all messages sent":all_messages}), 200
 
 
     def delete_multicast_queue(self):
