@@ -69,10 +69,11 @@ def get_all_users():
     user = UserHandler()
     return user.get_all_users()
 
+@app.route("/forgot-password/", methods=["POST"])
 @app.route("/forgot-password", methods=["POST"])
 def forgot_password():
-    # user = UserHandler()
-    # return user.forgot_password()
+    user = UserHandler()
+    return user.forgot_password()
     if request.method == "POST":
         # Get the email from the POST request body
         data = request.json
@@ -87,10 +88,19 @@ def forgot_password():
     # Handle other HTTP methods if needed
     return jsonify({"error": "Method not allowed"}), 405  # Return a 405 Method Not Allowed error for other methods
 
+
+@app.route("/check-forgotten-password-token", methods=["GET"])
+@app.route("/check-forgotten-password-token/", methods=["GET"])
+def check_forgotten_password_token():
+    user = UserHandler()
+    return user.check_forgotten_password_token()
+
+
 @app.route("/reset-password", methods=["POST"])
 @app.route("/reset-password/", methods=["POST"])
 def reset_password():
-    pass
+    return user_handler.update_password()
+    
     
 
 @app.route("/add-buoy", methods=["POST"])

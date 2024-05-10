@@ -155,3 +155,18 @@ class UsersDAO():
             self.conn.close()
         return updated
 
+
+    def forgotten_password (self, email, hashed_token, expiration):
+        cursor = self.conn.cursor()
+        try:
+            query = "UPDATE users SET forgot_password_hash = %s, hash_expiration_date = %s WHERE email = %s;"
+            cursor.execute(query, (hashed_token, expiration, email))
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+            self.conn.rollback()  # Roll back the transaction if an error occurs
+            return False  # Return False or handle the error in an appropriate way
+        finally:
+            cursor.close()
+            self.conn.close()
+        return True

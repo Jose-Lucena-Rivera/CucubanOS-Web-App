@@ -8,12 +8,17 @@ import os
 import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+import secrets
+from datetime import datetime, timedelta
+from config.sendgrip import send_email
+import pytz
 
 load_dotenv()
 
 debugging = os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
 pepper = os.getenv('PEPPER') if not None else os.environ.get('PEPPER')
-secret_key = os.environ.get('SECRET_KEY')
+secret_key = os.getenv('SECRET_KEY') if not None else os.environ.get('SECRET_KEY')
+frontend_url = os.getenv('FRONTEND_URL') if not None else os.environ.get('FRONTEND_URL')
 
 failed_login_attempts = {}
 
@@ -326,18 +331,62 @@ class UserHandler():
 
 
     def forgot_password(self):
-        pass
+        
     
         if request.method == "POST":
             # Get the email from the POST request body
             data = request.json
             email = data.get("email")
             print("Received email:", email)
+
+            if email is None:
+                return jsonify({"error": "Email is required"}), 400
             
             # Here you can implement the logic to send an email to the user to reset their password
+
+            token = secrets.token_urlsafe(128)
+            hashed_token = PasswordHasher().hash(token+email)
+            expiration = datetime.now(pytz.timezone('UTC')) + timedelta(hours=1)
+            print (expiration)
+
+            if UsersDAO().forgotten_password(email, hashed_token, expiration):
+                url = frontend_url+f"change-password?token={token}"
+                print(url)
+                send_email(email, url)
+
             
             # Return a JSON response to indicate that the request was successful
-            return jsonify({"message": "An email has been sent to reset your password"})
+            return jsonify({"message": "If your account exists, you should receive an email to reset your password"}), 200
 
         # Handle other HTTP methods if needed
         return jsonify({"error": "Method not allowed"}), 405  # Return a 405 Method Not Allowed error for other methods
+
+
+    def check_forgotten_password_token(self):
+        if request.method == 'GET':
+            # Get the token from the query parameters
+            token = request.args.get('token')
+            email = request.args.get('email')
+
+            if token is None:
+                return jsonify({"error": "Token is required"}), 400
+
+            # Fetch the user from the database using the token
+           
+            user = UsersDAO().get_user(email)
+            token_hash = user['forgot_password_hash']
+            expiration_date = user['hash_expiration_date']
+            expiration_date = expiration_date.replace(tzinfo=pytz.timezone('UTC'))
+
+            if expiration_date-timedelta(1) <= datetime.now(pytz.timezone('UTC')) <= expiration_date:
+                ph = PasswordHasher()
+                try:
+                    ph.verify(token_hash, token+email)
+                    return jsonify({"message": "Token is valid"}), 200
+                except VerifyMismatchError:
+                    return jsonify({"error": "Token is invalid"}), 404
+                
+            else:
+                return jsonify({"error": "Token is expired"}), 400
+
+            

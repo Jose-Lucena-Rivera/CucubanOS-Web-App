@@ -82,19 +82,20 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-mail = Mail()
-mail.from_email = Email('natanael2012@icloud.com')
-mail.template_id = 'd-c3f2266be9b54c419e7c3451ff5174bf'
-p = Personalization()
-p.add_to(Email('santiagonatanael017@gmail.com'))
-# p.dynamic_template_data = {
-#    'name': 'Bob',
-#    'balance': 42
-# }
-mail.add_personalization(p)
+def send_email(to_email, url):
+    
+    mail = Mail()
+    mail.from_email = Email('natanael2012@icloud.com')
+    mail.template_id = 'd-c3f2266be9b54c419e7c3451ff5174bf'
+    p = Personalization()
+    p.add_to(Email(to_email))
+    p.dynamic_template_data = {
+       'url': url
+    }
+    mail.add_personalization(p)
 
-sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-response = sg.client.mail.send.post(request_body=mail.get())
-print(response.status_code)
-print(response.headers)
-print(response.body)
+    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    response = sg.client.mail.send.post(request_body=mail.get())
+   #  print(response.status_code)
+   #  print(response.headers)
+   #  print(response.body)
