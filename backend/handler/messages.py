@@ -204,7 +204,7 @@ class MessageHandler():
 
         buoys.close_connection()
         
-        return jsonify({"message": f"Message {payload} sent to buoys.", "all messages sent":all_messages}), 200
+        return jsonify({"message": f"Message {payload} sent to buoys."}), 200
 
 
     def delete_multicast_queue(self):
