@@ -17,40 +17,44 @@ const ChangePassword = () => {
   const [notificationTimeout, setNotificationTimeout] = useState(null);
   const [tokenValid, setTokenValid] = useState(false);
 
-
   useEffect(() => {
-    validateToken();
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const email = localStorage.getItem('forgotPasswordEmail');
+
+    console.log('Entire URL:', window.location.href); // Log entire URL
+    console.log('Email:', email);
+    console.log('Token:', token);
+
+    // Check if token is valid
+    const checkTokenValidity = async () => {
+      try {
+        const response = await fetch(`https://boyaslacatalana-api.azurewebsites.net/check-forgotten-password-token?token=${token}&email=${email}`);
+        const data = await response.json();
+        if (response.ok) {
+          // Token is valid
+          console.log('Token is valid');
+          setTokenValid(true);
+        } else {
+          // Token is not valid
+          console.log('Token is not valid');
+          setTokenValid(false);
+          setError(data.error || 'Token is not valid');
+        }
+      } catch (error) {
+        console.error('Error checking token validity:', error);
+        setError('Error checking token validity');
+      }
+    };
+
+    if (token && email) {
+      checkTokenValidity();
+    } else {
+      setError('Token or email not found');
+    }
   }, []);
 
-  const validateToken = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-  const email = localStorage.getItem('forgotPasswordEmail');
-
-  console.log('Entire URL:', window.location.href); // Log entire URL
-  console.log('Email:', email);
-  console.log('Token:', token);
-
-    // Send a request to check if the token is valid
-    fetch(`https://boyaslacatalana.azurewebsites.net/check-forgotten-password-token?token=${token}&email=${email}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.message === 'Token is valid') {
-          setTokenValid(true);
-          console.log('Email:', email);
-        } else {
-          // Redirect to an error page or display an error message
-          console.error('Invalid token:', data.error);
-        }
-      })
-      .catch(error => {
-        console.error('Error checking token:', error);
-      });
-  };
-
-
-
-
+  
   const handleSubmitConfirmPassword = async (event) => {
     event.preventDefault();
 
@@ -94,12 +98,12 @@ const ChangePassword = () => {
         setShowNotification(true);
         
         // Set a timeout to redirect to the login page after showing the notification
-      const timeout = setTimeout(() => {
-        setRedirect(true);
-      }, 3000);
+        const timeout = setTimeout(() => {
+          setRedirect(true);
+        }, 3000);
 
-      // Clear the timeout when the component unmounts or when the notification is hidden
-      return () => clearTimeout(timeout);
+        // Clear the timeout when the component unmounts or when the notification is hidden
+        return () => clearTimeout(timeout);
       } else {
         // Failed to update password
         console.log('Failed to update password');
@@ -126,14 +130,19 @@ const ChangePassword = () => {
     }
   }, [showNotification]);
 
+  if (!tokenValid) {
+    return (
+      <div className="center-container-login">
+        <div className="image-container-expired">
+      <img src={linkexpired} alt="Expired Link" />
+        </div>
+      </div>
+    );
+  }
+
   if (redirect) {
     // Clear the notification timeout before redirecting
     clearTimeout(notificationTimeout);
-    return <Navigate to="/" />;
-  }
-
-  if (!tokenValid) {
-    // Redirect the user to an error page or display an error message
     return <Navigate to="/" />;
   }
 

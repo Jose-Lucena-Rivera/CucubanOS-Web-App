@@ -356,6 +356,15 @@ body {
   margin-top: 30px; /* Add some top margin for spacing */
 }
 
+.image-container-expired {
+  text-align: center;
+  margin-top: 50px; /* Adjust as needed to add space between the image container and other content */
+}
+
+.image-container-expired img {
+  max-width: 100%; /* Ensure the image does not exceed the container width */
+  max-height: 100%; /* Ensure the image does not exceed the container height */
+}
 
 /************************* Chanage Password ends ************************/
 
