@@ -23,11 +23,12 @@ const ChangePassword = () => {
   }, []);
 
   const validateToken = () => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
     const email = localStorage.getItem('forgotPasswordEmail');
 
     console.log('Email:', email);
+    console.log('Token:', token);
 
     // Send a request to check if the token is valid
     fetch(`https://boyaslacatalana.azurewebsites.net/check-forgotten-password-token?token=${token}&email=${email}`)
