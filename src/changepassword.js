@@ -16,6 +16,8 @@ const ChangePassword = () => {
   const [redirect, setRedirect] = useState(false);
   const [notificationTimeout, setNotificationTimeout] = useState(null);
   const [tokenValid, setTokenValid] = useState(false);
+  const [tokenChecked, setTokenChecked] = useState(false); 
+  
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -44,6 +46,9 @@ const ChangePassword = () => {
       } catch (error) {
         console.error('Error checking token validity:', error);
         setError('Error checking token validity');
+      }finally {
+        // Set tokenChecked to true once token check is complete
+        setTokenChecked(true);
       }
     };
 
@@ -51,6 +56,7 @@ const ChangePassword = () => {
       checkTokenValidity();
     } else {
       setError('Token or email not found');
+      setTokenChecked(true);
     }
   }, []);
 
@@ -129,6 +135,11 @@ const ChangePassword = () => {
       setNotificationTimeout(timeout);
     }
   }, [showNotification]);
+
+  if (!tokenChecked) {
+    // Delay rendering until token check is complete
+    return null;
+  }
 
   if (!tokenValid) {
     return (

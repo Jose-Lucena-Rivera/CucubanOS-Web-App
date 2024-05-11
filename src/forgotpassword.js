@@ -80,7 +80,7 @@ const ForgotPassword = () => {
           <h2 className="mdl-card__title-text">Forgot Password?</h2>
         </div>
         <div className="mdl-card__supporting-text">
-          After submitting your email you will receive a one-time use link to change your password.
+          After submitting your email you will receive a link to change your password.
           <form onSubmit={handleSubmit}>
             <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label forgotpassword-input-container">
               <input
