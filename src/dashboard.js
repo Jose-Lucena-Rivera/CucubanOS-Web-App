@@ -737,7 +737,7 @@ useEffect(() => {
       'Pulse': 4,
       'Strobe': 5,
       'Random': 6,
-      'No Pattern': 7,
+      'Solid': 7,
     };
 
     return patternMap[pattern] || 0; // Return pattern number or 0 if pattern not found
@@ -934,7 +934,7 @@ useEffect(() => {
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Pulse')}>Pulse</li>
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Strobe')}>Strobe</li>
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Random')}>Random</li>
-          <li className="mdl-menu__item" onClick={() => handlePatternSelect('No Pattern')}>No Pattern</li>
+          <li className="mdl-menu__item" onClick={() => handlePatternSelect('No Pattern')}>Solid</li>
         </ul>
         <button id="frequency-menu" className="mdl-button mdl-js-button mdl-button--raised" style={{ marginLeft: '10px' }}>
           {selectedFrequency}

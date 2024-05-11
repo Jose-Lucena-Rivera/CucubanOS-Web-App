@@ -24,7 +24,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="forgot_password" element={<ForgotPassword />} />
-        <Route path="change_password" element={<ChangePassword />} />
+        <Route path="change-password" element={<ChangePassword />} />
         <Route
           path="/dashboard"
           element={renderComponentOrLogin(Dashboard, { buoys: selectedBuoys, newBuoyCoordinates })}

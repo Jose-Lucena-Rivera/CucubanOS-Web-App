@@ -21,9 +21,9 @@ const Header = () => {
   
     const handleMenuItemClick = (menuItem) => {
       switch (menuItem) {
-          case 'Account':
-              window.location.href = '/account'; // Redirect to the account page
-              break;
+          // case 'Account':
+          //     window.location.href = '/account'; // Redirect to the account page
+          //     break;
           case 'Sign Out':
               // Handle sign out logic
               localStorage.removeItem('token');
@@ -60,7 +60,7 @@ const Header = () => {
           <i className="material-icons">more_vert</i>
         </button>
         <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-          <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Account')}>Account</li>
+          {/* <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Account')}>Account</li> */}
           <li className="mdl-menu__item" onClick={() => handleMenuItemClick('Sign Out')}>Sign Out</li>
         </ul>
       </div>

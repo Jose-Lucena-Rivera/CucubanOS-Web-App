@@ -15,15 +15,51 @@ const ChangePassword = () => {
   const [error, setError] = useState('');
   const [redirect, setRedirect] = useState(false);
   const [notificationTimeout, setNotificationTimeout] = useState(null);
+  const [tokenValid, setTokenValid] = useState(false);
+
+
+  useEffect(() => {
+    validateToken();
+  }, []);
+
+  const validateToken = () => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const email = params.get('email');
+
+    console.log('Email:', email);
+
+    // Send a request to check if the token is valid
+    fetch(`https://boyaslacatalana.azurewebsites.net/check-forgotten-password-token?token=${token}&email=${email}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.message === 'Token is valid') {
+          setTokenValid(true);
+          console.log('Email:', email);
+        } else {
+          // Redirect to an error page or display an error message
+          console.error('Invalid token:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error checking token:', error);
+      });
+  };
+
+
+
 
   const handleSubmitConfirmPassword = async (event) => {
     event.preventDefault();
+
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email');
   
     // Check if the new password meets the criteria
     const passwordRegex = /^(?=.*[0-9]).{8,12}$/;
     if (!passwordRegex.test(newPassword)) {
       // Display an error message to the user
-      setError('New password must be 8-12 characters long and contain at least one number.');
+      setError('New password must be at least 8 characters long and contain at least one number.');
       return;
     } else {
       setError(''); // Reset error message
@@ -46,7 +82,7 @@ const ChangePassword = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: localStorage.getItem('email'),
+          email: email,
           newPassword: newPassword,
         }),
       });
@@ -95,6 +131,11 @@ const ChangePassword = () => {
     return <Navigate to="/" />;
   }
 
+  if (!tokenValid) {
+    // Redirect the user to an error page or display an error message
+    return <Navigate to="/" />;
+  }
+
   return (
     <div className="center-container-login">
       {/* <div className="image-container">
@@ -106,7 +147,7 @@ const ChangePassword = () => {
         </div>
         <div className="mdl-card__supporting-text">
           <p>
-            Please enter a new password for your account and confirm below. This action cannot be undone.
+            Please enter a new password for your account and confirm it below. This action cannot be undone.
           </p>
           <form onSubmit={handleSubmitConfirmPassword}>
             <div className={`mdl-textfield mdl-js-textfield mdl-textfield--floating-label ${error ? 'is-invalid' : ''}`}>
@@ -119,9 +160,9 @@ const ChangePassword = () => {
                 required
               />
               <label className="mdl-textfield__label" htmlFor="newPassword">New Password:</label>
-              <span className="material-icons password-toggle" onClick={() => setIsNewPasswordVisible(!isNewPasswordVisible)}>
-                {isNewPasswordVisible ? 'visibility_off' : 'visibility'}
-              </span>
+              <button type="button" className="mdl-button mdl-js-button mdl-button--icon password-visibility-button" onClick={() => setIsNewPasswordVisible(!isNewPasswordVisible)}>
+                <i className="material-icons">{isNewPasswordVisible ? 'visibility_off' : 'visibility'}</i>
+              </button>
             </div>
             <div className={`mdl-textfield mdl-js-textfield mdl-textfield--floating-label ${error ? 'is-invalid' : ''}`}>
               <input
@@ -133,9 +174,9 @@ const ChangePassword = () => {
                 required
               />
               <label className="mdl-textfield__label" htmlFor="confirmPassword">Confirm Password:</label>
-              <span className="material-icons password-toggle" onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
-                {isConfirmPasswordVisible ? 'visibility_off' : 'visibility'}
-              </span>
+              <button type="button" className="mdl-button mdl-js-button mdl-button--icon password-visibility-button" onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
+                <i className="material-icons">{isConfirmPasswordVisible ? 'visibility_off' : 'visibility'}</i>
+              </button>
             </div>
             {error && <span className="error-message">{error}</span>}
             <div className="changepassword-button">

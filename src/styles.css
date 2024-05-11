@@ -15,7 +15,9 @@
  */
  @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-
+ ::-ms-reveal {
+  display: none !important;
+}
 html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
@@ -351,7 +353,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-top: 0px; /* Add some top margin for spacing */
+  margin-top: 30px; /* Add some top margin for spacing */
 }
 
 
@@ -523,7 +525,12 @@ body {
   width: 10%; /* Adjust the padding as needed */
 }
 
-
+/* Add padding to the header and body of the "Coordinates" column */
+.custom-width-network thead th:nth-child(4),
+.custom-width-network tbody td:nth-child(4) {
+  padding-left: 10px; /* Adjust the padding-left as needed */
+  padding-right: 30px; /* Adjust the padding-right as needed */
+}
 
 /* Responsive adjustments for mobile */
 @media (max-width: 768px) {
@@ -613,9 +620,31 @@ body {
   right: 30px;
 
 }
+/* Add padding to the header and body of the "Coordinates" column */
+.custom-width-network thead th:nth-child(3),
+.custom-width-network tbody td:nth-child(3) {
+  padding-left: 0px; /* Adjust the padding-left as needed */
+  padding-right: 30px; /* Adjust the padding-right as needed */
+ 
+}
 
+
+.custom-width-network thead th:nth-child(4),
+.custom-width-network thead td:nth-child(4) {
+  padding: 0 10px; /* Adjust the padding for mobile devices */
+  margin: 0;
+}
+
+/* Adjust padding for body */
+.custom-width-network tbody td:nth-child(4) {
+  padding: 0 10px; /* Adjust the padding for mobile devices */
+  margin: 0;
+}
 
 }
+
+
+
 
 
 /************************* Network ends ************************/
@@ -1533,4 +1562,84 @@ body {
   }
 }
 /*********************Computadora y Ipad*************************************/
+/*********************Macs*************************************/
+/* Mac screens with size 1440 x 900 */
+@media (min-width: 1440px) and (min-height: 900px) {
+  /* Apply the same styles as for iPads */
+  .image-container {
+    margin-top: -250px; 
+    text-align: center; 
+    position: relative;
+    margin-left: 200px;
+  }
+  
+  .image-container img {
+    width: 400px; 
+    height: auto; 
+  }
+
+  .dashboard-content {
+    height: 70vh; 
+  }
+
+  .deploy-button,
+  .stop-design,
+  .clear-all,
+  .select-all,
+  .slider-container,
+  #pattern-menu,
+  #frequency-menu {
+    width: 120px; 
+  }
+
+  .deploy-button {
+    top: 105%; 
+    left: 80%; 
+  }
+
+  .stop-design {
+    top: 105%; 
+    left: 56%; 
+  }
+
+  .clear-all {
+    top: 15%; 
+    left: 80%; 
+  }
+
+  .select-all {
+    top: 15%; 
+    left: 55%; 
+  }
+
+  .slider-container {
+    top: 75%; 
+    left: 75%; 
+  }
+
+  #pattern-menu {
+    top: 45%; 
+    left: 55%; 
+  }
+
+  #frequency-menu {
+    top: 65%; 
+    left: 55%; 
+  }
+
+  .map-container {
+    height: 50%; 
+    width: 60%; 
+  }
+
+  .color-picker-container {
+    bottom: 100px; 
+    right: 150px; 
+  }
+
+  .choose-color {
+    left: 75%; 
+    top: 40%; 
+  }
+}
 
