@@ -25,7 +25,7 @@ const ChangePassword = () => {
   const validateToken = () => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
-    const email = params.get('email');
+    const email = localStorage.getItem('forgotPasswordEmail');
 
     console.log('Email:', email);
 
@@ -52,8 +52,7 @@ const ChangePassword = () => {
   const handleSubmitConfirmPassword = async (event) => {
     event.preventDefault();
 
-    const params = new URLSearchParams(window.location.search);
-    const email = params.get('email');
+    const email = localStorage.getItem('forgotPasswordEmail');
   
     // Check if the new password meets the criteria
     const passwordRegex = /^(?=.*[0-9]).{8,12}$/;

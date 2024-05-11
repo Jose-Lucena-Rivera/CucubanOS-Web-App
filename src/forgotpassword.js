@@ -24,6 +24,9 @@ const ForgotPassword = () => {
         // User found, show notification
         setNotification('You have been sent an email to change your password');
         setError('');
+
+         // Store email in localStorage
+         localStorage.setItem('forgotPasswordEmail', email);
   
         // Make a POST request to the forgot password route with the email
         const postResponse = await fetch('https://boyaslacatalana-api.azurewebsites.net/forgot-password', {
