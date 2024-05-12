@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [validMarkers, setValidMarkers] = useState([]);
   const [markerIds, setMarkerIds] = useState([]);
   let markersData = [];
+  const [showNotification, setShowNotification] = useState(false); 
 
   
   useEffect(() => {
@@ -826,15 +827,13 @@ useEffect(() => {
         throw new Error('Network response was not ok');
       }
 
-      /* // Trigger the file download
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = 'output.json';
-      a.click();
-      window.URL.revokeObjectURL(downloadUrl); */
+      // Handle successful deploy
+      setShowNotification(true);
 
+      // Clear the notification after 3 seconds
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
 
       //Comment this to download json
       const responseData = await response.json();
@@ -918,6 +917,14 @@ useEffect(() => {
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect deploy-button" onClick={handleDeploy} type="submit">
           <span>Deploy</span>
         </button>
+        {/* Notification */}
+        {showNotification && (
+          <div className="notification-container">
+            <div className="notification-card">
+              <div className="notification-text">Deploy sent successfully! Your design will be live in a few seconds.</div>
+            </div>
+          </div>
+        )}
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect select-all" onClick={handleSelectAll} type="submit">
           <span>Select All</span>
         </button>
@@ -934,7 +941,7 @@ useEffect(() => {
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Pulse')}>Pulse</li>
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Strobe')}>Strobe</li>
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Random')}>Random</li>
-          <li className="mdl-menu__item" onClick={() => handlePatternSelect('No Pattern')}>Solid</li>
+          <li className="mdl-menu__item" onClick={() => handlePatternSelect('Solid')}>Solid</li>
         </ul>
         <button id="frequency-menu" className="mdl-button mdl-js-button mdl-button--raised" style={{ marginLeft: '10px' }}>
           {selectedFrequency}
