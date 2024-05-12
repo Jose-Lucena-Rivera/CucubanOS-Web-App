@@ -24,6 +24,9 @@ const Dashboard = () => {
   const [markerIds, setMarkerIds] = useState([]);
   let markersData = [];
   const [showNotification, setShowNotification] = useState(false); 
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [disableButtons, setDisableButtons] = useState(false);
+  const [errorNotification, setErrorNotification] = useState(false);
 
   
   useEffect(() => {
@@ -776,6 +779,14 @@ useEffect(() => {
 }, []);
 
   const handleDeploy = async () => {
+    if (disableButtons) {
+      setErrorNotification(true);
+      setTimeout(() => setErrorNotification(false), 3000);
+      return;
+    }
+    
+    setDisableButtons(true);
+    setTimeout(() => setDisableButtons(false), 30000);
 
     const updatedColorNums = markers.map(marker => {
       const storedColor = localStorage.getItem(`markerColor${marker.id}`);
@@ -828,7 +839,10 @@ useEffect(() => {
       }
 
       // Handle successful deploy
+      setNotificationMessage('You have deployed your design! Please wait a few seconds for this to take effect.');
+      
       setShowNotification(true);
+      setErrorNotification(false);
 
       // Clear the notification after 3 seconds
       setTimeout(() => {
@@ -842,11 +856,25 @@ useEffect(() => {
 
     } catch (error) {
       console.error('Error:', error);
+      setErrorNotification(true);
+      setShowNotification(false); // Hide normal notification
+      setTimeout(() => setErrorNotification(false), 3000);
     }
   };
   
 
   const handleStopDesign = async () => {
+
+    if (disableButtons) {
+      setErrorNotification(true);
+      setTimeout(() => setErrorNotification(false), 3000);
+      return;
+    }
+    
+    setDisableButtons(true);
+    setTimeout(() => setDisableButtons(false), 30000);
+
+
     const data = {
       selectedColorNum: Array(markers.length).fill(0), 
       selectedPatternNum: 0,
@@ -881,12 +909,25 @@ useEffect(() => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+
+      // Handle successful stop design
+      setNotificationMessage('You have stopped the current design. Please wait a few seconds for this to take effect.');
+      setShowNotification(true);
+      setErrorNotification(false);
+
+      // Clear the notification after 3 seconds
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
   
       const responseData = await response.json();
       console.log(responseData);
   
     } catch (error) {
       console.error('Error:', error);
+      setErrorNotification(true);
+      setShowNotification(false); // Hide normal notification
+      setTimeout(() => setErrorNotification(false), 3000);
     }
   
     // Reset all state values to their default or 0 values
@@ -906,6 +947,14 @@ useEffect(() => {
     localStorage.setItem('selectedColor', selectedColor);
   }, [selectedColor]);
 
+  useEffect(() => {
+    if (errorNotification) {
+      setNotificationMessage('You cannot perform this action too frequently. Please wait 30 seconds before Deploying or Stopping a Design.');
+      setErrorNotification(true);
+      setTimeout(() => setErrorNotification(false), 3000);
+    }
+  }, [errorNotification]);
+
 
   return (
     <Layout>
@@ -921,8 +970,13 @@ useEffect(() => {
         {showNotification && (
           <div className="notification-container">
             <div className="notification-card">
-              <div className="notification-text">Deploy sent successfully! Your design will be live in a few seconds.</div>
+              <div className="notification-text">{notificationMessage}</div>
             </div>
+          </div>
+        )}
+        {errorNotification && (
+          <div className="error-notification">
+            <div className="error-notification-text">Error: {notificationMessage}</div>
           </div>
         )}
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect select-all" onClick={handleSelectAll} type="submit">

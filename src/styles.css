@@ -406,12 +406,14 @@ body {
 .mdl-button-network.add-buoy {
   top: 70px;
   left: 20px;
+  background-color: #a4f596;
 }
 
 .mdl-button-network.remove-buoy {
   top: 70px;
   right: 20px;
   width: 16%; 
+  background-color: #ec9e9e;
 }
 .dialog-actions-submit-network {
   position: fixed;
@@ -1044,6 +1046,21 @@ body {
 
 /************************* Dashboard ************************/
 
+.error-notification {
+  position: fixed;
+  top: 100px;
+  right: 40px;
+  z-index: 1000;
+}
+
+.error-notification-text {
+  background-color: #ff6666; /* Red background color */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  color: #fff; /* White text color */
+}
+
 .dashboard-content {
   position: relative; /* Ensure positioning context for absolute positioning */
 }
@@ -1053,12 +1070,14 @@ body {
   position: absolute;
   top: 400px;
   right: 20px;
+  background-color: #a4f596;
 }
 
 .stop-design {
   position: absolute;
   top: 400px;
   right: 200px;
+  background-color: #ec9e9e;
 }
 
 .clear-all {
