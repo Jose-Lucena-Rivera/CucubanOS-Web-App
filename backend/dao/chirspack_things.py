@@ -189,7 +189,7 @@ class ChirpstackThing():
     
     def flush_dev_queue(self, eui):
         channel = grpc.insecure_channel(server)
-        client = api.DeviceQueueServiceStub(channel)
+        client = api.DeviceServiceStub(channel)
         auth_token = [("authorization", "Bearer %s" % api_token)]
 
         try:
