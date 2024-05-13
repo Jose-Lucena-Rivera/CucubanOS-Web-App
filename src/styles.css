@@ -1217,11 +1217,13 @@ body {
     position: relative;
     top: 270px;
     left: 130px;
+    z-index: 9998;
   }
   #frequency-menu {
     position: relative;
     top: 340px;
     left: -2px;
+    z-index: 9998;
   }
 
   .color-picker-container {
@@ -1237,9 +1239,7 @@ body {
     width: 100px;
   }
 
-  .touched {
-    pointer-events: none;
-  }
+
 
 }
 
