@@ -1211,19 +1211,20 @@ body {
 
   .mdl-slider {
     width: 100%; /* Ensure slider takes full width of its container */
+    z-index: 2;
   }
 
   #pattern-menu {
     position: relative;
     top: 270px;
     left: 130px;
-    z-index: 9998;
+    z-index: 10000;
   }
   #frequency-menu {
     position: relative;
     top: 340px;
     left: -2px;
-    z-index: 9998;
+    z-index: 1;
   }
 
   .color-picker-container {
