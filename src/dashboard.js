@@ -454,16 +454,8 @@ const handleUpdateMarker = (updatedMarkerId, updatedColor,color) => {
     };
 
     const handleTouchEnd = (event) => {
-      const target = event.target;
-    
-      // Check if the target is not the "Select All" or "Clear All" button
-      if (!target.classList.contains('select-all') && !target.classList.contains('clear-all')) {
-        // Remove the touch class
-        target.classList.remove('touched');
-    
-        // Trigger the button click event
-        target.click();
-      }
+      event.target.classList.remove('touched'); // Remove the touch class
+      event.target.click(); // Trigger the button click
     };
 
     // Add touch event listeners to all buttons
@@ -967,6 +959,7 @@ useEffect(() => {
   return (
     <Layout>
       <div className="dashboard-content d-flex">
+      <div className="test">
         {/* Existing buttons */}
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect stop-design" onClick={handleStopDesign} type="submit">
           <span>Stop Design</span>
@@ -1054,6 +1047,7 @@ useEffect(() => {
           </div>
           </div>
           <div ref={mapRef} className="map-container" style={{ top: '130px', left: '40px', height: '50vh', width: '40vw' }}></div>
+      </div>
     </Layout>
   );
 };
