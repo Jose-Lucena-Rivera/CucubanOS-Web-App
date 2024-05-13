@@ -1046,8 +1046,8 @@ useEffect(() => {
           )}
           </div>
           </div>
+          <div ref={mapRef} className="map-container" style={{ top: '130px', left: '40px', height: '50vh', width: '40vw' }}></div>
       </div>
-      <div ref={mapRef} className="map-container" style={{ top: '130px', left: '40px', height: '50vh', width: '40vw' }}></div>
     </Layout>
   );
 };
