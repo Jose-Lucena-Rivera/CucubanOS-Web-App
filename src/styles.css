@@ -1220,7 +1220,7 @@ body {
     position: relative;
     top: 270px;
     left: 130px;
-    z-index: 10000;
+    z-index: 200;
   }
   #frequency-menu {
     position: relative;
