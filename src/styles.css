@@ -18,6 +18,16 @@
  ::-ms-reveal {
   display: none !important;
 }
+
+.d-flex {
+  display: flex;
+}
+
+.test {
+  /* Add any other existing styles here */
+  /* Add the d-flex class to make it a flex container */
+  display: flex;
+}
 html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
@@ -1593,7 +1603,7 @@ body {
 /*********************Macs*************************************/
 /* Mac screens with size 1440 x 900 */
 @media (min-width: 1440px) and (min-height: 900px) {
-  /* Apply the same styles as for iPads */
+  
   .image-container {
     margin-top: -250px; 
     text-align: center; 
@@ -1615,7 +1625,7 @@ body {
   .clear-all,
   .select-all,
   .slider-container,
-  #pattern-menu,
+  #pattern-menu
   #frequency-menu {
     width: 120px; 
   }

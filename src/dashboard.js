@@ -958,7 +958,8 @@ useEffect(() => {
 
   return (
     <Layout>
-      <div className="dashboard-content">
+      <div className="dashboard-content d-flex">
+      <div className="test">
         {/* Existing buttons */}
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect stop-design" onClick={handleStopDesign} type="submit">
           <span>Stop Design</span>
@@ -1043,9 +1044,10 @@ useEffect(() => {
               </div>
             </div>
           )}
-        </div>
-        <div ref={mapRef} className="map-container" style={{ top: '130px', left: '40px', height: '50vh', width: '40vw' }}></div>
+          </div>
+          </div>
       </div>
+      <div ref={mapRef} className="map-container" style={{ top: '130px', left: '40px', height: '50vh', width: '40vw' }}></div>
     </Layout>
   );
 };
