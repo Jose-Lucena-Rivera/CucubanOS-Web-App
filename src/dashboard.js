@@ -448,44 +448,30 @@ const handleUpdateMarker = (updatedMarkerId, updatedColor,color) => {
     setSelectedColorNum(updatedColorNums);
 };
 
-useEffect(() => {
-  const handleTouchStart = (event) => {
-    event.target.classList.add('touched'); // Add a class to indicate touch
-  };
+  useEffect(() => {
+    const handleTouchStart = (event) => {
+      event.target.classList.add('touched'); // Add a class to indicate touch
+    };
 
-  const handleTouchEnd = (event) => {
-    event.preventDefault(); // Prevent default behavior to avoid duplicate click events
-    event.target.classList.remove('touched'); // Remove the touch class
-    if (!event.target.classList.contains('disabled')) {
-      event.target.dispatchEvent(new MouseEvent('click')); // Trigger the click event
-    }
-  };
+    const handleTouchEnd = (event) => {
+      event.target.classList.remove('touched'); // Remove the touch class
+      event.target.click(); // Trigger the button click
+    };
 
-  const buttons = document.querySelectorAll('button');
-  const slider = document.querySelector('.mdl-slider'); 
-
-  buttons.forEach((button) => {
-    button.addEventListener('touchstart', handleTouchStart);
-    button.addEventListener('touchend', handleTouchEnd);
-  });
-
-  if (slider) {
-    slider.addEventListener('touchstart', handleTouchStart);
-    slider.addEventListener('touchend', handleTouchEnd);
-  }
-
-  return () => {
-    buttons.forEach((button) => {
-      button.removeEventListener('touchstart', handleTouchStart);
-      button.removeEventListener('touchend', handleTouchEnd);
+    // Add touch event listeners to all buttons
+    document.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('touchstart', handleTouchStart);
+      button.addEventListener('touchend', handleTouchEnd);
     });
 
-    if (slider) {
-      slider.removeEventListener('touchstart', handleTouchStart);
-      slider.removeEventListener('touchend', handleTouchEnd);
-    }
-  };
-}, []);
+    // Cleanup: Remove event listeners when the component unmounts
+    return () => {
+      document.querySelectorAll('button').forEach((button) => {
+        button.removeEventListener('touchstart', handleTouchStart);
+        button.removeEventListener('touchend', handleTouchEnd);
+      });
+    };
+  }, []); // Empty dependency array means this useEffect runs once when the component mounts
 
 
 
@@ -736,7 +722,6 @@ useEffect(() => {
     setSliderValue(snappedValue);
     handleSliderChange(snappedValue);
   };
-  
 
   const handlePatternSelect = (pattern) => {
     setSelectedPattern(pattern);
@@ -973,7 +958,8 @@ useEffect(() => {
 
   return (
     <Layout>
-      <div className="dashboard-content">
+      <div className="dashboard-content d-flex">
+      <div className="test">
         {/* Existing buttons */}
         <button className="mdl-button-account mdl-button--colored mdl-js-button mdl-js-ripple-effect stop-design" onClick={handleStopDesign} type="submit">
           <span>Stop Design</span>
@@ -1061,6 +1047,7 @@ useEffect(() => {
           </div>
           </div>
           <div ref={mapRef} className="map-container" style={{ top: '130px', left: '40px', height: '50vh', width: '40vw' }}></div>
+      </div>
     </Layout>
   );
 };
