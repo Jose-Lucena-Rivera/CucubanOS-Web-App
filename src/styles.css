@@ -1202,17 +1202,18 @@ body {
     left: 300px;
     transform: translate(-50%, -50%);
     margin-top: 20px;
+    z-index: 100;
   }
 
   .slider-container > div {
     width: 150px !important; /* Override inline width for mobile */
     margin: 20px auto;
-    z-index: 2;
+    z-index: 100;
   }
 
   .mdl-slider {
     width: 100%; /* Ensure slider takes full width of its container */
-    
+    z-index: 100;
   }
 
   #pattern-menu {
