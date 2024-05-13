@@ -1207,11 +1207,12 @@ body {
   .slider-container > div {
     width: 150px !important; /* Override inline width for mobile */
     margin: 20px auto;
+    z-index: 2;
   }
 
   .mdl-slider {
     width: 100%; /* Ensure slider takes full width of its container */
-    z-index: 2;
+    
   }
 
   #pattern-menu {
