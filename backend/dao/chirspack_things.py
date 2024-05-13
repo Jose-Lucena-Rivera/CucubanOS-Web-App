@@ -186,3 +186,17 @@ class ChirpstackThing():
             return None
         
         return resp
+    
+    def flush_dev_queue(self, eui):
+        channel = grpc.insecure_channel(server)
+        client = api.DeviceServiceStub(channel)
+        auth_token = [("authorization", "Bearer %s" % api_token)]
+
+        try:
+            req = api.FlushDeviceQueueRequest()
+            req.dev_eui = eui
+            resp = client.FlushQueue(req, metadata=auth_token)
+            return resp
+        except grpc.RpcError as e:
+            print('exception: '+ str(e))
+            return None

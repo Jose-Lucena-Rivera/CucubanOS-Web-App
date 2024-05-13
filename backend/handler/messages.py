@@ -195,8 +195,9 @@ class MessageHandler():
             devEUI = buoys.update_color(i+1, colors[i], frequency)
             if not devEUI:
                 return jsonify({"error": f"Error updating buoy {i+1} colors."}), 400
+            message.flush_dev_queue(devEUI)
             payload = bytes([colors[i]]) + bytes([brightness]) + bytes([frequency]) + bytes([pattern])
-            all_messages.append(payload)
+            # all_messages.append(payload)
             resp = message.send_message_to_one_buoy(payload, devEUI )
 
         if resp is None:
