@@ -19,15 +19,7 @@
   display: none !important;
 }
 
-.d-flex {
-  display: flex;
-}
 
-.test {
-  /* Add any other existing styles here */
-  /* Add the d-flex class to make it a flex container */
-  display: flex;
-}
 html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
@@ -1210,26 +1202,31 @@ body {
     left: 300px;
     transform: translate(-50%, -50%);
     margin-top: 20px;
+    z-index: 100;
   }
 
   .slider-container > div {
     width: 150px !important; /* Override inline width for mobile */
     margin: 20px auto;
+    z-index: 100;
   }
 
   .mdl-slider {
     width: 100%; /* Ensure slider takes full width of its container */
+    z-index: 100;
   }
 
   #pattern-menu {
     position: relative;
     top: 270px;
     left: 130px;
+    z-index: 200;
   }
   #frequency-menu {
     position: relative;
     top: 340px;
     left: -2px;
+    z-index: 1;
   }
 
   .color-picker-container {
@@ -1244,6 +1241,9 @@ body {
     left: 265px;
     width: 100px;
   }
+
+
+
 }
 
 /************************* Dashboard ends ************************/
