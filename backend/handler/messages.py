@@ -146,22 +146,22 @@ class MessageHandler():
                     return jsonify({"message": "Chirpstack updates received. (but no location update)"}), 200
 
 
-            location = base64_to_string_location(location)
-            buoy = BuoyDAO()
+                location = base64_to_string_location(location)
+                buoy = BuoyDAO()
 
-            if buoy.update_location(dev_eui, location):
-                print(f"\nLocation updated: {location}\n")
-                return jsonify({"message": f"Chirpstack updates received. (Location updated) {location}"}), 200
-            else:
-                print("\nError updating location\n")
-                return jsonify({"error": "Error updating location."}), 400
+                if buoy.update_location(dev_eui, location):
+                    print(f"\nLocation updated: {location}\n")
+                    return jsonify({"message": f"Chirpstack updates received. (Location updated) {location}"}), 200
+                else:
+                    print("\nError updating location\n")
+                    return jsonify({"error": "Error updating location."}), 400
             
 
         
                 
             
             print(request.data)
-            print("#####PRINTING HEADERS######")
+            print("\n\n#####PRINTING HEADERS######")
             print(request.headers)
             print("##########################")
 
