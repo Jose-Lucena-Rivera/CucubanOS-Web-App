@@ -6,6 +6,7 @@ import re
 import random
 import string
 from dotenv import load_dotenv
+import base64
 
 load_dotenv()
 
@@ -137,7 +138,27 @@ class MessageHandler():
 
             elif event =='up':
                 ### recoger el mensaje que llega en el campo 'data' y convertirlo de base64 a hex o txt, depende lo que jonathan me mande
-                pass
+                location = data.get('data')
+                dev_eui = data['deviceInfo']['devEui']
+
+                if (location is None) or (location == ""):
+                    print ("\nNo location update\n")
+                    return jsonify({"message": "Chirpstack updates received. (but no location update)"}), 200
+
+
+            location = base64_to_string_location(location)
+            buoy = BuoyDAO()
+
+            if buoy.update_location(dev_eui, location):
+                print(f"\nLocation updated: {location}\n")
+                return jsonify({"message": f"Chirpstack updates received. (Location updated) {location}"}), 200
+            else:
+                print("\nError updating location\n")
+                return jsonify({"error": "Error updating location."}), 400
+            
+
+        
+                
             
             print(request.data)
             print("#####PRINTING HEADERS######")
@@ -216,3 +237,39 @@ class MessageHandler():
             return jsonify({"error": "Error flushing messages from multicast queue."}), 400
         
         return jsonify({"message": f"Multicast queue flushed: {resp}"}), 200
+    
+def base64_to_string_location(base64_string):
+    base64_bytes = base64_string.encode("ascii")
+
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+
+    index = max(sample_string.find("N"), sample_string.find("S"))
+
+    latitude = sample_string[:index+1]
+    longitude = sample_string[index+1:]
+
+    latitude1 = latitude[:-1]
+    lat_float = str(round(float(latitude1[latitude1.find(".")-2:])/60, 6))
+    lat_float = lat_float[lat_float.find("."):]
+
+    latitude1 = latitude1[:latitude1.find(".")-2] + lat_float[lat_float.find("."):]
+    longitude1 = longitude[:-1]
+    longitude_float = str(round(float(longitude1[longitude1.find(".")-2:])/60, 6))
+    longitude_float = longitude_float[longitude_float.find("."):]
+
+    longitude1 = longitude1[:longitude1.find(".")-2] + longitude_float[longitude_float.find("."):]
+    if latitude[-1] == "N":
+        latitude = latitude1
+    elif latitude[-1] == "S":
+        latitude = "-" + latitude
+
+    if longitude1[0] == "0":
+        longitude1 = longitude1[1:]
+
+    if longitude[-1] == "E":
+        longitude = longitude1
+    elif longitude[-1] == "W":
+        longitude = "-" + longitude1
+
+    return latitude + ", " + longitude
