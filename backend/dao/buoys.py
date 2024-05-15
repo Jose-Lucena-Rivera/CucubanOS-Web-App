@@ -154,7 +154,9 @@ class BuoyDAO():
         except Exception as e:
             self.conn.rollback()
             print(e)
+            return False
         finally:
             cursor.close()
             self.conn.close()
-            return True
+        
+        return True
