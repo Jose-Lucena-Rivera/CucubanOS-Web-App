@@ -145,8 +145,14 @@ class MessageHandler():
                     print ("\nNo location update\n")
                     return jsonify({"message": "Chirpstack updates received. (but no location update)"}), 200
 
+                txt = base_64_to_string(location)
+                if txt == "/":
+                    print("\nNo location update received\n")
+                    return jsonify({"message": "No location update received."}), 400
 
                 location = base64_to_string_location(location)
+
+                
                 buoy = BuoyDAO()
 
                 if buoy.update_location(dev_eui, location):
@@ -209,7 +215,7 @@ class MessageHandler():
 
         # if resp is None:
         #     return jsonify({"error": "Error sending message to buoys."}), 400
-        all_messages = []
+        # all_messages = []
         buoys = BuoyDAO()
         message = ChirpstackThing()
         for i in range(len(colors)):
@@ -238,6 +244,16 @@ class MessageHandler():
         
         return jsonify({"message": f"Multicast queue flushed: {resp}"}), 200
     
+
+def base_64_to_string(base64_string):
+    base64_bytes = base64_string.encode("ascii")
+
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+
+    return sample_string
+
+
 def base64_to_string_location(base64_string):
     base64_bytes = base64_string.encode("ascii")
 

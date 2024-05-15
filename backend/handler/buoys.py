@@ -13,6 +13,7 @@ debugging = False#os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGG
 
 class BuoyHandler():
 
+    # functions used for testing. Generated a random DevEUI and AppKey
     def generate_random_eui(self):
         """Generates a random EUI string (replace with specific EUI format if needed)"""
         """Generates a random 16-character hex string"""
@@ -28,10 +29,8 @@ class BuoyHandler():
         print(len(random_string))
         return random_string
 
+# creates a buoy. adds it to the database and to chirpstack
     def create_buoy(self):
-
-        ########################### Check if user is logged in with valid token
-        
 
         # get data from request
         data = request.get_json()
@@ -91,30 +90,25 @@ class BuoyHandler():
             return jsonify({"error": "Keys were not added to device"}), 400
 
         # add device to multicast group
-        add_to_multi = ChirpstackThing()
-        resp2 = add_to_multi.add_device_to_multicast_group(eui) 
-        if resp2 is None:
-            return jsonify({"error": "Device was not added to multicast group"}), 400 
+        # add_to_multi = ChirpstackThing()
+        # resp2 = add_to_multi.add_device_to_multicast_group(eui) 
+        # if resp2 is None:
+        #     return jsonify({"error": "Device was not added to multicast group"}), 400 
 
-        # Successful creation of buoy
-        return jsonify({"message": f"Buoy with name and EUI {created} has been created and added to multicast group" }), 201
+        # # Successful creation of buoy
+        # return jsonify({"message": f"Buoy with name and EUI {created} has been created and added to multicast group" }), 201
         
+        # # Successful creation of buoy
+        # return jsonify({"message": f"Buoy with name and EUI {created} has been created" }), 201
+
+    #returns all buoys
     def get_buoys(self):
-
-        ########################### Check if user is logged in with valid token
-
-
-        #######################################################################
         buoy = BuoyDAO()
         buoys = buoy.get_all_buoys()
         return jsonify(buoys),200
     
     def get_buoy(self):
-        ########################### Check if user is logged in with valid token
-
-
-        #######################################################################
-
+        
         # get data from request
         data = request.get_json()
         eui = data.get('eui')
@@ -144,21 +138,18 @@ class BuoyHandler():
         buoy_info=buoy.get_all_from_buoy(eui)
         return jsonify(buoy_info), 200
     
+    #deletes a buoy from the database and from chirpstack
     def delete_buoy(self, bname):
-        ########################### Check if user is logged in with valid token
-
-
-        #######################################################################
-
-        # data = request.get_json()
-        # eui = data.get('eui')
         eui = None
         name = bname
+
+        #checks that the needed data is present
         if (not eui) and (not name):
             return jsonify({"error": "EUI or buoy name is required to delete buoy."}), 400
 
         buoy = BuoyDAO()
 
+        #checks if the buoy exists
         if not eui:
             name = name.lower() 
             eui = buoy.get_buoy_by_name(name)
@@ -173,14 +164,15 @@ class BuoyHandler():
                 return jsonify({"error": "Buoy with this EUI does not exist."}), 400
             
 
-
-        ##################### DELETE IN CHIRPSTACK API ########################################
+        
+        # DELETE IN CHIRPSTACK API 
         delete_chirp_buoy = ChirpstackThing()
         resp = delete_chirp_buoy.delete_device(eui)
 
-        ########################################################################################
-
+        #delete buoy from database
         deleted = buoy.delete_buoy(eui, name)
+
+        # checks if the buoy was deleted
         if deleted:
             return jsonify({"message": f"Buoy {name} with EUI {eui} has been deleted."}), 200
         else:
@@ -188,18 +180,11 @@ class BuoyHandler():
         
 
 
+    #updates buoy data. Only used in testing
     def update_buoy(self, eui = None, updated_location = None, updated_bcolor = None, updated_battery = None, updated_frequency = None, updated_name = None, buoy_id = 0):
-        ########################### Check if user is logged in with valid token
-
-
-        #######################################################################
-
         data = request.get_json()
         eui = data.get('eui') if eui is None else eui
         name = data.get('name')
-
-
-
 
         ############################# Separar esto pa otra ruta (o sea, una ruta pa que el usuario actualice y otra
         ############################# para lo que recibamos de Chirpstack API) 
@@ -232,11 +217,6 @@ class BuoyHandler():
             if not name:
                 buoy.close_connection()
                 return jsonify({"error": "Buoy with this EUI does not exist."}), 400
-
-        #################################### UPDATE IN CHIRPSTACK API ########################################
-
-
-        ####################################################################################################
 
 
         updates = []
@@ -281,6 +261,7 @@ class BuoyHandler():
             return jsonify({"error": "Buoy was not updated."}), 400
         
 
+    # gets the ids sent from the front end and stores them in the database
     def update_marker_ids(self):
         try:
             # Extract marker IDs and DevEUIs from the request data
@@ -303,6 +284,7 @@ class BuoyHandler():
             for marker in markers_list:
                 marker_id = marker.get("markerId")
                 devEUI = marker.get("devEUI")
+
                 if marker_id is None or devEUI is None:
                     return jsonify({"error": "Missing 'markerId' or 'devEUI' in marker data"}), 400
                 # Your code to handle the marker ID and DevEUI goes here
@@ -311,14 +293,7 @@ class BuoyHandler():
 
                 self.update_buoy(eui = devEUI, buoy_id = marker_id)
                 
-                # Example: Store marker ID and DevEUI in a database   ################################################ send id to buoy individually
-                # payload = bytes([0xAA, marker_id, 0xBB, buoys])
-                # resp = message.send_message_to_one_buoy(payload, devEUI)
-
-                # if resp is None:
-                #     return jsonify({"error": f"Error sending message to buoy {devEUI}."}), 400
-                
-            # Optionally, return a success response
+            # return a success response
             return jsonify({"message": "Marker IDs received successfully"}), 200
 
         except ValueError as ve:

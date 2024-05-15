@@ -34,61 +34,51 @@ def add_cors_headers(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     return response
 
-# for key, value in os.environ.items():
-#     print(f"{key}: {value}")
-    
 
+# route for adding a user. Not implemented on the front end
 @app.route("/add-user", methods=["POST"])
 @app.route("/add-user/", methods=["POST"])
 def add_user():
     user = UserHandler()
     return user.create_user()
-    # return create_user()
 
+# route for removing a user. Not implemented on the front end
 @app.route("/remove-user/", methods=["DELETE"])
 @app.route("/remove-user", methods=["DELETE"])
 def remove_user():
     user = UserHandler()
     return user.delete_user()
 
+# route for updating a user. Not implemented on the front end
 @app.route("/update-user", methods=["PUT"])
 @app.route("/update-user/", methods=["PUT"])
 def update_user():
     user = UserHandler()
     return user.update_user()
 
+# route for getting a user. Not implemented on the front end
 @app.route("/get-user", methods=["GET"])
 @app.route("/get-user/", methods=["GET"])
 def get_user():
     user = UserHandler()
     return user.get_user()
 
+# route for getting all users. Not implemented on the front end
 @app.route("/get-all-users", methods=["GET"])
 @app.route("/get-all-users/", methods=["GET"])
 def get_all_users():
     user = UserHandler()
     return user.get_all_users()
 
+# a route for the forgot password in the front end. Sends an email to the user to reset their password if they exist
 @app.route("/forgot-password/", methods=["POST"])
 @app.route("/forgot-password", methods=["POST"])
 def forgot_password():
     user = UserHandler()
     return user.forgot_password()
-    if request.method == "POST":
-        # Get the email from the POST request body
-        data = request.json
-        email = data.get("email")
-        print("Received email:", email)
-        
-        # Here you can implement the logic to send an email to the user to reset their password
-        
-        # Return a JSON response to indicate that the request was successful
-        return jsonify({"message": "An email has been sent to reset your password"})
+    
 
-    # Handle other HTTP methods if needed
-    return jsonify({"error": "Method not allowed"}), 405  # Return a 405 Method Not Allowed error for other methods
-
-
+# a route for checking the forgotten password token. To check if the forgot password link is valid
 @app.route("/check-forgotten-password-token", methods=["GET"])
 @app.route("/check-forgotten-password-token/", methods=["GET"])
 def check_forgotten_password_token():
@@ -96,138 +86,111 @@ def check_forgotten_password_token():
     return user.check_forgotten_password_token()
 
 
+# a route for resetting the password. (after the link has been verified)
 @app.route("/reset-password", methods=["POST"])
 @app.route("/reset-password/", methods=["POST"])
 def reset_password():
     return user_handler.update_password()
     
     
-
+# adds a buoy to the database and to chirpstack 
 @app.route("/add-buoy", methods=["POST"])
 @app.route("/add-buoy/", methods=["POST"])
 def add_buoy():
     buoy = BuoyHandler()
     return buoy.create_buoy()
     
+# gets a buoy from the database. Not implemented on the front end
 @app.route("/get-one-buoy", methods=["GET"])
 @app.route("/get-one-buoy/", methods=["GET"])
 def get_one_buoy():
     buoy = BuoyHandler()
     return buoy.get_buoy()
 
+# gets all buoys from the database. 
 @app.route("/get-buoys/", methods=["GET"])
 @app.route("/get-buoys", methods=["GET"])
 def get_buoys():
     buoy = BuoyHandler()
     return buoy.get_buoys()
 
-
+# deletes a buoy from the database and from chirpstack
 @app.route("/delete-buoy/<string:bname>", methods=["DELETE"])
 @app.route("/delete-buoy/<string:bname>/", methods=["DELETE"])
 def delete_buoy(bname):
     buoy = BuoyHandler()
     return buoy.delete_buoy(bname)
 
-
+# updates a buoy in the database and in chirpstack. Not used in the front end. 
 @app.route("/update-buoy/", methods=["PUT"])
 @app.route("/update-buoy", methods=["PUT"])
 def update_buoy():
     buoy = BuoyHandler()
     return buoy.update_buoy()
 
-
+# where chirpstack posts updates. depending on the update type, the data is processed or ignored
 @app.route("/chirpstack-updates", methods=["POST"])
 @app.route("/chirpstack-updates/", methods=["POST"])
 def chirpstack_updates():
     update = MessageHandler()
     return update.chirpstack_updates()
 
-
+# For multicast. Multicast is not being used right now, so this is not implemented on the front end
 @app.route("/send-all-buoys-data/", methods=["POST"])
 @app.route("/send-all-buoys-data", methods=["POST"])
 def send_buoy_data():
     message = MessageHandler()
     return message.multicast()
     
+# For sending data to one buoy. Not implemented on the front end, but is used for testing
 @app.route("/send-one-buoy-data/", methods=["POST"])
 @app.route("/send-one-buoy-data", methods=["POST"])
 def send_one_buoy_data():
     message = MessageHandler()
     return message.send_one_buoy_data()
 
+# to get the mulicast queue. Not implemented since multicast is not being used
 @app.route("/see-multimessage", methods=["GET"])
 def see_multimessage():
     message = MessageHandler()
     return message.see_multimessage()
 
+# to delete the multicast queue. Not implemented since multicast is not being used
 @app.route("/delete-multicast-queue", methods=["DELETE"])
 def delete_multicast():
     message = MessageHandler()
     return message.delete_multicast_queue()
 
 
-# Route to serve index.html
+# Route to serve index.html. For azure deployment
 @app.route('/')
 def serve_index():
     return send_from_directory('build', 'index.html')
 
-# Route to serve static files
+# Route to serve static files. 
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory('build', path)
 
-
+# the front end assigns an id to each buoy. This route updates the buoy's id in the database. 
 @app.route("/update-marker-ids", methods=["POST"])
 def update_marker_ids():
     buoy = BuoyHandler()
     return buoy.update_marker_ids()
-    try:
-        # Extract marker IDs and DevEUIs from the request data
-        marker_ids_devEUIs = request.get_json()
-        print("Data Recieved:", marker_ids_devEUIs)
-        # Check if request data is None or empty
-        if marker_ids_devEUIs is None:
-            return jsonify({"error": "No JSON data received"}), 400
-
-        # Check if 'markers' key exists and it's a list
-        markers_list = marker_ids_devEUIs.get("markers")
-        if not isinstance(markers_list, list):
-            return jsonify({"error": "Invalid 'markers' format or missing 'markers' key"}), 400
-        
-        # Process the received marker IDs and DevEUIs
-        for marker in markers_list:
-            marker_id = marker.get("markerId")
-            devEUI = marker.get("devEUI")
-            if marker_id is None or devEUI is None:
-                return jsonify({"error": "Missing 'markerId' or 'devEUI' in marker data"}), 400
-            # Your code to handle the marker ID and DevEUI goes here
-            print("Marker ID:", marker_id)
-            print("DevEUI:", devEUI)
-            
-            # Example: Store marker ID and DevEUI in a database
-
-        # Optionally, return a success response
-        return jsonify({"message": "Marker IDs received successfully"}), 200
-
-    except ValueError as ve:
-        # JSON decoding error
-        return jsonify({"error": "Invalid JSON data in the request: " + str(ve)}), 400
-
-    except Exception as e:
-        # Return an error response if something goes wrong
-        return jsonify({"error": "An unexpected error occurred: " + str(e)}), 500
-
+    
+# sends a message to all buoys (one by one) when the deploy button is clicked in the front end
 @app.route('/deploy', methods=['POST'])
 def deploy():
     message = MessageHandler()
     return message.deploy_buoy()
 
 
+# verifies if the provided password is the correct password
 @app.route("/verify-password", methods=["GET"])
 def verify_password():
     return user_handler.verify_password()
 
-
+# updates the password for the current user. checks that the new password is not the same as the old password
 @app.route("/update-password", methods=["PUT"])
 def update_password():
     return user_handler.update_password()
@@ -236,62 +199,13 @@ def update_password():
 failed_login_attempts = {}
 
 
-
+# checks that the user is introducing the correct password. If the user fails to introduce the correct password 10 times, the user is locked out for 5 minutes
 @app.route('/login', methods=['POST'])
 def login():
     user = UserHandler()
     return user.login()
 
 
-    try:
-        # Define MAX_LOGIN_ATTEMPTS here
-        MAX_LOGIN_ATTEMPTS = 10
-        
-        # Get the email and password from the request body
-        data = request.json
-        email = data.get('email')
-        password = data.get('password')
-
-        # Check if email and password are provided
-        if not email or not password:
-            return jsonify({'message': 'Email and password are required.'}), 400
-
-        # Connect to the PostgreSQL database
-        conn = psycopg2.connect(database_url)
-        cursor = conn.cursor()
-
-        # Execute a SQL query to authenticate the user
-        cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))
-        user = cursor.fetchone()
-
-        if user:
-            # Reset failed login attempts for this user
-            failed_login_attempts.pop(email, None)
-
-            # Generate JWT token
-            token = jwt.encode({'email': email}, secret_key, algorithm='HS256')
-
-            print("Generated Token:", token)
-            return jsonify({'token': token}), 200
-        else:
-            # Increment failed login attempts counter for this user
-            failed_attempts = failed_login_attempts.get(email, 0) + 1
-            failed_login_attempts[email] = failed_attempts
-
-            # Log the number of failed login attempts for this user
-            print(f"Failed login attempts for {email}: {failed_attempts}")
-
-            # Check if the user has exceeded the maximum attempts
-            if failed_attempts >= MAX_LOGIN_ATTEMPTS:
-                return jsonify({'message': 'You have been locked due to failed login attempts. Please try again in 5 minutes.'}), 401
-            else:
-                return jsonify({'message': 'Invalid email or password.'}), 401
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
-    finally:
-        # Close the database connection
-        cursor.close()
-        conn.close()
 
 if __name__ == '__main__':
     if debugging:

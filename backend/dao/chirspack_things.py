@@ -12,12 +12,7 @@ from chirpstack_api import api
 
 # load_dotenv()
 
-debugging = True#os.getenv('DEBUGGING') if not None else os.environ.get('DEBUGGING')
-# server = os.getenv('TEST_CHIRPSTACK_URL')
-# application_id = os.getenv('TEST_CHIRPSTACK_APP_ID')
-# api_token = os.getenv('TEST_CHIRPSTACK_API_KEY')
-# device_profile_id = os.getenv('TEST_DEVICE_PROFILE_ID')
-# multicast_group_id = os.getenv('TEST_MULTICAST_GROUP_ID')
+debugging = True
 
 server = os.environ.get('CHIRPSTACK_URL')
 application_id = os.environ.get('CHIRPSTACK_APP_ID')
@@ -148,6 +143,8 @@ class ChirpstackThing():
 
             resp = client.Enqueue(device_queue_req, metadata=auth_token)
 
+            print (f"message for buoy with eui {eui}:", payload)
+
         except grpc.RpcError as e:
             print('exception: '+ str(e))
             return None
@@ -196,6 +193,21 @@ class ChirpstackThing():
             req = api.FlushDeviceQueueRequest()
             req.dev_eui = eui
             resp = client.FlushQueue(req, metadata=auth_token)
+            return resp
+        except grpc.RpcError as e:
+            print('exception: '+ str(e))
+            return None
+        
+    def get_dev_queue(self, eui):
+        channel = grpc.insecure_channel(server)
+        client = api.DeviceServiceStub(channel)
+        auth_token = [("authorization", "Bearer %s" % api_token)]
+
+        try:    
+            req = api.GetDeviceQueueItemsRequest()
+            req.dev_eui = eui
+            req.count_only = False
+            resp = client.GetQueue(req, metadata=auth_token)
             return resp
         except grpc.RpcError as e:
             print('exception: '+ str(e))

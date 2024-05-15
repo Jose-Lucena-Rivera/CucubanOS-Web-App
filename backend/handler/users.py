@@ -331,8 +331,6 @@ class UserHandler():
 
 
     def forgot_password(self):
-        
-    
         if request.method == "POST":
             # Get the email from the POST request body
             data = request.json

@@ -12,6 +12,7 @@ class BuoyDAO():
     def close_connection(self):
         self.conn.close()
 
+    # when only the eui is given, this function returns the name of the buoy
     def get_buoy_by_eui(self, eui):
         cursor = self.conn.cursor()
 
@@ -22,6 +23,7 @@ class BuoyDAO():
         # self.conn.close()
         return bName
     
+    # when only the name is given, this function returns the eui of the buoy
     def get_buoy_by_name(self, name):
         cursor = self.conn.cursor()
 
@@ -32,6 +34,7 @@ class BuoyDAO():
         # self.conn.close()
         return bEUI
     
+    # selects everything for a specific buoy
     def get_all_from_buoy(self, eui):
         cursor = self.conn.cursor()
         query = "SELECT * FROM buoy WHERE bEUI = %s;"
@@ -41,6 +44,7 @@ class BuoyDAO():
         self.conn.close()
         return result
     
+    # adds a new buoy to the database
     def create_buoy(self, name, eui):
         cursor = self.conn.cursor()
         created = None
@@ -56,6 +60,7 @@ class BuoyDAO():
             self.conn.close()
         return created
     
+    #selects everything from the buoys table
     def get_all_buoys(self):
         cursor = self.conn.cursor()
         query = "SELECT * FROM buoy;"
@@ -65,6 +70,7 @@ class BuoyDAO():
         self.conn.close()
         return result
     
+    # deletes a specific buoy from the database
     def delete_buoy(self, eui, name):
         cursor = self.conn.cursor()
         deleted = None
@@ -80,6 +86,7 @@ class BuoyDAO():
             self.conn.close()
         return deleted
     
+    # updates buoy information in the database
     def update_buoy(self, updates, params):
         cursor = self.conn.cursor()
         updated = None
@@ -94,7 +101,8 @@ class BuoyDAO():
             cursor.close()
             self.conn.close()
         return updated
-    
+
+    # counts the buoys in the database. not used.     
     def count_buoys(self):
         cursor = self.conn.cursor()
         query = "SELECT COUNT(*) FROM buoy;"
@@ -104,6 +112,7 @@ class BuoyDAO():
         self.conn.close()
         return count
     
+    # updates the frequency of a buoy in the database
     def set_frequency(self, f):
         cursor = self.conn.cursor()
         try:
@@ -117,6 +126,7 @@ class BuoyDAO():
             cursor.close()
             self.conn.close()
 
+    # updates the color of a buoy in the database
     def update_color(self, id, color, frequency):
         cursor = self.conn.cursor()
         try:
@@ -131,6 +141,7 @@ class BuoyDAO():
             cursor.close()
             return devEUI
         
+    # updates the battery level of a buoy in the database
     def update_batterylevel(self, devEUI, battery):
         cursor = self.conn.cursor()
         try:
@@ -145,6 +156,8 @@ class BuoyDAO():
             self.conn.close()
             return True
         
+
+    # updates the location of a buoy in the database
     def update_location(self, devEUI, location):
         cursor = self.conn.cursor()
         try:
