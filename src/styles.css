@@ -371,7 +371,15 @@ body {
 /************************* Chanage Password ends ************************/
 
 /************************* Network ************************/
+.custom-width-network thead th:nth-child(0) {
+  width: 5%; /* Adjust the width for the checkbox */
+  margin-left: 20px;
+}
 
+.custom-width-network thead th:nth-child(2) {
+  width: 15%;
+  left: 0; /* Adjust the width for the "ID" header */
+}
 
 .center-network-container {
   display: flex;
@@ -538,15 +546,51 @@ body {
   width: 10%; /* Adjust the padding as needed */
 }
 
+.custom-width-network thead th:nth-child(1) {
+  width: 10%; /* Adjust the width for the checkbox */
+  margin-left: 0px;
+}
+
+.custom-width-network thead th:nth-child(2) {
+  width: 15%;
+  left: -50; /* Adjust the width for the "ID" header */
+}
+
 /* Add padding to the header and body of the "Coordinates" column */
 .custom-width-network thead th:nth-child(4),
 .custom-width-network tbody td:nth-child(4) {
   padding-left: 10px; /* Adjust the padding-left as needed */
   padding-right: 30px; /* Adjust the padding-right as needed */
 }
+.custom-width-network tbody td:nth-child(1){
+  left: 10px !important;
+}
+.custom-width-network tbody td:nth-child(2) {
+  padding-left: 40px; /* Adjust the left padding for the first and second columns */
+}
+
 
 /* Responsive adjustments for mobile */
 @media (max-width: 768px) {
+
+  .custom-width-network tbody td:nth-child(1){
+    padding-left: 10px;
+  }
+  .custom-width-network tbody td:nth-child(2) {
+    padding-left: 15px; /* Adjust the left padding for the first and second columns */
+  }
+
+  .custom-width-network thead th:nth-child(1) {
+    width: 15%; /* Adjust the width for the checkbox */
+    margin-left: 0px;
+  }
+  
+  .custom-width-network thead th:nth-child(2) {
+    width: 15%;
+    left: -50; /* Adjust the width for the "ID" header */
+  }
+
+
   .custom-width-network {
     width: 95%; /* Adjust as needed for mobile */
   }
@@ -630,9 +674,10 @@ body {
 /* Adjust spacing for specific columns if needed */
 .custom-width-network tbody tr td:nth-child(3){
 
-  right: 30px;
+  right: -25px;
 
 }
+
 /* Add padding to the header and body of the "Coordinates" column */
 .custom-width-network thead th:nth-child(3),
 .custom-width-network tbody td:nth-child(3) {
@@ -644,13 +689,13 @@ body {
 
 .custom-width-network thead th:nth-child(4),
 .custom-width-network thead td:nth-child(4) {
-  padding: 0 10px; /* Adjust the padding for mobile devices */
+  padding: 15 10px; /* Adjust the padding for mobile devices */
   margin: 0;
 }
 
 /* Adjust padding for body */
 .custom-width-network tbody td:nth-child(4) {
-  padding: 0 10px; /* Adjust the padding for mobile devices */
+  padding-left: 55px; /* Adjust the padding for mobile devices */
   margin: 0;
 }
 
@@ -1680,4 +1725,441 @@ body {
     top: 40%; 
   }
 }
+
+/* Responsive adjustments for Galaxy Note (360 x 640) */
+@media (max-width: 360px) and (max-height: 640px) {
+  .deploy-button,
+  .stop-design,
+  .clear-all,
+  .select-all,
+  .slider-container,
+  #pattern-menu,
+  #frequency-menu {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: 120px;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .deploy-button {
+    bottom: -550px;
+    right: -120px;
+  }
+
+  .stop-design {
+    bottom: -550px;
+    right: -30px;
+  }
+
+  .clear-all {
+    bottom: -3px;
+    right: -230px;
+  }
+
+  .select-all {
+    bottom: -58px;
+    right: 200px;
+  }
+
+  .slider-container {
+    top: 110px;
+    left: 275px;
+    transform: translate(-50%, -50%);
+    margin-top: 20px;
+    z-index: 100;
+  }
+
+  .slider-container > div {
+    width: 150px !important; /* Override inline width for mobile */
+    margin: 20px auto;
+    z-index: 100;
+  }
+
+  .mdl-slider {
+    width: 100%; /* Ensure slider takes full width of its container */
+    z-index: 100;
+  }
+
+  #pattern-menu {
+    position: relative;
+    top: 280px;
+    left: 80px;
+    z-index: 200;
+  }
+  #frequency-menu {
+    position: relative;
+    top: 310px;
+    left: 202px;
+    z-index: 1;
+  }
+
+  .color-picker-container {
+    position: fixed;
+    bottom: 300px;
+    right: 205px;
+    z-index: 9999;
+  }
+
+  .choose-color {
+    top: 150px;
+    left: 235px;
+    width: 100px;
+  }
+  .custom-width-network {
+    width: 95%; /* Adjust as needed for mobile */
+  }
+  
+
+  .mdl-button-network {
+    width: 120px; /* Adjust width for mobile */
+    height: 35px; /* Adjust height for mobile */
+  }
+
+  .mdl-button-network i {
+    font-size: 1em; /* Adjust font size for mobile */
+  }
+
+  .mdl-button-network.add-buoy,
+  .mdl-button-network.remove-buoy {
+    top: 40px; /* Adjust top position for mobile */
+    width: 120px;
+  }
+
+  .dialog-actions-submit-network{
+    bottom: 20px;
+
+  }
+  
+  
+  .add-buoy-dialog {
+    width: 70%; /* Adjust width for mobile */
+    height: auto; /* Adjust height for mobile */
+  }
+
+ .add-submit{
+  left: 180px;
+  top: 10px;
+ }
+
+  .remove-buoy-dialog{
+    width: 89% !important;
+  }
+  
+  .mdl-card__supporting-text-network {
+    margin-bottom: 40px; /* Adjust margin for mobile */
+  }
+
+
+    .dialog-close-button-network {
+    position: absolute;
+    bottom: 10px;
+    left: 200px; /* Adjust left position */
+   
+  }
+
+  /* Refresh button */
+.refresh-container {
+  position: absolute;
+  right:10px;
+  top: 175px;
+}
+
+  /* Refresh button */
+.refresh-button {
+  top: 10px;
+  position: absolute;
+  right: -100px;
+  cursor: pointer;
+  
+}
+
+.table-title-network {
+  position: absolute;
+  top: 20%;
+  left: 10%;
+ 
+ }
+ .custom-width-network {
+  width: 90%; 
+  top: 5%;
+}
+
+
+/* Adjust spacing for specific columns if needed */
+.custom-width-network tbody tr td:nth-child(3){
+
+  right: 30px;
+
+}
+/* Add padding to the header and body of the "Coordinates" column */
+.custom-width-network thead th:nth-child(3),
+.custom-width-network tbody td:nth-child(3) {
+  padding-left: 60px; /* Adjust the padding-left as needed */
+  padding-right: 30px; /* Adjust the padding-right as needed */
+ 
+}
+
+
+.custom-width-network thead th:nth-child(4),
+.custom-width-network thead td:nth-child(4) {
+  padding: 0 37px; /* Adjust the padding for mobile devices */
+  margin: 0;
+}
+
+/* Adjust padding for body */
+.custom-width-network tbody td:nth-child(4) {
+  padding: 0 70px; /* Adjust the padding for mobile devices */
+  margin: 0;
+}
+
+.dialog-actions-submit-change {
+  position: absolute;
+  top: 310px;
+  right: 0px;
+ }
+
+
+}
+
+
+/* Responsive adjustments for Galaxy S9+ (320 x 658) */
+@media (max-width: 320px) and (max-height: 658px) {
+  .deploy-button,
+  .stop-design,
+  .clear-all,
+  .select-all,
+  .slider-container,
+  #pattern-menu,
+  #frequency-menu {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: 120px;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  /* Adjust the left padding for the third column of table body */
+  .custom-width-network tbody td:nth-child(3) {
+    left: 30px; /* Adjust the left padding */
+    padding-right: 10px;
+  }
+
+  /* Adjust the left padding for the third column of table body */
+  .custom-width-network tbody td:nth-child(4) {
+    left: 70px; /* Adjust the left padding */
+    padding-right: 10px;
+  }
+
+  .deploy-button {
+    bottom: -550px;
+    right: -60px;
+  }
+
+  .stop-design {
+    bottom: -550px;
+    right: -30px;
+  }
+
+  .clear-all {
+    bottom: 10px;
+    right: -50px;
+  }
+
+  .select-all {
+    bottom: 10px;
+    right: -20px;
+  }
+
+  .slider-container {
+    top: 110px;
+    left: 235px;
+    transform: translate(-50%, -50%);
+    margin-top: 20px;
+    z-index: 100;
+  }
+
+  .slider-container > div {
+    width: 150px !important; /* Override inline width for mobile */
+    margin: 20px auto;
+    z-index: 100;
+  }
+
+  .mdl-slider {
+    width: 100%; /* Ensure slider takes full width of its container */
+    z-index: 100;
+  }
+
+  #pattern-menu {
+    position: relative;
+    top: 230px;
+    left: 170px;
+    z-index: 200;
+  }
+  #frequency-menu {
+    position: relative;
+    top: 295px;
+    left: 40px;
+    z-index: 1;
+  }
+
+  .color-picker-container {
+    position: fixed;
+    bottom: 300px;
+    right: 205px;
+    z-index: 9999;
+  }
+
+  .choose-color {
+    top: 150px;
+    left: 195px;
+    width: 100px;
+  }
+
+  .custom-width-network {
+    width: 95%; /* Adjust as needed for mobile */
+  }
+  
+
+  .mdl-button-network {
+    width: 120px; /* Adjust width for mobile */
+    height: 35px; /* Adjust height for mobile */
+  }
+
+  .mdl-button-network i {
+    font-size: 1em; /* Adjust font size for mobile */
+  }
+
+  .mdl-button-network.add-buoy,
+  .mdl-button-network.remove-buoy {
+    top: 40px; /* Adjust top position for mobile */
+    width: 120px;
+  }
+
+  .dialog-actions-submit-network{
+    bottom: 20px;
+
+  }
+  
+  
+  .add-buoy-dialog {
+    width: 70%; /* Adjust width for mobile */
+    height: auto; /* Adjust height for mobile */
+  }
+
+ .add-submit{
+  left: 150px;
+  top: 10px;
+ }
+
+  .remove-buoy-dialog{
+    width: 98% !important;
+    height: 50%;
+    
+  }
+
+  
+  
+  .mdl-card__supporting-text-network {
+    margin-bottom: 40px; /* Adjust margin for mobile */
+  }
+
+
+    .dialog-close-button-network {
+    position: absolute;
+    bottom: 10px;
+    left: 170px; /* Adjust left position */
+   
+  }
+
+  /* Refresh button */
+.refresh-container {
+  position: absolute;
+  right:10px;
+  top: 175px;
+}
+
+  /* Refresh button */
+.refresh-button {
+  top: 10px;
+  position: absolute;
+  right: -100px;
+  cursor: pointer;
+  
+}
+
+.table-title-network {
+  position: absolute;
+  top: 20%;
+  left: 10%;
+ 
+ }
+ .custom-width-network {
+  width: 90%; 
+  top: 5%;
+}
+
+
+/* Adjust spacing for specific columns if needed */
+.custom-width-network tbody tr td:nth-child(3){
+
+  right: 30px;
+
+}
+/* Add padding to the header and body of the "Coordinates" column */
+.custom-width-network thead th:nth-child(3),
+.custom-width-network tbody td:nth-child(3) {
+  padding-left: 10px; /* Adjust the padding-left as needed */
+  padding-right: 30px; /* Adjust the padding-right as needed */
+ 
+}
+
+
+.custom-width-network thead th:nth-child(4),
+.custom-width-network thead td:nth-child(4) {
+  padding: 0 10px; /* Adjust the padding for mobile devices */
+  margin: 0;
+}
+
+/* Adjust padding for body */
+.custom-width-network tbody td:nth-child(4) {
+  padding: 0 10px; /* Adjust the padding for mobile devices */
+  margin: 0;
+}
+
+.image-container {
+  margin-top: -250px; /* Adjust the top margin as needed */
+  text-align: center; /* Center the image horizontally */
+  position: relative;
+  margin-left: 100px;
+
+}
+
+.image-container img {
+  width: 200px; /* Set the width of the image */
+  height: auto; /* Maintain aspect ratio */
+}
+.dialog-actions-submit-change {
+  position: absolute;
+  top: 310px;
+  right: 0px;
+ }
+
+ .dialog-actions-submit-confirm{
+  position: absolute;
+  top: 460px;
+  right: 10px;
+ }
+
+ 
+
+ 
+
+}
+
+
 

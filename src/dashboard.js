@@ -620,7 +620,7 @@ useEffect(() => {
       '#FFC107': 14,
       '#FF9800': 15,
       '#FF5722': 16,
-      '#795548': 17,
+      '#FF6200': 17,
       '#607D8B': 18,
       '#FF5252': 19,
       '#FF4081': 20,
@@ -636,6 +636,46 @@ useEffect(() => {
       '#C0CA33': 30,
       '#FFD600': 31,
       '#FF6F00': 32,
+
+
+      // '#FFAB00': 1,
+      // '#FF6600': 2,
+      // '#FF3D00':3,
+      // '#FF2000': 4,
+      // '#FFA000': 5,
+      // '#FF0700': 6,
+      // '#FF1600': 7,
+      // '#FF2400': 8,
+      // '#FF2F00': 9,
+      // '#FF3A00': 10,
+      // '#FF4300': 11,
+      // '#FF4C00': 12,
+      // '#FF5400': 13,
+      // '#FF5B00': 14,
+      // '#FF6200': 15,
+      // '#FF6900': 16,
+      // '#FF6F00': 17,
+      // '#FF7400': 18,
+      // '#FF7A00': 19,
+      // '#FF7F00': 20,
+      // '#FF8400': 21,
+      // '#FF880D': 22,
+      // '#FF8D19': 23,
+      // '#FF9124': 24,
+      // '#FF952F': 25,
+      // '#FF9938': 26,
+      // '#FF9D41': 27,
+      // '#FFA04A': 28,
+      // '#FFA452': 29,
+      // '#FFA759': 30,
+      // '#FFAA60': 31,
+      // '#FFAE67': 32,
+
+
+
+
+
+
     };
 
     return colorMap[color] || 0; // Return color number or 0 if color not found
@@ -740,7 +780,7 @@ useEffect(() => {
       'Fade Down': 3,
       'Pulse': 4,
       'Strobe': 5,
-      'Random': 6,
+      // 'Random': 6,
       'Solid': 7,
     };
 
@@ -995,7 +1035,7 @@ useEffect(() => {
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Fade Down')}>Fade Down</li>
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Pulse')}>Pulse</li>
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Strobe')}>Strobe</li>
-          <li className="mdl-menu__item" onClick={() => handlePatternSelect('Random')}>Random</li>
+          {/* <li className="mdl-menu__item" onClick={() => handlePatternSelect('Random')}>Random</li> */}
           <li className="mdl-menu__item" onClick={() => handlePatternSelect('Solid')}>Solid</li>
         </ul>
         <button id="frequency-menu" className="mdl-button mdl-js-button mdl-button--raised" style={{ marginLeft: '10px' }}>
@@ -1029,10 +1069,11 @@ useEffect(() => {
           {displayColorPicker && (
             <div style={{ position: 'absolute', top: buttonRef.current.offsetTop + buttonRef.current.offsetHeight, left: buttonRef.current.offsetLeft, backgroundColor: '#fff', border: '2px solid #000', boxShadow: '0 3px 5px rgba(0, 0, 0, 0.3)', padding: '20px', width: '300px' }}>
               <div className="color-squares">
+                {/*colores normales*/}
                 {['#FF0303', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',
-                  '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',
-                  '#795548', '#607D8B', '#FF5252', '#FF4081', '#8E24AA', '#512DA8', '#303F9F', '#1976D2',
-                  '#0288D1', '#0097A7', '#00796B', '#388E3C', '#7CB342', '#C0CA33', '#FFD600', '#FF6F00'
+                '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',
+                '#FF6200', '#607D8B', '#FF5252', '#FF4081', '#8E24AA', '#512DA8', '#303F9F', '#1976D2',
+                '#0288D1', '#0097A7', '#00796B', '#388E3C', '#7CB342', '#C0CA33', '#FFD600', '#FF6F00'
                 ].map((color, index) => (
                   <div
                     key={index}
@@ -1051,5 +1092,13 @@ useEffect(() => {
     </Layout>
   );
 };
+{/*colores menores de 3000K*/}
+
+
+// ['#FFAB00','#FF6600','#FF3D00','#FF2000','#FFA000','#FF0700','#FF1600','#FF2400',
+//                 '#FF2F00','#FF3A00','#FF4300','#FF4C00','#FF5400','#FF5B00','#FF6200','#FF6900',
+//                 '#FF6F00','#FF7400','#FF7A00','#FF7F00','#FF8400','#FF880D','#FF8D19','#FF9124',
+//                 '#FF952F','#FF9938','#FF9D41','#FFA04A','#FFA452','#FFA759','#FFAA60','#FFAE67'
+//                 ]
 
 export default Dashboard;
